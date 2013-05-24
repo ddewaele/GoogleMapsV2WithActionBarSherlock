@@ -21,6 +21,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapFragment extends SherlockMapFragment {
 	private GoogleMap googleMap;
 
+
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {

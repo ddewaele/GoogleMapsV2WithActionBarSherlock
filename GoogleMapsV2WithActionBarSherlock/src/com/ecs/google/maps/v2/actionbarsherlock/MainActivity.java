@@ -43,31 +43,18 @@ public class MainActivity extends SherlockFragmentActivity {
     
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
-      //Used to put dark icons on light action bar
-      boolean isLight = MainActivity.THEME == R.style.Theme_Sherlock_Light;
-      
-      menu.add("Save")
-          .setIcon(isLight ? R.drawable.ic_compose_inverse : R.drawable.ic_compose)
-          .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-
-      menu.add("Search")
-          .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-
-      menu.add("Refresh")
-          .setIcon(isLight ? R.drawable.ic_refresh_inverse : R.drawable.ic_refresh)
-          .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-
+	  
+	  getSupportMenuInflater().inflate(R.menu.main_menu, menu);
       return true;
   }    
   
+  
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-	  if (item.getItemId() == android.R.id.home || item.getItemId() == 0) {
-          return false;
-      }
-      THEME = item.getItemId();
-      
-      Toast.makeText(this, "Theme changed to \"" + item.getTitle() + "\"", Toast.LENGTH_SHORT).show();
+//	  if (item.getItemId() == android.R.id.home || item.getItemId() == 0) {
+//          return false;
+//      }
+      Toast.makeText(this, "Menu id  \"" + item.getItemId() + "\" clicked.", Toast.LENGTH_SHORT).show();
       return true;
   }
 }
