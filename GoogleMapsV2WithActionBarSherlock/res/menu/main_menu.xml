@@ -4,18 +4,23 @@
 
 	<item android:id="@+id/action_bar_start"
         android:showAsAction="ifRoom"
-    	android:icon="@drawable/ic_compose"
         android:title="Start"/>
 	
 	<item android:id="@+id/action_bar_stop"
         android:showAsAction="ifRoom"
-    	android:icon="@drawable/ic_compose"
         android:title="Stop"/>
 	
 	
     <item android:id="@+id/action_bar_add_manual_location"
         android:showAsAction="ifRoom"
-    	android:icon="@drawable/ic_refresh"
         android:title="Add"/>	
-		
+
+        <item android:id="@+id/action_bar_clear_locations"
+        android:showAsAction="ifRoom"
+        android:title="Clear"/>	
+    
+        <item android:id="@+id/action_bar_pan_camera"
+        android:showAsAction="ifRoom"
+        android:title="PanCamera"/>	
+        		
 </menu>
