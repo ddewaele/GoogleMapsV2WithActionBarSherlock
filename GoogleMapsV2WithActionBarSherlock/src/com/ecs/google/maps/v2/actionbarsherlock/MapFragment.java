@@ -17,11 +17,13 @@ import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
-import com.google.android.gms.maps.UiSettings;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 
 public class MapFragment extends SherlockMapFragment {
 	
@@ -37,6 +39,9 @@ public class MapFragment extends SherlockMapFragment {
 
 	private Marker trackingMarker;
 	
+	private Polyline polyLine = null;
+	private List<LatLng> polyLinePoints = new ArrayList<LatLng>();
+	
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -44,13 +49,14 @@ public class MapFragment extends SherlockMapFragment {
 		View root = super.onCreateView(inflater, container, savedInstanceState);
 		googleMap = getMap();
 		googleMap.setMyLocationEnabled(true);
-		googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-		//addMarkerToMap(new LatLng(0, 0));
+		//googleMap.getUiSettings().setMyLocationButtonEnabled(true);
 		return root;
 	}
 	
 	public void startAnimation() {
 		//navigateToPoint(latLng);
+		
+		polyLine = initializePolyLine();
 		
 		System.out.println("Markers (" + this.markers.size() + ")");
 		System.out.println("-------");
@@ -66,9 +72,13 @@ public class MapFragment extends SherlockMapFragment {
 //		
 //		currentPt = 0-1;
 		
-		animator.reset();
 		
+		// We first need to put the camera in the correct position for the first run (we need 2 markers for this).....
 		LatLng markerPos = this.markers.get(0).getPosition();
+		LatLng secondPos = this.markers.get(1).getPosition();
+		
+		float bearing = bearingBetweenLatLngs(markerPos,secondPos);
+		
 		trackingMarker = googleMap.addMarker(new MarkerOptions().position(markerPos)
 				 .title("title")
 				 .snippet("snippet"));
@@ -76,11 +86,10 @@ public class MapFragment extends SherlockMapFragment {
 		CameraPosition cameraPosition =
 				new CameraPosition.Builder()
 						.target(markerPos)
+						.bearing(bearing)
 	                    .tilt(90)
 	                    .zoom(googleMap.getCameraPosition().zoom)
 	                    .build();
-
-
 		
 		googleMap.animateCamera(
 				CameraUpdateFactory.newCameraPosition(cameraPosition), 
@@ -90,6 +99,7 @@ public class MapFragment extends SherlockMapFragment {
 					@Override
 					public void onFinish() {
 						System.out.println("finished camera");
+						animator.reset();
 						Handler handler = new Handler();
 						handler.post(animator);	
 					}
@@ -177,12 +187,31 @@ public class MapFragment extends SherlockMapFragment {
 		
 	};
 	
+	private PolylineOptions rectOptions = new PolylineOptions();
+	
+	
+	private Polyline initializePolyLine() {
+		polyLinePoints = new ArrayList<LatLng>();
+		rectOptions.add(this.markers.get(0).getPosition());
+		return googleMap.addPolyline(rectOptions);
+	}
+	
+	private void updatePolyLine(LatLng latLng) {
+		List<LatLng> points = polyLine.getPoints();
+		points.add(latLng);
+		polyLine.setPoints(points);
+	}
+	
 	public class Animator implements Runnable {
 		
+		private static final int ANIMATE_SPEEED = 1500;
+
+		private static final int ANIMATE_SPEEED_TURN = 1000;
+
 		int currentIndex = 0;
 		
 		//final LatLng endLatLng = new LatLng(50, 4);
-		final int duration = 5000;
+		final int duration = ANIMATE_SPEEED;
 
 		float tilt = 90;
 		float zoom = 15.5f;
@@ -199,42 +228,24 @@ public class MapFragment extends SherlockMapFragment {
 		@Override
 		public void run() {
 			
-			//System.out.println("run with " + currentIndex);
-			
-			//adjustCameraPosition();
-			
 			long elapsed = SystemClock.uptimeMillis() - start;
 			double t = interpolator.getInterpolation((float)elapsed/duration);
-			
-//			LatLng endLatLng = new LatLng(50, 4); // getEndLatLng();
-//			LatLng beginLatLng = new LatLng(0, 0); // getBeginLatLng();
 			
 			LatLng endLatLng = getEndLatLng();
 			LatLng beginLatLng = getBeginLatLng();
 			
-			System.out.println("Calculating " + currentIndex + " with t=" + t + " between " + beginLatLng + " and " + endLatLng);
-			
-			Location beginLocation = convertLatLngToLocation(beginLatLng);
-			Location endLocation = convertLatLngToLocation(endLatLng);
-			
-			float bearing = beginLocation.bearingTo(endLocation);
-			
-			//System.out.println("end latlng " + endLatLng);
-			//System.out.println("begin latlng " + beginLatLng);
-			
 			double lat = t * endLatLng.latitude + (1-t) * beginLatLng.latitude;
 			double lng = t * endLatLng.longitude + (1-t) * beginLatLng.longitude;
 			LatLng newPosition = new LatLng(lat, lng);
-			//System.out.println("t= " + t + " - newposition = " + newPosition);
 			
 			trackingMarker.setPosition(newPosition);
+			updatePolyLine(newPosition);
 			
-			float bearingC = googleMap.getCameraPosition().bearing;
-			//System.out.println("Camera bearing : " + bearingC);
-			
-			navigateToPoint(newPosition,tilt,bearing,zoom);
+			// It's not possible to move the marker + center it through a cameraposition update while another camerapostioning was already happening.
+			//navigateToPoint(newPosition,tilt,bearing,currentZoom,false);
+			//navigateToPoint(newPosition,false);
+
 			if (t< 1) {
-				//System.out.println("Continue....");
 				mHandler.postDelayed(this, 16);
 			} else {
 				
@@ -245,46 +256,48 @@ public class MapFragment extends SherlockMapFragment {
 					currentIndex++;
 					
 					start = SystemClock.uptimeMillis();
-					
-					LatLng begin = getBeginLatLng(); // googleMap.getCameraPosition().target;
+
+					LatLng begin = getBeginLatLng();
 					LatLng end = getEndLatLng();
 					
-					Location beginL= convertLatLngToLocation(begin);
-					Location endL= convertLatLngToLocation(end);
+					float bearingL = bearingBetweenLatLngs(begin, end);
 					
-					System.out.println("Calculating baring between " + begin + " and " + end);
-					float bearingL = beginL.bearingTo(endL);
+					//System.out.println("Calculating baring between " + begin + " and " + end);
+					
+					markers.get(currentIndex).setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
 					
 					//Create a new CameraPosition
 					CameraPosition cameraPosition =
 							new CameraPosition.Builder()
-									.target(begin)
+									.target(end) // changed this...
 				                    .bearing(bearingL)
 				                    .tilt(tilt)
 				                    .zoom(googleMap.getCameraPosition().zoom)
 				                    .build();
 
 					
-					System.out.println("New bearing : " + bearingL);
-					System.out.println("Animating camera....");
 					googleMap.animateCamera(
 							CameraUpdateFactory.newCameraPosition(cameraPosition), 
-							2000,
+							ANIMATE_SPEEED_TURN,
 							new CancelableCallback() {
 								
 								@Override
 								public void onFinish() {
-									System.out.println("finished camera");
-									start = SystemClock.uptimeMillis();
-									mHandler.postDelayed(animator, 16);									
+									System.out.println("camera pointing in the right direction....");
+									
+//									start = SystemClock.uptimeMillis();
+//									mHandler.postDelayed(animator, 16);									
 								}
 								
 								@Override
 								public void onCancel() {
-									System.out.println("cancelling camera");									
+									System.out.println("cancelling camera....");									
 								}
 							}
 					);
+					
+					start = SystemClock.uptimeMillis();
+					mHandler.postDelayed(animator, 16);					
 					
 					// here shift to the next marker, reset the time
 					// and do the animations all over again
@@ -301,12 +314,7 @@ public class MapFragment extends SherlockMapFragment {
 			}
 		}
 		
-		private Location convertLatLngToLocation(LatLng latLng) {
-			Location loc = new Location("someLoc");
-			loc.setLatitude(latLng.latitude);
-			loc.setLongitude(latLng.longitude);
-			return loc;
-		}
+
 		
 		private LatLng getEndLatLng() {
 			return markers.get(currentIndex+1).getPosition();
@@ -340,17 +348,26 @@ public class MapFragment extends SherlockMapFragment {
 		}
 	};	
 	
-	 private void changeCamera(CameraUpdate update, CancelableCallback callback) {
-	     //googleMap.animateCamera(update, callback);
-	     googleMap.moveCamera(update);
-	 }
-
-	 private void changeCamera(CameraUpdate update) {
-		 changeCamera(update, null);
-	 }
+//	 private void changeCamera(CameraUpdate update, CancelableCallback callback) {
+//	     //googleMap.animateCamera(update, callback);
+//	     googleMap.moveCamera(update);
+//	 }
+//
+//	 private void changeCamera(CameraUpdate update) {
+//		 changeCamera(update, null);
+//	 }
 
 	    
-	 private void navigateToPoint(LatLng latLng,float tilt, float bearing, float zoom) {
+	 /**
+	  * 
+	  * Allows us to navigate to a certain point.
+	  * 
+	  * @param latLng
+	  * @param tilt
+	  * @param bearing
+	  * @param zoom
+	  */
+	 public void navigateToPoint(LatLng latLng,float tilt, float bearing, float zoom,boolean animate) {
 		 CameraPosition position =
 				 new CameraPosition.Builder().target(latLng)
 	                        .zoom(zoom)
@@ -358,9 +375,38 @@ public class MapFragment extends SherlockMapFragment {
 	                        .tilt(tilt)
 	                        .build();
 	    	
-	    	changeCamera(CameraUpdateFactory.newCameraPosition(position)); 
+	    	changeCameraPosition(position, animate);
+	    	
 	 }
 
+	 public void navigateToPoint(LatLng latLng, boolean animate) {
+		 CameraPosition position =
+				 new CameraPosition.Builder().target(latLng)
+//	                        .zoom(zoom)
+//	                        .bearing(bearing)
+//	                        .tilt(tilt)
+	                        .build();
+	    	
+	    	changeCameraPosition(position, animate);
+	 }
+	 
+	 private void changeCameraPosition(CameraPosition cameraPosition, boolean animate) {
+		 CameraUpdate cameraUpdate = CameraUpdateFactory.newCameraPosition(cameraPosition);
+		 
+	    	if (animate) {
+	    		googleMap.animateCamera(cameraUpdate);
+	    	} else {
+	    	  	googleMap.moveCamera(cameraUpdate);
+	    	}
+
+	 }
+	 
+	/**
+	 * 
+	 * Adds a marker to the map.
+	 * 
+	 * @param latLng
+	 */
 	public void addMarkerToMap(LatLng latLng) {
 		Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
 				 .title("title")
@@ -369,8 +415,35 @@ public class MapFragment extends SherlockMapFragment {
 		
 	}
 
+	/**
+	 * 
+	 * Clears all markers from the map.
+	 * 
+	 */
 	public void clearMarkers() {
 		googleMap.clear();
     	markers.clear();		
+	}
+	
+	private Location convertLatLngToLocation(LatLng latLng) {
+		Location loc = new Location("someLoc");
+		loc.setLatitude(latLng.latitude);
+		loc.setLongitude(latLng.longitude);
+		return loc;
+	}
+	
+	private float bearingBetweenLatLngs(LatLng begin,LatLng end) {
+		Location beginL= convertLatLngToLocation(begin);
+		Location endL= convertLatLngToLocation(end);
+		return beginL.bearingTo(endL);
+	}
+
+	public void toggleStyle() {
+		if (GoogleMap.MAP_TYPE_NORMAL == googleMap.getMapType()) {
+			googleMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);		
+		} else {
+			googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+		}
 	}	
+	
 }

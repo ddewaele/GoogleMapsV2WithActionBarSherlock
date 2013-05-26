@@ -1,8 +1,5 @@
 package com.ecs.google.maps.v2.actionbarsherlock;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.os.Bundle;
 import android.widget.Toast;
 
@@ -14,8 +11,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 
 public class MainActivity extends SherlockFragmentActivity {
     
@@ -36,6 +31,23 @@ public class MainActivity extends SherlockFragmentActivity {
         
         googleMap = mapFragment.getMap();
         
+
+        
+        mapFragment.addMarkerToMap(new LatLng(50.961813797827055,3.5168474167585373));
+        mapFragment.addMarkerToMap(new LatLng(50.96085423274633,3.517405651509762));
+        mapFragment.addMarkerToMap(new LatLng(50.96020550146382,3.5177918896079063));
+        mapFragment.addMarkerToMap(new LatLng(50.95936754348453,3.518972061574459));
+        mapFragment.addMarkerToMap(new LatLng(50.95877285446026,3.5199161991477013));
+        mapFragment.addMarkerToMap(new LatLng(50.958179213755905,3.520646095275879));
+        mapFragment.addMarkerToMap(new LatLng(50.95901719316589,3.5222768783569336));
+        mapFragment.addMarkerToMap(new LatLng(50.95954430150347,3.523542881011963));
+        mapFragment.addMarkerToMap(new LatLng(50.95873336312275,3.5244011878967285));
+        mapFragment.addMarkerToMap(new LatLng(50.95955781702322,3.525688648223877));
+        mapFragment.addMarkerToMap(new LatLng(50.958855004782116,3.5269761085510254));
+
+        
+        
+        
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 			
 			@Override
@@ -44,6 +56,18 @@ public class MainActivity extends SherlockFragmentActivity {
 			}
 
 		});
+        
+        
+        if (googleMap.getMyLocation()!=null) {
+        
+	        double lat = googleMap.getMyLocation().getLatitude();
+	        double lng = googleMap.getMyLocation().getLongitude();
+	    
+	        mapFragment.navigateToPoint(new LatLng(lat,lng), true);
+        }
+        
+        
+        
         
     }
     
@@ -70,13 +94,18 @@ public class MainActivity extends SherlockFragmentActivity {
 	    	mapFragment.clearMarkers();
 	  } else if (item.getItemId() == R.id.action_bar_pan_camera) {
 	    	panCamera();
+	  } else if (item.getItemId() == R.id.action_bar_toggle_style) {
+		  mapFragment.toggleStyle();
 	  }
 	  
       Toast.makeText(this, "Menu id  \"" + item.getItemId() + "\" clicked.", Toast.LENGTH_SHORT).show();
       return true;
   }
 
-private void panCamera() {
+  private void panCamera() {
+	
+	System.out.println("Current loc = " + googleMap.getMyLocation());
+	
 	LatLng begin = googleMap.getCameraPosition().target;
 	//Create a new CameraPosition
 	CameraPosition cameraPosition =

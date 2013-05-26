@@ -22,5 +22,8 @@
         <item android:id="@+id/action_bar_pan_camera"
         android:showAsAction="ifRoom"
         android:title="PanCamera"/>	
-        		
+
+		<item android:id="@+id/action_bar_toggle_style"
+        android:showAsAction="ifRoom"
+        android:title="Toggle Style"/>			
 </menu>
