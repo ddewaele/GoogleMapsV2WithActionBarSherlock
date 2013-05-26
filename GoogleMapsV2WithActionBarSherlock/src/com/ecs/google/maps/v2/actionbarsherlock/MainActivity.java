@@ -18,9 +18,6 @@ public class MainActivity extends SherlockFragmentActivity {
 	private GoogleMap googleMap;
 	private MapFragment mapFragment;
 	
-	
-	
-	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,8 +27,6 @@ public class MainActivity extends SherlockFragmentActivity {
         mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_map);
         
         googleMap = mapFragment.getMap();
-        
-
         
         mapFragment.addMarkerToMap(new LatLng(50.961813797827055,3.5168474167585373));
         mapFragment.addMarkerToMap(new LatLng(50.96085423274633,3.517405651509762));
@@ -44,9 +39,6 @@ public class MainActivity extends SherlockFragmentActivity {
         mapFragment.addMarkerToMap(new LatLng(50.95873336312275,3.5244011878967285));
         mapFragment.addMarkerToMap(new LatLng(50.95955781702322,3.525688648223877));
         mapFragment.addMarkerToMap(new LatLng(50.958855004782116,3.5269761085510254));
-
-        
-        
         
         googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 			
@@ -84,10 +76,10 @@ public class MainActivity extends SherlockFragmentActivity {
 //          return false;
 //      }
 	  
-	  if (item.getItemId() == R.id.action_bar_add_manual_location) {
-		  
+	  if (item.getItemId() == R.id.action_bar_remove_location) {
+		  mapFragment.removeSelectedMarker();
 	  } else if (item.getItemId() == R.id.action_bar_start) {
-		  mapFragment.startAnimation();
+		  mapFragment.startAnimation(true);
 	  } else if (item.getItemId() == R.id.action_bar_stop) {
 		  mapFragment.stopAnimation();
 	  } else if (item.getItemId() == R.id.action_bar_clear_locations) {
@@ -104,10 +96,8 @@ public class MainActivity extends SherlockFragmentActivity {
 
   private void panCamera() {
 	
-	System.out.println("Current loc = " + googleMap.getMyLocation());
-	
 	LatLng begin = googleMap.getCameraPosition().target;
-	//Create a new CameraPosition
+
 	CameraPosition cameraPosition =
 			new CameraPosition.Builder()
 					.target(begin)
@@ -115,7 +105,6 @@ public class MainActivity extends SherlockFragmentActivity {
                     .zoom(googleMap.getCameraPosition().zoom)
                     .build();
 
-	System.out.println("Animating camera....");
 	googleMap.animateCamera(
 			CameraUpdateFactory.newCameraPosition(cameraPosition), 
 			3000,
@@ -130,7 +119,8 @@ public class MainActivity extends SherlockFragmentActivity {
 				public void onCancel() {
 					System.out.println("cancelling camera");									
 				}
-			});
+			}
+	);
 		
-}
+  }
 }

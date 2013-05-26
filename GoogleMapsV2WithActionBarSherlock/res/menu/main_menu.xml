@@ -11,9 +11,9 @@
         android:title="Stop"/>
 	
 	
-    <item android:id="@+id/action_bar_add_manual_location"
+    <item android:id="@+id/action_bar_remove_location"
         android:showAsAction="ifRoom"
-        android:title="Add"/>	
+        android:title="Remove"/>	
 
         <item android:id="@+id/action_bar_clear_locations"
         android:showAsAction="ifRoom"
