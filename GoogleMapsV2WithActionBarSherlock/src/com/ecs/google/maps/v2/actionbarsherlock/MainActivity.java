@@ -44,6 +44,7 @@ public class MainActivity extends SherlockFragmentActivity {
 			
 			@Override
 			public void onMapClick(LatLng latLng) {
+				System.out.println("On Map click");
 				mapFragment.addMarkerToMap(latLng);
 			}
 
@@ -101,7 +102,8 @@ public class MainActivity extends SherlockFragmentActivity {
 	CameraPosition cameraPosition =
 			new CameraPosition.Builder()
 					.target(begin)
-                    .bearing(0)
+                    .bearing(45)
+                    .tilt(45)
                     .zoom(googleMap.getCameraPosition().zoom)
                     .build();
 

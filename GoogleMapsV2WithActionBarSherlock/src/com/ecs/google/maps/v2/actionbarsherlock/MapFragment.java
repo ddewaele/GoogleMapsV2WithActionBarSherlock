@@ -30,6 +30,7 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 	
 	private static final int ANIMATE_SPEEED = 1500;
 	private static final int ANIMATE_SPEEED_TURN = 1000;
+	private static final int BEARING_OFFSET = 20;
 	
 	// Keep track of our markers
 	private List<Marker> markers = new ArrayList<Marker>();
@@ -59,7 +60,8 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 			
 			@Override
 			public boolean onMarkerClick(Marker marker) {
-				System.out.println("Clicked on map");
+				System.out.println("Clicked on map... ");
+				marker.hideInfoWindow();
 				selectedMarker = marker;
 				return false;
 			}
@@ -69,18 +71,22 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 	}
 	
 	public void startAnimation(boolean showPolyLine) {
+		animator.reset();
+		
 		this.showPolyline = showPolyLine;
+		
+		highLightMarker(0);
 		
 		if (this.showPolyline) {
 			polyLine = initializePolyLine();
 		}
 		
-		System.out.println("Markers (" + this.markers.size() + ")");
-		System.out.println("-------");
-		for (Marker marker : this.markers) {
-			System.out.println(marker.getPosition());
-		}
-		
+//		System.out.println("Markers (" + this.markers.size() + ")");
+//		System.out.println("-------");
+//		for (Marker marker : this.markers) {
+//			System.out.println(marker.getPosition());
+//		}
+//		
 		
 //		googleMap.animateCamera(
 //				CameraUpdateFactory.zoomTo(googleMap.getCameraPosition().zoom + 0.5f), 
@@ -88,7 +94,6 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 //				MyCancelableCallback);						
 //		
 //		currentPt = 0-1;
-		
 		
 		// We first need to put the camera in the correct position for the first run (we need 2 markers for this).....
 		LatLng markerPos = this.markers.get(0).getPosition();
@@ -109,9 +114,9 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 		CameraPosition cameraPosition =
 				new CameraPosition.Builder()
 						.target(markerPos)
-						.bearing(bearing)
+						.bearing(bearing + BEARING_OFFSET)
 	                    .tilt(90)
-	                    .zoom(googleMap.getCameraPosition().zoom)
+	                    .zoom(googleMap.getCameraPosition().zoom >=16 ? googleMap.getCameraPosition().zoom : 16)
 	                    .build();
 		
 		googleMap.animateCamera(
@@ -137,7 +142,7 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 	
 	public void stopAnimation() {
 		trackingMarker.remove();
-		animator.reset();
+		//animator.reset();
 		mHandler.removeCallbacks(animator);
 	}
 	
@@ -161,18 +166,20 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 					
 					if(++currentPt < markers.size()){
 						
-						//Get the current location
-						Location startingLocation = new Location("starting point");
-						startingLocation.setLatitude(googleMap.getCameraPosition().target.latitude);
-						startingLocation.setLongitude(googleMap.getCameraPosition().target.longitude);
-						
-						//Get the target location
-						Location endingLocation = new Location("ending point");
-						endingLocation.setLatitude(markers.get(currentPt).getPosition().latitude);
-						endingLocation.setLongitude(markers.get(currentPt).getPosition().longitude);
-						
-						//Find the Bearing from current location to next location
-						float targetBearing = startingLocation.bearingTo(endingLocation);
+//						//Get the current location
+//						Location startingLocation = new Location("starting point");
+//						startingLocation.setLatitude(googleMap.getCameraPosition().target.latitude);
+//						startingLocation.setLongitude(googleMap.getCameraPosition().target.longitude);
+//						
+//						//Get the target location
+//						Location endingLocation = new Location("ending point");
+//						endingLocation.setLatitude(markers.get(currentPt).getPosition().latitude);
+//						endingLocation.setLongitude(markers.get(currentPt).getPosition().longitude);
+//						
+//						//Find the Bearing from current location to next location
+//						float targetBearing = startingLocation.bearingTo(endingLocation);
+					
+						float targetBearing = bearingBetweenLatLngs( googleMap.getCameraPosition().target, markers.get(currentPt).getPosition());
 						
 						LatLng targetLatLng = markers.get(currentPt).getPosition();
 						//float targetZoom = zoomBar.getProgress();
@@ -234,6 +241,7 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 		long start = SystemClock.uptimeMillis();
 		
 		public void reset() {
+			resetMarkers();
 			start = SystemClock.uptimeMillis();
 			currentIndex = 0;
 		}
@@ -283,7 +291,7 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 					CameraPosition cameraPosition =
 							new CameraPosition.Builder()
 									.target(end) // changed this...
-				                    .bearing(bearingL)
+				                    .bearing(bearingL  + BEARING_OFFSET)
 				                    .tilt(tilt)
 				                    .zoom(googleMap.getCameraPosition().zoom)
 				                    .build();
@@ -432,10 +440,27 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 	 * Highlight the marker by marker.
 	 */
 	private void highLightMarker(Marker marker) {
+		
+		/*
+		for (Marker foundMarker : this.markers) {
+			if (!foundMarker.equals(marker)) {
+				foundMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+			} else {
+				foundMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+				foundMarker.showInfoWindow();
+			}
+		}
+		*/
 		marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
 		marker.showInfoWindow();
+
 		this.selectedMarker=marker;
 	}	
 
-	
+	private void resetMarkers() {
+		for (Marker marker : this.markers) {
+			marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+		}
+	}
+		
 }
