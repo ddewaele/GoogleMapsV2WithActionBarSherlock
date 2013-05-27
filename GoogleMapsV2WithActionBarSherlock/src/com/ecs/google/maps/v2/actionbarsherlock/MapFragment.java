@@ -16,6 +16,7 @@ import android.view.animation.LinearInterpolator;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -25,7 +26,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-public class MapFragment extends SherlockMapFragment {
+public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 	
 	private static final int ANIMATE_SPEEED = 1500;
 	private static final int ANIMATE_SPEEED_TURN = 1000;
