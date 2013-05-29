@@ -157,7 +157,7 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 
 				@Override
 				public void onCancel() {
-					//info.setText("onCancel()");
+					System.out.println("onCancelled called");
 				}
 
 				@Override

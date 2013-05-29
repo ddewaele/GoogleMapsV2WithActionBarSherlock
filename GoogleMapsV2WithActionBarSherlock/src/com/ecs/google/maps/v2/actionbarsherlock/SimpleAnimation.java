@@ -3,8 +3,12 @@ package com.ecs.google.maps.v2.actionbarsherlock;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.annotation.SuppressLint;
 import android.location.Location;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -12,10 +16,11 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
@@ -23,7 +28,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 public class SimpleAnimation extends SherlockFragmentActivity {
 
-	private SupportMapFragment findFragmentById;
+	private SupportMapFragment mapFragment;
 	private GoogleMap googleMap;
 
 	private List<Marker> markers = new ArrayList<Marker>();
@@ -37,8 +42,8 @@ public class SimpleAnimation extends SherlockFragmentActivity {
 	protected void onCreate(Bundle bundle) {
 		super.onCreate(bundle);
 		setContentView(R.layout.support_map_fragment);
-		findFragmentById = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-		googleMap = findFragmentById.getMap();
+		mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+		googleMap = mapFragment.getMap();
 	
 		  googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 				
@@ -49,6 +54,14 @@ public class SimpleAnimation extends SherlockFragmentActivity {
 				}
 
 			});
+		  
+		  googleMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+			
+			@Override
+			public void onCameraChange(CameraPosition cameraPosition) {
+				System.out.println(" ***** new position : " + cameraPosition);
+			}
+		});
 		  
 		 addMarkerToMap(new LatLng(50.961813797827055,3.5168474167585373));
 	       addMarkerToMap(new LatLng(50.96085423274633,3.517405651509762));
@@ -61,7 +74,27 @@ public class SimpleAnimation extends SherlockFragmentActivity {
 	       addMarkerToMap(new LatLng(50.95873336312275,3.5244011878967285));
 	       addMarkerToMap(new LatLng(50.95955781702322,3.525688648223877));
 	       addMarkerToMap(new LatLng(50.958855004782116,3.5269761085510254));
-	       		  
+	       		
+//	       fixZoom();
+	       
+	       final View mapView = mapFragment.getView();
+	       
+	       if (mapView.getViewTreeObserver().isAlive()) {
+	    	   mapView.getViewTreeObserver().addOnGlobalLayoutListener(new OnGlobalLayoutListener() {
+	               @SuppressLint("NewApi") // We check which build version we are using.
+	               @Override
+	               public void onGlobalLayout() {
+	                   if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+	                	   mapView.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+	                   } else {
+	                	   mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+	                   }
+	                   fixZoom();
+	               }
+	           });
+	       }	       
+	       
+	       
 	}
 
 	
@@ -127,16 +160,18 @@ public class SimpleAnimation extends SherlockFragmentActivity {
 
 				@Override
 				public void onCancel() {
+					System.out.println("********** oncancel");
 				}
 
 				@Override
 				public void onFinish() {
 					
 					if(++currentPt < markers.size()){
-						
 						float targetBearing = bearingBetweenLatLngs( googleMap.getCameraPosition().target, markers.get(currentPt).getPosition());
 						LatLng targetLatLng = markers.get(currentPt).getPosition();
 
+							System.out.println(" ------- " + currentPt + " - " + markers.size() + " - " + targetBearing + " - " + targetLatLng);
+						
 						CameraPosition cameraPosition =
 								new CameraPosition.Builder()
 										.target(targetLatLng)
@@ -148,7 +183,10 @@ public class SimpleAnimation extends SherlockFragmentActivity {
 						googleMap.animateCamera(
 								CameraUpdateFactory.newCameraPosition(cameraPosition), 
 								3000,
-								MyCancelableCallback);
+								currentPt==markers.size()-1 ? FinalCancelableCallback : MyCancelableCallback);
+
+//						googleMap.moveCamera(
+//								CameraUpdateFactory.newCameraPosition(cameraPosition)); 
 						
 						markers.get(currentPt).showInfoWindow();
 						
@@ -156,6 +194,19 @@ public class SimpleAnimation extends SherlockFragmentActivity {
 					
 				}
 		
+	};
+	
+	CancelableCallback FinalCancelableCallback = new CancelableCallback() {
+		
+		@Override
+		public void onFinish() {
+			fixZoom();
+		}
+		
+		@Override
+		public void onCancel() {
+			
+		}
 	};
 	
 	private Location convertLatLngToLocation(LatLng latLng) {
@@ -169,6 +220,16 @@ public class SimpleAnimation extends SherlockFragmentActivity {
 		Location beginL= convertLatLngToLocation(begin);
 		Location endL= convertLatLngToLocation(end);
 		return beginL.bearingTo(endL);
+	}	
+	
+	private void fixZoom() {
+	    LatLngBounds.Builder bc = new LatLngBounds.Builder();
+
+	    for (Marker marker : markers) {
+	        bc.include(marker.getPosition());
+	    }
+
+	    googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bc.build(), 50),4000,null);
 	}	
 	
 }
