@@ -55,8 +55,8 @@ Once we have the CameraPosition, we can pass it on the Google Map animateCamera 
 
 The callback provides us hooks when the animation finishes. 
 
-onFinish is called after the animation has completely finished
-onCancel is called when the animation has been stopped for some reason (call to stopAnimation or another animation started).
+- onFinish is called after the animation has completely finished
+- onCancel is called when the animation has been stopped for some reason (call to stopAnimation or another animation started).
 
 Note that you cannot have 2 animations running at the same time. When the second animation starts, the first animation will be stopped abrublty, and you'll get a notification through the onCancel callback.
 
@@ -94,4 +94,4 @@ We need to take into account
 - The different LatLng points between beginning and end that we'll use to shift the marker.
 - How much time is spent moving the marker from beginning to end and hwo many position updates do want.
 
-Setting the position of the marker to a new LatLng point is easy as it only takes a call to setPosition with the appropriate LatLng. 
+	Setting the position of the marker to a new LatLng point is easy as it only takes a call to setPosition with the appropriate LatLng. 

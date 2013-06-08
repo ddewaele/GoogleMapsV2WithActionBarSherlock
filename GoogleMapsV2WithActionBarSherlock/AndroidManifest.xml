@@ -38,9 +38,9 @@
 		    		android:value="AIzaSyA_u1faIXRhx_Q7NafFbrhQJEerl6UUbPY"/>
          
         <activity
-            android:name="com.ecs.google.maps.v2.actionbarsherlock.SimpleMapFragmentActivity"
-            android:label="@string/app_name" 
-			android:uiOptions="splitActionBarWhenNarrow">
+            android:name="com.ecs.google.maps.v2.actionbarsherlock.SimpleSherlockFragmentActivity"
+            android:label="@string/app_name"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

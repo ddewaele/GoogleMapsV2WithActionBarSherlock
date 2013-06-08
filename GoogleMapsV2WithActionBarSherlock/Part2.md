@@ -5,6 +5,15 @@ In this article, I'll show you some simple ways of dealing with Markers on your 
 Markers have finally become first class citizens in the Google Maps for Android v2 API. Gone are the days where you need to work with low-level overlays and overlayitems
 to get a simple marker on the Map. As of v2, we finally have `Marker` objects and an `addMarkerToMap`, so let's see what we can do with it...
 
+But first we're going to take a little side-track. 
+
+### Adding some tabs to our application.
+
+The next 4 parts in this series will be included in a single Android demo application.
+I'm going to use a wonderful library from [Andreas Stütz](https://plus.google.com/117122118961369445953/posts) called [PagerSlidingTabStrip](https://github.com/astuetz/PagerSlidingTabStrip) that adds a nice set of tabs to the application.
+Setting up the project is really easy. Go checkout the Github page and download the library and the sample project if you're interested in finding out more.
+
+
 ### Adding markers to the map
 
 Adding a marker to the map is very simple. The only thing you need to do is call the `addMarkerToMap` method on the googleMap.
@@ -23,7 +32,9 @@ A title and snippet can be provided to be displayed on the `InfoWindow` when sel
 ###  Marker management
 
 The googleMap doesn't expose a list of markers that have been added to the map, nor does it track the currently selected marker. 
-In other words, you'll need to do your own `marker management`. Marker management is the ability to manage the markers in your app in a flexible way. 
+In other words, you'll need to do your own `marker management`. Marker management is all about having a flexible way to keep 
+track of the markers being used on your app, so that you can refer to them in an easy way.
+
 It comes in handy when you want to interact with markers without going through the standard callbacks of the googleMap.
 
 When you have a marker somewhere on the map and you didn't store the resulting marker in a list, the only way to access the marker again is by clicking on it, and using the marker argument in the callback.
@@ -174,3 +185,6 @@ Simply doing polyLine.getPoints().add(latLng) doesn't work.
 		polyLine.setPoints(points);
 	}
 
+## References
+
+http://www.youtube.com/watch?feature=player_embedded&v=nb2X9IjjZpM#!

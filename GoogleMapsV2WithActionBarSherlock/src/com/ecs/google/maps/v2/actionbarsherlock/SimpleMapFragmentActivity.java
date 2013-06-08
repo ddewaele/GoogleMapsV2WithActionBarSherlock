@@ -1,10 +1,13 @@
 package com.ecs.google.maps.v2.actionbarsherlock;
 
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
+import java.lang.reflect.Field;
 
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.view.ViewConfiguration;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
 
 public class SimpleMapFragmentActivity extends FragmentActivity{
 
@@ -19,6 +22,7 @@ public class SimpleMapFragmentActivity extends FragmentActivity{
 		mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         googleMap = mapFragment.getMap();
         googleMap.setMyLocationEnabled(true);
+
         
 	}
 }

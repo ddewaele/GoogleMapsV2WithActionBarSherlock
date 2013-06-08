@@ -211,16 +211,38 @@ If not, you'll get the following error:
 
 ### Adding the actionBar.
 
-The point of this article was to show you how you can include the actionBar in your app.
+The point of this article was to show you how you can include the ActionBarSherlock in your app.
+With ABS 4.3 it couldn't be simpler. Simply have your activity extend SherlockFragmentActivity like this
 
-Typically if you want to embed a fragment in an application using ActionBarSherlock, you simply have your activity extend SherlockFragmentActivity.
-However, this doesn't work with the MapFragment as you'll see the following error
+	public class SimpleSherlockFragmentActivity extends SherlockFragmentActivity {
+	
+		private SupportMapFragment mapFragment;
+		private GoogleMap googleMap;
+	
+		@Override
+		protected void onCreate(Bundle bundle) {
+			super.onCreate(bundle);
+			setContentView(R.layout.simple_sherlock_map_fragment);
+			
+			mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+			googleMap = mapFragment.getMap();
+			googleMap.setMyLocationEnabled(true);
+	
+		}
+	}
 
-	Caused by: java.lang.ClassCastException: com.google.android.gms.maps.MapFragment cannot be cast to android.support.v4.app.Fragment
 
-There's no real built-in support for MapFragments in ActionBarSherlock, so you can't really use it out of the box, but it is very simple to add support.
-You simply need to "bridge" the SupportMapFragment and the SherlockFragmentActivity. As this is a common requirement, lots of people already did it and you can find lots of examples on the web..
+If you want to include a menu simply add this
 
+	  @Override
+	  public boolean onCreateOptionsMenu(Menu menu) {
+		  getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+	      return true;
+	  } 
+	  
+
+			android:uiOptions="splitActionBarWhenNarrow"
+			
 
 ### Older Android version
 

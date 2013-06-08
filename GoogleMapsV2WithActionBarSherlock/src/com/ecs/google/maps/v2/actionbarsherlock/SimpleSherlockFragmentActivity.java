@@ -1,6 +1,9 @@
 package com.ecs.google.maps.v2.actionbarsherlock;
 
+import java.lang.reflect.Field;
+
 import android.os.Bundle;
+import android.view.ViewConfiguration;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
@@ -20,6 +23,18 @@ public class SimpleSherlockFragmentActivity extends SherlockFragmentActivity {
 		mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         googleMap = mapFragment.getMap();
         googleMap.setMyLocationEnabled(true);
+        
+        
+        try {
+            ViewConfiguration config = ViewConfiguration.get(this);
+            Field menuKeyField = ViewConfiguration.class.getDeclaredField("sHasPermanentMenuKey");
+            if(menuKeyField != null) {
+                menuKeyField.setAccessible(true);
+                menuKeyField.setBoolean(config, false);
+            }
+        } catch (Exception ex) {
+            // Ignore
+        }
 
 	}
 	
