@@ -30,7 +30,10 @@ In order to animate the camera, we first need to define where it should be point
 							.zoom(googleMap.getCameraPosition().zoom)
 							.build();
 
-the CameraPosition allos us to define the target (where does the camera needs to go), the bearing (where should the camera be pointing at), the tilt and the zoom.
+the CameraPosition allows us to define the target (where does the camera needs to go), the bearing (where should the camera be pointing at), the tilt and the zoom.
+
+If you can opt not to specify any values for them, the Camera will keep the current bearing, tilt and zoom while doing its movement.
+
 We'll just hardcode these values for now...
 
 Once we have the CameraPosition, we can pass it on the Google Map animateCamera method:

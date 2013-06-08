@@ -89,7 +89,7 @@ public class SimpleAnimation extends SherlockFragmentActivity {
 	                   } else {
 	                	   mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 	                   }
-	                   fixZoom();
+	                   Utils.fixZoom(googleMap,markers);
 	               }
 	           });
 	       }	       
@@ -200,7 +200,7 @@ public class SimpleAnimation extends SherlockFragmentActivity {
 		
 		@Override
 		public void onFinish() {
-			fixZoom();
+			Utils.fixZoom(googleMap,markers);
 		}
 		
 		@Override
@@ -222,14 +222,6 @@ public class SimpleAnimation extends SherlockFragmentActivity {
 		return beginL.bearingTo(endL);
 	}	
 	
-	private void fixZoom() {
-	    LatLngBounds.Builder bc = new LatLngBounds.Builder();
-
-	    for (Marker marker : markers) {
-	        bc.include(marker.getPosition());
-	    }
-
-	    googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bc.build(), 50),4000,null);
-	}	
+	
 	
 }

@@ -2,18 +2,24 @@
 
 ##Introduction
 
-In this tutorial I will show you can start using Google Naps Android API v2 in your Android application. 
-The new API is a vast improvement over the original one and comes with many new features. 
-Not only on a pure UI but also on the API level is the new Maps v2 library a "delight" for both end-users and developers.
+In the first part of this tutorial I will show you can start using Google Maps Android API v2 in your Android application. 
+The goal is to create a skeleton project that loads up a map using the new Google Map for Android API v2 as well as ActionBarsherlock.
+ 
+The new Google Maps Android API v2 is a vast improvement over the original one and comes with many new features. 
+Not only does it really stand out from a UI perspective but also on an API level is the new Maps v2 library a "delight" for both end-users and developers.
+
+Before the Google Maps Android API v2 was released, developers were forced to embed a MapView component in their MapActivity. If you compared the Google Maps application with third party applications using the MapView compeonent you could immediately see a big difference.
+Not only were the tiles of much higher quality in the maps component, but subtle differences like auto-orienting streetnames and labels were present in the Google Maps application, but were not available in the MapView compeonent.
+
+This has all changes with the new Google Maps Android v2 API.
 
 A quick overview of these features
 
-- Distribution via Google Play Services
+- Distribution via Google Play Services (no more waiting for Android platform updates to get new functionality)
 - Full fragment support (no more MapView, no more single map / app limitation)
 - New Map look and feel (new tiles, new gestures, 3D support ....)
 
-
-In this guide I will show you how to
+In the first part of this series I will show you how to
 
 - setup the skeleton project
 - install the library projecs
@@ -22,12 +28,12 @@ In this guide I will show you how to
 
 ### Setting up the skeleton project.
 
-I'm going to be using Eclipse ADT 22 to build the project. We'll start by creating e a standard Android project using the project wizard.
+I'm going to be using Eclipse ADT 22 to build the project. We'll start by creating a standard Android project using the project wizard.
 
-As our project is going to use
+Our project is going to use the following Android libraries
 
-- the new Google Maps V2 library for Android, we're going to need the Google Play Services library project.
-- ActionBarSherlock, we're going to need the ActionBarSherlock library 
+- the new Google Maps V2 library for Android
+- ActionBarSherlock library 
 
 Please checkout the resources at the end of the document on how to obtain these projects.
 
@@ -98,9 +104,21 @@ Adding the fragment to a layout is very simple.
 
 The Google Play Services library provides a simple MapFragment (com.google.android.gms.maps.MapFragment) that can be used out of the box.
 Note that the MapFragment requires the native API Level 11 fragment implementation, so it's only available on devices with API level 11 and higher.
-There is a support library equivalent called SupportMapFragment that is for use with the Android Support package's backport of fragments. 
-In other words, the SupportMamFragment can be used on Android devices running API 10 and lower, as well as Android devices running 11 and higher. 
+Attempting to run the example below on devices with a lower API level will fail with the following error 
 
+	Caused by: java.lang.ClassNotFoundException: android.view.fragment in loader dalvik.system.PathClassLoader[/data/app/com.ecs.google.maps.v2.actionbarsherlock-2.apk]
+		at dalvik.system.PathClassLoader.findClass(PathClassLoader.java:240)
+		at java.lang.ClassLoader.loadClass(ClassLoader.java:551)
+		at java.lang.ClassLoader.loadClass(ClassLoader.java:511)
+		at android.view.LayoutInflater.createView(LayoutInflater.java:471)
+		at android.view.LayoutInflater.onCreateView(LayoutInflater.java:549)
+		at com.android.internal.policy.impl.PhoneLayoutInflater.onCreateView(PhoneLayoutInflater.java:66)
+		at android.view.LayoutInflater.createViewFromTag(LayoutInflater.java:568)
+		... 19 more
+		
+We'll talk about how to run this example on lower API levels in a minute. 
+
+For now, we'll stick with API level 11 and higher by adding the MapFragmnet to the layout like this :
 
 	<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 	    android:id="@+id/root"
@@ -116,29 +134,80 @@ In other words, the SupportMamFragment can be used on Android devices running AP
 
 Create the activity that will load up the layout above:
 
-	package com.ecs.google.maps.v2.actionbarsherlock;
-	
-	import android.app.Activity;
-	import android.os.Bundle;
-	
 	public class SimpleMapActivity extends Activity{
 		
+		private com.google.android.gms.maps.MapFragment mapFragment;
+		private GoogleMap googleMap;
+	
 		@Override
 		protected void onCreate(Bundle savedInstanceState) {
 			super.onCreate(savedInstanceState);
-			setContentView(R.layout.map);
+			setContentView(R.layout.map_fragment);
 		}
 	
 	}
+	
+Note that in order to interact with the map, you need to get a reference to the GoogleMap object. The GoogleMap object can be retrieved via the MapFragment.
+In order to get a reference to the MapFragment in an Activity you need to retrieve the FragmentManager using the getFragmentManager call. 
+This call is only available on API level 11 and up so you need to have your minSDK set to 11 if you want to run this.
 
-And you should see your map.
+			mapFragment = (com.google.android.gms.maps.MapFragment) getFragmentManager().findFragmentById(R.id.map);
+			googleMap = mapFragment.getMap();
+			googleMap.setMyLocationEnabled(true);		
+
+
+### Running on lower API levels
+
+Google also provides a com.google.android.gms.maps.SupportMapFragment in Google Play services to be used with the Android Support package's backport of fragments. 
+In other words, the SupportMapFragment can be used on Android devices running API 10 and lower, as well as Android devices running 11 and higher. 
+
+In order to use the new Google Maps V2 API on older devices we need to do 2 things 
+
+- use a SupportMapFragment instead of a MapFragment
+- use a FragmentActivity instead of an Activity.
+
+Our layout will now look like this :
+
+	<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:id="@+id/root"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:orientation="horizontal" >
+	
+	<fragment
+	  android:id="@+id/map"
+	  android:layout_width="match_parent"
+	  android:layout_height="match_parent"
+	  class="com.google.android.gms.maps.SupportMapFragment"/>
+	</FrameLayout> 
+  
+And our FragmentActivity will look like this :
+
+	public class SimpleMapFragmentActivity extends FragmentActivity{
+	
+		private SupportMapFragment mapFragment;
+		private GoogleMap googleMap;
+	
+		@Override
+		protected void onCreate(Bundle arg0) {
+			super.onCreate(arg0);
+			setContentView(R.layout.support_map_fragment);
+			
+			mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+			googleMap = mapFragment.getMap();
+			googleMap.setMyLocationEnabled(true);
+			
+		}
+	}
 
 Keep in mind that although the MapFragment can run in an Activity, the SupportMapFragment cannot, and needs to run in a FragmentActivity. 
+
 Simply have your activity extend SupportFragment instead of Activity in order to resolve this. 
 
 If not, you'll get the following error:
 
 	Caused by: java.lang.ClassCastException: com.google.android.gms.maps.SupportMapFragment cannot be cast to android.app.Fragment
+
 
 ### Adding the actionBar.
 
@@ -153,11 +222,66 @@ There's no real built-in support for MapFragments in ActionBarSherlock, so you c
 You simply need to "bridge" the SupportMapFragment and the SherlockFragmentActivity. As this is a common requirement, lots of people already did it and you can find lots of examples on the web..
 
 
+### Older Android version
+
+You'll also notice that despite using the Android Support Library and Action Bar Sherlock that the app doesn't run on older API versions.
+The application crashes with the following error :
+	
+	FATAL EXCEPTION: main
+	java.lang.RuntimeException: Unable to start activity ComponentInfo{com.ecs.google.maps.v2.actionbarsherlock/com.ecs.google.maps.v2.actionbarsherlock.MainActivity}: java.lang.IllegalStateException: You must use Theme.Sherlock, Theme.Sherlock.Light, Theme.Sherlock.Light.DarkActionBar, or a derivative.
+		at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:1651)
+		at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:1667)
+		at android.app.ActivityThread.access$1500(ActivityThread.java:117)
+		at android.app.ActivityThread$H.handleMessage(ActivityThread.java:935)
+		at android.os.Handler.dispatchMessage(Handler.java:99)
+		at android.os.Looper.loop(Looper.java:130)
+		at android.app.ActivityThread.main(ActivityThread.java:3687)
+		at java.lang.reflect.Method.invokeNative(Native Method)
+		at java.lang.reflect.Method.invoke(Method.java:507)
+		at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:867)
+		at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:625)
+		at dalvik.system.NativeStart.main(Native Method)
+	Caused by: java.lang.IllegalStateException: You must use Theme.Sherlock, Theme.Sherlock.Light, Theme.Sherlock.Light.DarkActionBar, or a derivative.
+		at com.actionbarsherlock.internal.ActionBarSherlockCompat.generateLayout(ActionBarSherlockCompat.java:976)
+		at com.actionbarsherlock.internal.ActionBarSherlockCompat.installDecor(ActionBarSherlockCompat.java:902)
+		at com.actionbarsherlock.internal.ActionBarSherlockCompat.setContentView(ActionBarSherlockCompat.java:836)
+		at com.actionbarsherlock.app.SherlockFragmentActivity.setContentView(SherlockFragmentActivity.java:262)
+		at com.ecs.google.maps.v2.actionbarsherlock.MainActivity.onCreate(MainActivity.java:25)
+		at android.app.Instrumentation.callActivityOnCreate(Instrumentation.java:1047)
+		at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:1615)
+		... 11 more
 
 
+
+Notice the following in the manifest
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+        
+        
+This can be easily fixed by using the Theme.Sherlock in our application.
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.Sherlock">        
+        
+        
+## Application screenshots
+
+### Android 2.3.3
+
+### Android 4.2.3
+
+        
+        
 ## Resources
 
 
 - [Google Maps Android API v2](https://developers.google.com/maps/documentation/android/)
-= Google Play Services Map Samples (included in the SDK)
+- Google Play Services Map Samples (included in the SDK)
  

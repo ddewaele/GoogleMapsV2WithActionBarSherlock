@@ -24,7 +24,7 @@ public class MainActivity extends SherlockFragmentActivity {
         setTitle("GoogleMapsDemo");
         setContentView(R.layout.main_activity);
         
-        mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_map);
+        mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         
         googleMap = mapFragment.getMap();
         

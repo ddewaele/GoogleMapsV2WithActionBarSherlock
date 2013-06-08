@@ -17,7 +17,7 @@ public class SimpleSherlockFragmentActivity extends SherlockFragmentActivity {
 		super.onCreate(arg0);
 		setContentView(R.layout.simple_sherlock_map_fragment);
 		
-		mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_map);
+		mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         googleMap = mapFragment.getMap();
         googleMap.setMyLocationEnabled(true);
 

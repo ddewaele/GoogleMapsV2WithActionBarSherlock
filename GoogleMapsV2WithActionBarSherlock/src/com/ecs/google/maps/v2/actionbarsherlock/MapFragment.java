@@ -81,12 +81,12 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 			polyLine = initializePolyLine();
 		}
 		
-//		System.out.println("Markers (" + this.markers.size() + ")");
-//		System.out.println("-------");
-//		for (Marker marker : this.markers) {
-//			System.out.println(marker.getPosition());
-//		}
-//		
+		System.out.println("Markers (" + this.markers.size() + ")");
+		System.out.println("-------");
+		for (Marker marker : this.markers) {
+			System.out.println(marker.getPosition());
+		}
+		
 		
 //		googleMap.animateCamera(
 //				CameraUpdateFactory.zoomTo(googleMap.getCameraPosition().zoom + 0.5f), 
@@ -240,10 +240,16 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 		
 		long start = SystemClock.uptimeMillis();
 		
+		LatLng endLatLng = null; 
+		LatLng beginLatLng = null;
+		
 		public void reset() {
 			resetMarkers();
 			start = SystemClock.uptimeMillis();
 			currentIndex = 0;
+			endLatLng = getEndLatLng();
+			beginLatLng = getBeginLatLng();
+			
 		}
 		
 		@Override
@@ -252,8 +258,8 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 			long elapsed = SystemClock.uptimeMillis() - start;
 			double t = interpolator.getInterpolation((float)elapsed/ANIMATE_SPEEED);
 			
-			LatLng endLatLng = getEndLatLng();
-			LatLng beginLatLng = getBeginLatLng();
+//			LatLng endLatLng = getEndLatLng();
+//			LatLng beginLatLng = getBeginLatLng();
 			
 			double lat = t * endLatLng.latitude + (1-t) * beginLatLng.latitude;
 			double lng = t * endLatLng.longitude + (1-t) * beginLatLng.longitude;
@@ -278,6 +284,10 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 				if (currentIndex<markers.size()-2) {
 				
 					currentIndex++;
+					
+					endLatLng = getEndLatLng();
+					beginLatLng = getBeginLatLng();
+
 					
 					start = SystemClock.uptimeMillis();
 
@@ -454,6 +464,8 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 		marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
 		marker.showInfoWindow();
 
+		//Utils.bounceMarker(googleMap, marker);
+		
 		this.selectedMarker=marker;
 	}	
 

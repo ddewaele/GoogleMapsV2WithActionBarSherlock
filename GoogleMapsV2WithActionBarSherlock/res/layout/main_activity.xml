@@ -5,7 +5,7 @@
     android:orientation="horizontal" >
 
     <fragment
-        android:id="@+id/fragment_map"
+        android:id="@+id/map"
         android:name="com.ecs.google.maps.v2.actionbarsherlock.MapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
