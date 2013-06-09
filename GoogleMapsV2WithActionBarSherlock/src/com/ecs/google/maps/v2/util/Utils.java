@@ -1,4 +1,4 @@
-package com.ecs.google.maps.v2.actionbarsherlock;
+package com.ecs.google.maps.v2.util;
 
 import java.util.List;
 

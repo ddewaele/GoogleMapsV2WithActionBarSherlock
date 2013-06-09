@@ -1,4 +1,4 @@
-package com.ecs.google.maps.v2.actionbarsherlock;
+package com.ecs.google.maps.v2.component;
 import android.app.Activity;
 import android.support.v4.app.Watson.OnCreateOptionsMenuListener;
 import android.support.v4.app.Watson.OnOptionsItemSelectedListener;

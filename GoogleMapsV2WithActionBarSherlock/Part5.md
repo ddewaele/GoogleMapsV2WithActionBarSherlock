@@ -38,4 +38,6 @@ We need to add a reference to the Google Play Services library project.
 
 ##References
 
-https://github.com/googlemaps/android-maps-utils
+[0]: http://www.youtube.com/watch?feature=player_embedded&v=nb2X9IjjZpM#!
+[1]: https://github.com/googlemaps/android-maps-utils
+[2]: https://developers.google.com/live/shows/585386324 "Fireside Chat with the Google Maps Team"

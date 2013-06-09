@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
+	<classpathentry kind="lib" path="/Users/ddewaele/Projects/workspace-android/EnhancedGoogleMapLibrary/libs/android-support-v4.jar" sourcepath="/Users/ddewaele/Tools/adt-bundle-mac-x86_64-20130514/sdk/extras/android/support/v4/src"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.ANDROID_FRAMEWORK"/>
 	<classpathentry exported="true" kind="con" path="com.android.ide.eclipse.adt.LIBRARIES"/>
 	<classpathentry kind="con" path="com.android.ide.eclipse.adt.DEPENDENCIES"/>

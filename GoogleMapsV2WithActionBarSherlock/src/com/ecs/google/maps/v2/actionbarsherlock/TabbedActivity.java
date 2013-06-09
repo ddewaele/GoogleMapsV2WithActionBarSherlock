@@ -1,37 +1,24 @@
 package com.ecs.google.maps.v2.actionbarsherlock;
 
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
-import android.graphics.drawable.TransitionDrawable;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.TypedValue;
-import android.view.View;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuItem;
+import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
-import com.google.android.gms.maps.model.Marker;
+import com.ecs.google.maps.v2.fragment.PlayingWithMarkersFragment;
+import com.ecs.google.maps.v2.fragment.SimpleCardFragment;
+import com.ecs.google.maps.v2.fragment.SupportMapFragmentWithMenu;
 
-public class TabbedActivity extends FragmentActivity{ 
-
-	private final Handler handler = new Handler();
+public class TabbedActivity extends SherlockFragmentActivity { 
 
 	private PagerSlidingTabStrip tabs;
 	private ViewPager pager;
 	private MyPagerAdapter adapter;
 
-	private Drawable oldBackground = null;
-	private int currentColor = 0xFF666666;
-	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -43,136 +30,44 @@ public class TabbedActivity extends FragmentActivity{
 		
 		pager.setAdapter(adapter);
 		
-		//pager.setPadding(10, 10, 10, 10);
-
 		final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
 				.getDisplayMetrics());
 		pager.setPageMargin(pageMargin);
 
 		tabs.setViewPager(pager);
 
-		changeColor(currentColor);
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-
-		switch (item.getItemId()) {
-
-		case R.id.action_contact:
-			QuickContactFragment dialog = new QuickContactFragment();
-			dialog.show(getSupportFragmentManager(), "QuickContactFragment");
-			return true;
-
-		}
-
-		return super.onOptionsItemSelected(item);
-	}
-
-	private void changeColor(int newColor) {
-
-		tabs.setIndicatorColor(newColor);
-
-		// change ActionBar color just if an ActionBar is available
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-
-			Drawable colorDrawable = new ColorDrawable(newColor);
-			Drawable bottomDrawable = getResources().getDrawable(R.drawable.actionbar_bottom);
-			LayerDrawable ld = new LayerDrawable(new Drawable[] { colorDrawable, bottomDrawable });
-
-			if (oldBackground == null) {
-
-				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-					ld.setCallback(drawableCallback);
-				} else {
-					//getActionBar().setBackgroundDrawable(ld);
-				}
-
-			} else {
-
-				TransitionDrawable td = new TransitionDrawable(new Drawable[] { oldBackground, ld });
-
-				// workaround for broken ActionBarContainer drawable handling on
-				// pre-API 17 builds
-				// https://github.com/android/platform_frameworks_base/commit/a7cc06d82e45918c37429a59b14545c6a57db4e4
-				if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN_MR1) {
-					td.setCallback(drawableCallback);
-				} else {
-					//getActionBar().setBackgroundDrawable(td);
-				}
-
-				td.startTransition(200);
-
-			}
-
-			oldBackground = ld;
-
-			// http://stackoverflow.com/questions/11002691/actionbar-setbackgrounddrawable-nulling-background-from-thread-handler
-//			getActionBar().setDisplayShowTitleEnabled(false);
-//			getActionBar().setDisplayShowTitleEnabled(true);
-
-		}
-
-		currentColor = newColor;
-
-	}
-
-	public void onColorClicked(View v) {
-
-		int color = Color.parseColor(v.getTag().toString());
-		changeColor(color);
-		
-		
-		//getSupportFragmentManager().findFragmentByTag(makeFragmentName(viewId, position))
-
-	}
-
+//	@Override
+//	public boolean onCreateOptionsMenu(Menu menu) {
+//		getSupportMenuInflater().inflate(R.menu.main, menu);
+//		return true;
+//	}
+	
 	@Override
 	protected void onSaveInstanceState(Bundle outState) {
 		super.onSaveInstanceState(outState);
-		outState.putInt("currentColor", currentColor);
+		outState.putString("currentColor", "currentColor");
 	}
 
 	@Override
 	protected void onRestoreInstanceState(Bundle savedInstanceState) {
 		super.onRestoreInstanceState(savedInstanceState);
-		currentColor = savedInstanceState.getInt("currentColor");
-		changeColor(currentColor);
+		String currentColor = savedInstanceState.getString("currentColor");
+		//changeColor(currentColor);
+		System.out.println("Found color " + currentColor);
+	}	
+
+	private static String makeFragmentName(int viewId, int index) {
+	     return "android:switcher:" + viewId + ":" + index;
 	}
 
-	private Drawable.Callback drawableCallback = new Drawable.Callback() {
-		@Override
-		public void invalidateDrawable(Drawable who) {
-			//getActionBar().setBackgroundDrawable(who);
-		}
-
-		@Override
-		public void scheduleDrawable(Drawable who, Runnable what, long when) {
-			handler.postAtTime(what, when);
-		}
-
-		@Override
-		public void unscheduleDrawable(Drawable who, Runnable what) {
-			handler.removeCallbacks(what);
-		}
-	};
-
-	
-	private static String makeFragmentName(int viewId, int position)
-	{
-	     return "android:switcher:" + viewId + ":" + position;
-	}
-	
 	public class MyPagerAdapter extends FragmentPagerAdapter {
 
-		private final String[] TITLES = { "Categories", "Home", "Top Paid", "Top Free", "Top Grossing", "Top New Paid",
-				"Top New Free", "Trending" };
+		private final String[] TITLES = { 	"Simple Map", 
+											"Playing With Markers", 
+											"Animation", 
+											"Maps Utils Library"};
 
 		public MyPagerAdapter(FragmentManager fm) {
 			super(fm);
@@ -191,24 +86,35 @@ public class TabbedActivity extends FragmentActivity{
 		@Override
 		public Fragment getItem(int position) {
 			if (position==0) {
-				MapFragment f = new MapFragment();
+				
+				Fragment fragmentByTag = getSupportFragmentManager().findFragmentByTag(makeFragmentName(R.id.pager, position));
+				System.out.println("*********** fragmentByTag = " + fragmentByTag);
+				
+				SupportMapFragmentWithMenu f = new SupportMapFragmentWithMenu();
+				//SimpleSupportMapFragment f = new SimpleSupportMapFragment();
+				//MapFragment f = new MapFragment();
 				Bundle b = new Bundle();
 				b.putInt("position", position);
-				//final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
+				f.setArguments(b);
+				return f;
+			} else if (position==1) {
+				
+				Fragment fragmentByTag = getSupportFragmentManager().findFragmentByTag(makeFragmentName(R.id.pager, position));
+				System.out.println("*********** fragmentByTag = " + fragmentByTag);
 
-				//f.getView().setPadding(margin, margin, margin, margin);
+				
+				PlayingWithMarkersFragment f = new PlayingWithMarkersFragment();
+				//f.setHasOptionsMenu(true); // Important ... do not forget this.
+				Bundle b = new Bundle();
+				b.putInt("position", position);
 				f.setArguments(b);
 				return f;
 			} else {
-				return SuperAwesomeCardFragment.newInstance(position);
+				return SimpleCardFragment.newInstance(position);
 			}
 		}
 
 	}
 
-	@Override
-	public boolean onMarkerClick(Marker marker) {
-		return false;
-	}
 
 }

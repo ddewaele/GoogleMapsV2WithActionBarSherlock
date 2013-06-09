@@ -7,11 +7,14 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v4.view.ViewPager.LayoutParams;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.FrameLayout;
 
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -26,6 +29,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+/**
+ * 
+ * Re-usable component.
+ * 
+ * @author ddewaele
+ *
+ */
 public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 	
 	private static final int ANIMATE_SPEEED = 1500;
@@ -51,6 +61,7 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		
 		View root = super.onCreateView(inflater, container, savedInstanceState);
 		googleMap = getMap();
 		googleMap.setMyLocationEnabled(true);
@@ -67,7 +78,21 @@ public class MapFragment extends SupportMapFragment /*SherlockMapFragment */{
 			}
 		});
 		
+		initializeMargin(root);
+		   		
+
 		return root;
+	}
+
+	private void initializeMargin(View root) {
+		final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
+
+		root.setPadding(margin, margin, margin, margin);
+		
+		 FrameLayout frameLayout = new FrameLayout(getActivity());
+		    frameLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+		    ((ViewGroup) root).addView(frameLayout,
+		        new ViewGroup.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 	}
 	
 	public void startAnimation(boolean showPolyLine) {
