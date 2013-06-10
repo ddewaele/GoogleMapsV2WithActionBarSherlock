@@ -6,6 +6,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.ecs.google.maps.v2.fragment.AnimatingMarkersFragment;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
@@ -16,7 +17,7 @@ public class MainActivity extends SherlockFragmentActivity {
     
 	public static int THEME = R.style.Theme_Sherlock;
 	private GoogleMap googleMap;
-	private MapFragment mapFragment;
+	private AnimatingMarkersFragment mapFragment;
 	
 	@Override
     public void onCreate(Bundle savedInstanceState) {
@@ -24,7 +25,7 @@ public class MainActivity extends SherlockFragmentActivity {
         setTitle("GoogleMapsDemo");
         setContentView(R.layout.main_activity);
         
-        mapFragment = (MapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment = (AnimatingMarkersFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         
         googleMap = mapFragment.getMap();
         

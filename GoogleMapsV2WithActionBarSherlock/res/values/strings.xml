@@ -2,7 +2,12 @@
 <resources>
 
     <string name="app_name">Maps V2 API</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+  
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="remove">Remove</string>
+    <string name="clear">Clear</string>
+    <string name="pancamera">PanCamera</string>
+    <string name="toggle_style">Toggle Style</string>
 
 </resources>

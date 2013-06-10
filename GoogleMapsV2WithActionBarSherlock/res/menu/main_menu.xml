@@ -4,26 +4,25 @@
 
 	<item android:id="@+id/action_bar_start"
         android:showAsAction="ifRoom"
-        android:title="Start"/>
+        android:title="@string/start"/>
 	
 	<item android:id="@+id/action_bar_stop"
         android:showAsAction="ifRoom"
-        android:title="Stop"/>
-	
-	
-    <item android:id="@+id/action_bar_remove_location"
+        android:title="@string/stop"/>
+
+	<item android:id="@+id/action_bar_remove_location"
         android:showAsAction="ifRoom"
-        android:title="Remove"/>	
+        android:title="@string/remove"/>	
 
         <item android:id="@+id/action_bar_clear_locations"
         android:showAsAction="ifRoom"
-        android:title="Clear"/>	
+        android:title="@string/clear"/>	
     
         <item android:id="@+id/action_bar_pan_camera"
         android:showAsAction="ifRoom"
-        android:title="PanCamera"/>	
+        android:title="@string/pancamera"/>	
 
 		<item android:id="@+id/action_bar_toggle_style"
         android:showAsAction="ifRoom"
-        android:title="Toggle Style"/>			
+        android:title="@string/toggle_style"/>			
 </menu>

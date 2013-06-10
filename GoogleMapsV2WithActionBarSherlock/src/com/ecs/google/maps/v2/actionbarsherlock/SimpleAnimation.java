@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
+import com.ecs.google.maps.v2.util.GoogleMapUtis;
 import com.ecs.google.maps.v2.util.Utils;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -90,7 +91,7 @@ public class SimpleAnimation extends SherlockFragmentActivity {
 	                   } else {
 	                	   mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 	                   }
-	                   Utils.fixZoom(googleMap,markers);
+	                   GoogleMapUtis.fixZoom(googleMap,markers);
 	               }
 	           });
 	       }	       
@@ -140,6 +141,20 @@ public class SimpleAnimation extends SherlockFragmentActivity {
 		markers.add(marker);
 		
 	}
+	
+	/**
+	 * Adds a list of markers to the map.
+	 */
+	public void addMarkersToMap(List<LatLng> latLngs) {
+		for (LatLng latLng : latLngs) {
+			Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
+					 .title("title")
+					 .snippet("snippet"));
+			markers.add(marker);
+			
+		}
+	}
+	
 
 	public void startAnimation() {
 		googleMap.animateCamera(
@@ -201,7 +216,7 @@ public class SimpleAnimation extends SherlockFragmentActivity {
 		
 		@Override
 		public void onFinish() {
-			Utils.fixZoom(googleMap,markers);
+			GoogleMapUtis.fixZoom(googleMap,markers);
 		}
 		
 		@Override

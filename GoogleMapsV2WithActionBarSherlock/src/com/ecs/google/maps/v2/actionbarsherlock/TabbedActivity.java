@@ -9,6 +9,7 @@ import android.util.TypedValue;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
+import com.ecs.google.maps.v2.fragment.AnimatingMarkersFragment;
 import com.ecs.google.maps.v2.fragment.PlayingWithMarkersFragment;
 import com.ecs.google.maps.v2.fragment.SimpleCardFragment;
 import com.ecs.google.maps.v2.fragment.SupportMapFragmentWithMenu;
@@ -104,6 +105,18 @@ public class TabbedActivity extends SherlockFragmentActivity {
 
 				
 				PlayingWithMarkersFragment f = new PlayingWithMarkersFragment();
+				//f.setHasOptionsMenu(true); // Important ... do not forget this.
+				Bundle b = new Bundle();
+				b.putInt("position", position);
+				f.setArguments(b);
+				return f;
+			} else if (position==2) {
+				
+				Fragment fragmentByTag = getSupportFragmentManager().findFragmentByTag(makeFragmentName(R.id.pager, position));
+				System.out.println("*********** fragmentByTag = " + fragmentByTag);
+
+				
+				AnimatingMarkersFragment f = new AnimatingMarkersFragment();
 				//f.setHasOptionsMenu(true); // Important ... do not forget this.
 				Bundle b = new Bundle();
 				b.putInt("position", position);

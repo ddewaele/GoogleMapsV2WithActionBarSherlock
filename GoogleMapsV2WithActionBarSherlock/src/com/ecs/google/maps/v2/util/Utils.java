@@ -49,13 +49,4 @@ public class Utils {
     });
 	}
 	
-	public static void fixZoom(GoogleMap googleMap, List<Marker> markers) {
-	    LatLngBounds.Builder bc = new LatLngBounds.Builder();
-
-	    for (Marker marker : markers) {
-	        bc.include(marker.getPosition());
-	    }
-
-	    googleMap.animateCamera(CameraUpdateFactory.newLatLngBounds(bc.build(), 50),4000,null);
-	}
 }

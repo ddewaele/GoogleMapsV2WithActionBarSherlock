@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/map"
-        android:name="com.ecs.google.maps.v2.actionbarsherlock.MapFragment"
+        android:name="com.ecs.google.maps.v2.fragment.AnimatingMarkersFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:tag="tag_fragment_map" />

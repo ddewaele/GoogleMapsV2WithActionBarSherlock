@@ -1,9 +1,11 @@
 package com.ecs.google.maps.v2.fragment;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -15,9 +17,8 @@ import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.ecs.google.maps.v2.actionbarsherlock.R;
-import com.ecs.google.maps.v2.actionbarsherlock.R.id;
-import com.ecs.google.maps.v2.actionbarsherlock.R.menu;
 import com.ecs.google.maps.v2.component.SherlockMapFragment;
+import com.ecs.google.maps.v2.util.FileUtils;
 import com.ecs.google.maps.v2.util.GoogleMapUtis;
 import com.ecs.google.maps.v2.util.ViewUtils;
 import com.google.android.gms.maps.GoogleMap;
@@ -27,6 +28,18 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpRequestInitializer;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.JsonObjectParser;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.Key;
+import com.google.maps.android.PolyUtil;
 
 /**
  * 
@@ -105,14 +118,13 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		  if (item.getItemId() == R.id.action_bar_remove_location) {
-			  //mapFragment.removeSelectedMarker();
-		  } else if (item.getItemId() == R.id.action_bar_clear_locations) {
+		  if (item.getItemId() == R.id.action_bar_clear_locations) {
 			  clearMarkers();
 		  } else if (item.getItemId() == R.id.action_bar_add_default_locations) {
-		    	addDefaultLocations();
+			  addDefaultLocations();
 		  } else if (item.getItemId() == R.id.action_bar_zoom) {
-			  //mapFragment.toggleStyle();
+			  GoogleMapUtis.fixZoom(googleMap, markers);
+			  new DirectionsFetcher().execute();
 		  } else if (item.getItemId() == R.id.action_bar_toggle_style) {
 			  GoogleMapUtis.toggleStyle(googleMap);
 		  }
@@ -141,6 +153,19 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 				 .snippet("snippet"));
 		markers.add(marker);
 		
+	}
+	
+	/**
+	 * Adds a list of markers to the map.
+	 */
+	public void addMarkersToMap(List<LatLng> latLngs) {
+		for (LatLng latLng : latLngs) {
+			Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
+					 .title("title")
+					 .snippet("snippet"));
+			markers.add(marker);
+			
+		}
 	}
 
 	/**
@@ -199,5 +224,75 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 		points.add(latLng);
 		polyLine.setPoints(points);
 	}	
+	
+	static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
+	static final JsonFactory JSON_FACTORY = new JacksonFactory();
 
+	 private class DirectionsFetcher extends AsyncTask<URL, Integer, String> {
+	     
+		 private List<LatLng> latLngs = new ArrayList<LatLng>();
+		 
+		 protected String doInBackground(URL... urls) {
+			 android.os.Debug.waitForDebugger();
+	    	 try {
+	    	 HttpRequestFactory requestFactory =
+	    		        HTTP_TRANSPORT.createRequestFactory(new HttpRequestInitializer() {
+	    		            @Override
+	    		          public void initialize(HttpRequest request) {
+	    		            request.setParser(new JsonObjectParser(JSON_FACTORY));
+	    		          }
+	    		        });
+	    	 
+	    	 GenericUrl url = new GenericUrl("http://maps.googleapis.com/maps/api/directions/json");
+	    	 url.put("origin", "Chicago,IL");
+	    	 url.put("destination", "Los Angeles,CA");
+	    	 url.put("sensor",false);
+	    	 
+	    		    HttpRequest request = requestFactory.buildGetRequest(url);
+	    		    HttpResponse httpResponse = request.execute();
+	    		    DirectionsResult directionsResult = httpResponse.parseAs(DirectionsResult.class);
+	    		    String encodedPoints = directionsResult.routes.get(0).overviewPolyLine.points;
+					System.out.println(encodedPoints);
+	    		    //String responseAsString = httpResponse.parseAsString();
+					//System.out.println("Response = " + responseAsString);
+	    		    //FileUtils.writeToFile("directions-dump.txt", responseAsString, getActivity());
+	    		    
+	    		    latLngs = PolyUtil.decode(encodedPoints);
+	    	 } catch (Exception ex) {
+	    		 ex.printStackTrace();
+	    	 }
+	    	 return null;
+	     
+	     }
+
+	     protected void onProgressUpdate(Integer... progress) {
+	         //setProgressPercent(progress[0]);
+	     }
+
+	     protected void onPostExecute(String result) {
+	         //showDialog("Downloaded " + result + " bytes");
+	    	 clearMarkers();
+	    	 addMarkersToMap(latLngs);
+	     }
+	 }	
+	 
+	 /** Feed of Google+ activities. */
+	  public static class DirectionsResult {
+
+	    @Key("routes")
+	    public List<Route> routes;
+
+	  }
+
+	  public static class Route {
+		  @Key("overview_polyline")
+		  public OverviewPolyLine overviewPolyLine;
+		  
+	  }
+
+	  public static class OverviewPolyLine {
+		  @Key("points")
+		  public String points;
+		  
+	  }
 }
