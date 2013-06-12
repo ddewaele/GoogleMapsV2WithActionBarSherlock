@@ -19,6 +19,10 @@ public class GoogleMapUtis {
 		}
 	}
 	
+	public static String encodeMarkerForDirection(Marker marker) {
+		return marker.getPosition().latitude + "," + marker.getPosition().longitude;
+	}
+	
 	public static void fixZoom(GoogleMap googleMap, List<Marker> markers) {
 	    LatLngBounds.Builder bc = new LatLngBounds.Builder();
 

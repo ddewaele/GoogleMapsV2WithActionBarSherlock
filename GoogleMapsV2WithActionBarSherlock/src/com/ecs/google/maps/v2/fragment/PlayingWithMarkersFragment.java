@@ -8,6 +8,8 @@ import java.util.Random;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +20,6 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.ecs.google.maps.v2.actionbarsherlock.R;
 import com.ecs.google.maps.v2.component.SherlockMapFragment;
-import com.ecs.google.maps.v2.util.FileUtils;
 import com.ecs.google.maps.v2.util.GoogleMapUtis;
 import com.ecs.google.maps.v2.util.ViewUtils;
 import com.google.android.gms.maps.GoogleMap;
@@ -88,8 +89,15 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		handler.postDelayed(runner, random.nextInt(2000));
+		
+		if (savedInstanceState!=null) {
+			System.out.println(" ((((((((((((( restoring state.....");
+			boolean b = savedInstanceState.getBoolean("controlsvisible");
+			controlsvisible = b;
+		}
 
 		View view = super.onCreateView(inflater, container, savedInstanceState);
+		//View view = inflater.inflate(R.id.fragmentContainer, container,false);
 
 		googleMap = getMap();
 		polyLine = initializePolyLine();
@@ -116,6 +124,16 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 		inflater.inflate(R.menu.playing_with_markers_menu, menu);
 	}
 
+	private boolean controlsvisible = false;
+	
+	
+	@Override
+	public void onSaveInstanceState(Bundle savedInstanceState) {
+	  super.onSaveInstanceState(savedInstanceState);
+	  savedInstanceState.putBoolean("controlsvisible", controlsvisible);
+	}
+
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		  if (item.getItemId() == R.id.action_bar_clear_locations) {
@@ -123,8 +141,28 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 		  } else if (item.getItemId() == R.id.action_bar_add_default_locations) {
 			  addDefaultLocations();
 		  } else if (item.getItemId() == R.id.action_bar_zoom) {
-			  GoogleMapUtis.fixZoom(googleMap, markers);
-			  new DirectionsFetcher().execute();
+//			  GoogleMapUtis.fixZoom(googleMap, markers);
+			  //new DirectionsFetcher().execute();
+			  
+			  if (!controlsvisible) {
+				  DirectionsInputFragment directionsInputFragment = new DirectionsInputFragment();
+				  FragmentTransaction transaction = getFragmentManager().beginTransaction();
+
+				// Replace whatever is in the fragment_container view with this fragment,
+				// and add the transaction to the back stack so the user can navigate back
+				transaction.replace(R.id.fragmentContainer, directionsInputFragment);
+				transaction.addToBackStack(null);
+				controlsvisible=true;
+				// Commit the transaction
+				transaction.commit();
+			  } else {
+				  FragmentTransaction transaction = getFragmentManager().beginTransaction();
+				  Fragment tobeRemoved = getFragmentManager().findFragmentById(R.id.fragmentContainer);
+				  transaction.remove(tobeRemoved);
+				  controlsvisible = false;
+				  transaction.commit();
+			  }
+			
 		  } else if (item.getItemId() == R.id.action_bar_toggle_style) {
 			  GoogleMapUtis.toggleStyle(googleMap);
 		  }
@@ -231,6 +269,24 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 	 private class DirectionsFetcher extends AsyncTask<URL, Integer, String> {
 	     
 		 private List<LatLng> latLngs = new ArrayList<LatLng>();
+		 private String origin = null; 
+		 private String destination= null;
+		 
+		 @Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+	    	 System.out.println(" ------------ " + markers.get(0).getPosition());
+	    	 System.out.println(" ------------ " + markers.get(0).getPosition().toString());
+	    	 System.out.println(" ------------ " + markers.get(0).getPosition().latitude + "," + markers.get(0).getPosition().longitude);
+	    	 
+	    	 
+	    	 origin = markers.get(0).getPosition().latitude + "," + markers.get(0).getPosition().longitude;
+	    	 destination= markers.get(1).getPosition().latitude + "," + markers.get(1).getPosition().longitude;
+	    	 
+//	    	 origin = "Chicago,IL";
+//	    	 destination = "Los Angeles,CA";
+			
+		}
 		 
 		 protected String doInBackground(URL... urls) {
 			 android.os.Debug.waitForDebugger();
@@ -244,8 +300,10 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 	    		        });
 	    	 
 	    	 GenericUrl url = new GenericUrl("http://maps.googleapis.com/maps/api/directions/json");
-	    	 url.put("origin", "Chicago,IL");
-	    	 url.put("destination", "Los Angeles,CA");
+	    	 
+	    	 
+	    	 url.put("origin", origin);
+	    	 url.put("destination", destination);
 	    	 url.put("sensor",false);
 	    	 
 	    		    HttpRequest request = requestFactory.buildGetRequest(url);

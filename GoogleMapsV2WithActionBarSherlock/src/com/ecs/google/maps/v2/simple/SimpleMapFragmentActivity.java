@@ -31,12 +31,10 @@ public class SimpleMapFragmentActivity extends FragmentActivity{
 	@Override
 	protected void onCreate(Bundle arg0) {
 		super.onCreate(arg0);
-		setContentView(R.layout.support_map_fragment);
+		setContentView(R.layout.support_map_fragment_container);
 		
-		mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+		mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_container);
         googleMap = mapFragment.getMap();
         googleMap.setMyLocationEnabled(true);
-
-        
 	}
 }

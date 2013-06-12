@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
 
+    
     <com.astuetz.viewpager.extensions.PagerSlidingTabStrip
         android:id="@+id/tabs"
         android:layout_width="match_parent"
@@ -16,5 +17,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/tabs"
         tools:context=".MainActivity" />
+    
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
+    
 
 </RelativeLayout>
