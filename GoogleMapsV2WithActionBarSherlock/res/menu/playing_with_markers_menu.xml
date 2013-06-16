@@ -14,6 +14,16 @@
         android:showAsAction="ifRoom"
         android:title="Zoom"/>	
 
+        <item android:id="@+id/action_bar_toggle_controls"
+        android:showAsAction="ifRoom"
+        android:title="Controls"/>	
+        
+        
+        <item android:id="@+id/action_bar_directions"
+        android:showAsAction="ifRoom"
+        android:title="Directions"/>	
+        
+                
 		<item android:id="@+id/action_bar_toggle_style"
         android:showAsAction="ifRoom"
         android:title="Toggle Style"/>			

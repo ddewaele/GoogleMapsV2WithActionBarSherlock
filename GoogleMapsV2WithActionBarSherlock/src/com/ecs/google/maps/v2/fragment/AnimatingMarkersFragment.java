@@ -2,28 +2,24 @@ package com.ecs.google.maps.v2.fragment;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.support.v4.view.ViewPager.LayoutParams;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
+import android.widget.FrameLayout;
 
-import com.actionbarsherlock.view.Menu;
-import com.actionbarsherlock.view.MenuInflater;
-import com.actionbarsherlock.view.MenuItem;
-import com.ecs.google.maps.v2.actionbarsherlock.R;
-import com.ecs.google.maps.v2.component.SherlockMapFragment;
-import com.ecs.google.maps.v2.util.GoogleMapUtis;
-import com.ecs.google.maps.v2.util.ViewUtils;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -40,7 +36,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
  * @author ddewaele
  *
  */
-public class AnimatingMarkersFragment extends SherlockMapFragment {
+public class AnimatingMarkersFragment extends SupportMapFragment /*SherlockMapFragment */{
 	
 	private static final int ANIMATE_SPEEED = 1500;
 	private static final int ANIMATE_SPEEED_TURN = 1000;
@@ -62,27 +58,14 @@ public class AnimatingMarkersFragment extends SherlockMapFragment {
 	private Polyline polyLine;
 	private PolylineOptions rectOptions = new PolylineOptions();
 	
-	Handler handler = new Handler();
-	Random random = new Random();
-	Runnable runner = new Runnable() {
-        @Override
-        public void run() {
-            setHasOptionsMenu(true);
-        }
-    };
-    
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
-		handler.postDelayed(runner, random.nextInt(2000));
 		
 		View root = super.onCreateView(inflater, container, savedInstanceState);
 		googleMap = getMap();
 		googleMap.setMyLocationEnabled(true);
 		//googleMap.getUiSettings().setMyLocationButtonEnabled(true);
-		
-		List<LatLng> sampleLatLngs = GoogleMapUtis.getSampleLatLngs();
-		addMarkersToMap(sampleLatLngs);
 		
 		googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 			
@@ -95,37 +78,23 @@ public class AnimatingMarkersFragment extends SherlockMapFragment {
 			}
 		});
 		
-		ViewUtils.initializeMargin(getActivity(), root);
+		initializeMargin(root);
+		   		
 
 		return root;
 	}
-	
-	@Override
-	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.main_menu, menu);
-	}
-	
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		  if (item.getItemId() == R.id.action_bar_remove_location) {
-			  removeSelectedMarker();
-		  } else if (item.getItemId() == R.id.action_bar_start) {
-			  startAnimation(true);
-		  } else if (item.getItemId() == R.id.action_bar_stop) {
-			  stopAnimation();
-		  } else if (item.getItemId() == R.id.action_bar_clear_locations) {
-			  clearMarkers();
-		  } else if (item.getItemId() == R.id.action_bar_pan_camera) {
-		    	//panCamera();
-		  } else if (item.getItemId() == R.id.action_bar_toggle_style) {
-			  GoogleMapUtis.toggleStyle(googleMap);
-		  }
-		  
-	      //Toast.makeText(this, "Menu id  \"" + item.getItemId() + "\" clicked.", Toast.LENGTH_SHORT).show();
-	      return true;
-	}
 
+	private void initializeMargin(View root) {
+		final int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, getResources().getDisplayMetrics());
+
+		root.setPadding(margin, margin, margin, margin);
+		
+		 FrameLayout frameLayout = new FrameLayout(getActivity());
+		    frameLayout.setBackgroundColor(getResources().getColor(android.R.color.transparent));
+		    ((ViewGroup) root).addView(frameLayout,
+		        new ViewGroup.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
+	}
+	
 	public void startAnimation(boolean showPolyLine) {
 		animator.reset();
 		
@@ -478,19 +447,6 @@ public class AnimatingMarkersFragment extends SherlockMapFragment {
 		markers.add(marker);
 		
 	}
-	
-	/**
-	 * Adds a list of markers to the map.
-	 */
-	public void addMarkersToMap(List<LatLng> latLngs) {
-		for (LatLng latLng : latLngs) {
-			Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
-					 .title("title")
-					 .snippet("snippet"));
-			markers.add(marker);
-			
-		}
-	}	
 
 	/**
 	 * Clears all markers from the map.

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -139,41 +140,43 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 			  clearMarkers();
 		  } else if (item.getItemId() == R.id.action_bar_add_default_locations) {
 			  addDefaultLocations();
-		  } else if (item.getItemId() == R.id.action_bar_toggle_controls) {
-			  toggleControls();
-		  } else if (item.getItemId() == R.id.action_bar_directions) {			  
-			  GoogleMapUtis.fixZoom(googleMap, markers);
-			  new DirectionsFetcher().execute();
+//		  } else if (item.getItemId() == R.id.action_bar_toggle_controls) {
+//			  toggleControls();
+		  } else if (item.getItemId() == R.id.action_bar_directions) {
+		  		startActivityForResult(new Intent(getActivity(), DirectionsInputFragment.class), DirectionsInputFragment.RESULT_CODE);
+			  //GoogleMapUtis.fixZoom(googleMap, markers);
+			  //new DirectionsFetcher().execute();
 		  } else if (item.getItemId() == R.id.action_bar_zoom) {
 			  GoogleMapUtis.fixZoom(googleMap, markers);
 		  } else if (item.getItemId() == R.id.action_bar_toggle_style) {
 			  GoogleMapUtis.toggleStyle(googleMap);
+			  
 		  }
 		  
 	      Toast.makeText(getActivity(), "Menu id  \"" + item.getItemId() + "\" clicked.", Toast.LENGTH_SHORT).show();
 	      return true;
 	}
 
-	private void toggleControls() {
-		if (!controlsvisible) {
-			  DirectionsInputFragment directionsInputFragment = new DirectionsInputFragment();
-			  FragmentTransaction transaction = getFragmentManager().beginTransaction();
-
-			// Replace whatever is in the fragment_container view with this fragment,
-			// and add the transaction to the back stack so the user can navigate back
-			transaction.replace(R.id.fragmentContainer, directionsInputFragment);
-			transaction.addToBackStack(null);
-			controlsvisible=true;
-			// Commit the transaction
-			transaction.commit();
-		  } else {
-			  FragmentTransaction transaction = getFragmentManager().beginTransaction();
-			  Fragment tobeRemoved = getFragmentManager().findFragmentById(R.id.fragmentContainer);
-			  transaction.remove(tobeRemoved);
-			  controlsvisible = false;
-			  transaction.commit();
-		  }
-	}
+//	private void toggleControls() {
+//		if (!controlsvisible) {
+//			  DirectionsInputFragment directionsInputFragment = new DirectionsInputFragment();
+//			  FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//
+//			// Replace whatever is in the fragment_container view with this fragment,
+//			// and add the transaction to the back stack so the user can navigate back
+//			transaction.replace(R.id.fragmentContainer, directionsInputFragment);
+//			transaction.addToBackStack(null);
+//			controlsvisible=true;
+//			// Commit the transaction
+//			transaction.commit();
+//		  } else {
+//			  FragmentTransaction transaction = getFragmentManager().beginTransaction();
+//			  Fragment tobeRemoved = getFragmentManager().findFragmentById(R.id.fragmentContainer);
+//			  transaction.remove(tobeRemoved);
+//			  controlsvisible = false;
+//			  transaction.commit();
+//		  }
+//	}
 	
 	private void addDefaultLocations() {
         addMarkerToMap(new LatLng(50.961813797827055,3.5168474167585373));
@@ -273,15 +276,19 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 	 private class DirectionsFetcher extends AsyncTask<URL, Integer, Void> {
 	     
 		 private List<LatLng> latLngs = new ArrayList<LatLng>();
-		 private String origin = null; 
-		 private String destination= null;
+		private String origin;
+		private String destination;
+		 
+		 public DirectionsFetcher(String origin,String destination) {
+			this.origin = origin;
+			this.destination = destination;
+		}
 		 
 		 @Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-			
-	    	 origin = GoogleMapUtis.encodeMarkerForDirection(markers.get(0));
-	    	 destination= GoogleMapUtis.encodeMarkerForDirection(markers.get(1));
+			clearMarkers();
+			getActivity().setProgressBarIndeterminateVisibility(Boolean.TRUE);
 			
 		}
 		 
@@ -306,12 +313,7 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
     		    HttpResponse httpResponse = request.execute();
     		    DirectionsResult directionsResult = httpResponse.parseAs(DirectionsResult.class);
     		    String encodedPoints = directionsResult.routes.get(0).overviewPolyLine.points;
-				System.out.println(encodedPoints);
-    		    //String responseAsString = httpResponse.parseAsString();
-				//System.out.println("Response = " + responseAsString);
-    		    //FileUtils.writeToFile("directions-dump.txt", responseAsString, getActivity());
-	    		    
-	    		    latLngs = PolyUtil.decode(encodedPoints);
+    		    latLngs = PolyUtil.decode(encodedPoints);
 	    	 } catch (Exception ex) {
 	    		 ex.printStackTrace();
 	    	 }
@@ -324,8 +326,9 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 
 	     protected void onPostExecute(Void result) {
 	         //showDialog("Downloaded " + result + " bytes");
-	    	 clearMarkers();
 	    	 addMarkersToMap(latLngs);
+	    	 GoogleMapUtis.fixZoom(googleMap, markers);
+	    	 getActivity().setProgressBarIndeterminateVisibility(Boolean.FALSE);
 	     }
 	 }	
 	 
@@ -348,4 +351,17 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 		  public String points;
 		  
 	  }
+	  
+	  @Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode==DirectionsInputFragment.RESULT_CODE) {
+			String from = data.getExtras().getString("from");
+			String to = data.getExtras().getString("to");
+			System.out.println("from = " + from);
+			System.out.println("to = " + to);
+			new DirectionsFetcher(from,to).execute();
+		}
+	}
+	  
 }
