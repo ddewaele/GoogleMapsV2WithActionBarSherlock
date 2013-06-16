@@ -9,5 +9,6 @@
     <string name="clear">Clear</string>
     <string name="pancamera">PanCamera</string>
     <string name="toggle_style">Toggle Style</string>
+    <string name="directions_input">Directions Input</string>
 
 </resources>

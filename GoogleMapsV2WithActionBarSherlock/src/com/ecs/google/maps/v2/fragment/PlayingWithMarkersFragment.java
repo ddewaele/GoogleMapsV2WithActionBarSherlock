@@ -5,11 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -143,13 +142,13 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 		  } else if (item.getItemId() == R.id.action_bar_zoom) {
 //			  GoogleMapUtis.fixZoom(googleMap, markers);
 			  //new DirectionsFetcher().execute();
-			  
+
+			  startActivityForResult(new Intent(getActivity(), DirectionsInputFragment.class), DirectionsInputFragment.RESULT_CODE);
+			  /*
 			  if (!controlsvisible) {
 				  DirectionsInputFragment directionsInputFragment = new DirectionsInputFragment();
 				  FragmentTransaction transaction = getFragmentManager().beginTransaction();
 
-				// Replace whatever is in the fragment_container view with this fragment,
-				// and add the transaction to the back stack so the user can navigate back
 				transaction.replace(R.id.fragmentContainer, directionsInputFragment);
 				transaction.addToBackStack(null);
 				controlsvisible=true;
@@ -162,6 +161,7 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 				  controlsvisible = false;
 				  transaction.commit();
 			  }
+			  */
 			
 		  } else if (item.getItemId() == R.id.action_bar_toggle_style) {
 			  GoogleMapUtis.toggleStyle(googleMap);
@@ -271,18 +271,28 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 		 private List<LatLng> latLngs = new ArrayList<LatLng>();
 		 private String origin = null; 
 		 private String destination= null;
+		private String to;
+		private String from;
+		 
+		 public DirectionsFetcher(String from,String to) {
+			this.from = from;
+			this.to = to;
+		}
 		 
 		 @Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-	    	 System.out.println(" ------------ " + markers.get(0).getPosition());
-	    	 System.out.println(" ------------ " + markers.get(0).getPosition().toString());
-	    	 System.out.println(" ------------ " + markers.get(0).getPosition().latitude + "," + markers.get(0).getPosition().longitude);
+			getActivity().setProgressBarIndeterminateVisibility(Boolean.TRUE); 
+//	    	 System.out.println(" ------------ " + markers.get(0).getPosition());
+//	    	 System.out.println(" ------------ " + markers.get(0).getPosition().toString());
+//	    	 System.out.println(" ------------ " + markers.get(0).getPosition().latitude + "," + markers.get(0).getPosition().longitude);
 	    	 
 	    	 
-	    	 origin = markers.get(0).getPosition().latitude + "," + markers.get(0).getPosition().longitude;
-	    	 destination= markers.get(1).getPosition().latitude + "," + markers.get(1).getPosition().longitude;
+	    	 //origin = markers.get(0).getPosition().latitude + "," + markers.get(0).getPosition().longitude;
+	    	 //destination= markers.get(1).getPosition().latitude + "," + markers.get(1).getPosition().longitude;
 	    	 
+	    	 origin = from;
+	    	 destination = to;
 //	    	 origin = "Chicago,IL";
 //	    	 destination = "Los Angeles,CA";
 			
@@ -331,6 +341,8 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 	         //showDialog("Downloaded " + result + " bytes");
 	    	 clearMarkers();
 	    	 addMarkersToMap(latLngs);
+	    	 GoogleMapUtis.fixZoom(googleMap, markers);
+	    	 getActivity().setProgressBarIndeterminateVisibility(Boolean.FALSE);
 	     }
 	 }	
 	 
@@ -353,4 +365,17 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 		  public String points;
 		  
 	  }
+	  
+	  @Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		if (resultCode==DirectionsInputFragment.RESULT_CODE) {
+			String from = data.getExtras().getString("from");
+			String to = data.getExtras().getString("to");
+			System.out.println("from = " + from);
+			System.out.println("to = " + to);
+			new DirectionsFetcher(from,to).execute();
+		}
+	}
+	  
 }

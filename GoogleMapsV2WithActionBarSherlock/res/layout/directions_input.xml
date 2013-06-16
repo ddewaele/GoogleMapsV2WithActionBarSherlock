@@ -1,31 +1,61 @@
-<?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.GridLayout
+<android.support.v7.widget.GridLayout 
+    
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto" 
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:columnCount="6" >                               
+    xmlns:app="http://schemas.android.com/apk/res-auto"  
+    
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp"
+        android:useDefaultMargins="true"
+        app:columnCount="1"
+        android:alignmentMode="alignBounds" 
+        >
 
-    <Button
-        android:id="@+id/button1"
-        app:layout_column="1"                            
-        app:layout_columnSpan="2"
-        app:layout_gravity="left"
-        app:layout_row="1"
-        android:text="Button" />
+<!-- Error messages -->
+<TextView
+        android:id="@+id/errors"
+        app:layout_columnSpan="@integer/create_account_pane_column_count" />
 
-    <CheckBox
-        android:id="@+id/checkBox1"
-        app:layout_column="4"
-        app:layout_gravity="left"
-        app:layout_row="2"
-        android:text="CheckBox" />
+<TextView
+        android:id="@+id/from_label"
+        app:layout_gravity="fill_horizontal"
+        android:text="label_from"
+        android:textColor="?android:textColorSecondary" />
 
-    <Button
-        android:id="@+id/button2"
-        app:layout_column="5"
-        app:layout_gravity="left"
-        app:layout_row="3"
-        android:text="Button" />
+<EditText
+        android:id="@+id/from"
+        app:layout_gravity="fill_horizontal"
+        android:ems="10"
+        android:hint="hint_from"
+        android:inputType="textNoSuggestions" >
 
-        </android.support.v7.widget.GridLayout>
+    <requestFocus />
+</EditText>
+
+<TextView
+        android:id="@+id/to_label"
+        app:layout_gravity="fill_horizontal"
+        android:text="label_to"
+        android:textColor="?android:textColorSecondary" />
+
+<EditText
+        android:id="@+id/to"
+        app:layout_gravity="fill_horizontal"
+        android:ems="10"
+        android:hint="hint_to"/>
+
+<Button
+        android:id="@+id/load_directions"
+        android:layout_columnSpan="@integer/create_account_pane_column_count"
+        app:layout_gravity="fill_horizontal"
+        android:text="load directions" />
+
+<Button 
+
+        android:id="@+id/create_account"
+        android:layout_columnSpan="@integer/create_account_pane_column_count"
+        app:layout_gravity="center_horizontal"
+        android:text="create_a_new_account"/>
+
+</android.support.v7.widget.GridLayout>
