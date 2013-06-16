@@ -9,7 +9,7 @@ import android.widget.EditText;
 
 import com.ecs.google.maps.v2.actionbarsherlock.R;
 
-public class DirectionsInputFragment extends FragmentActivity {
+public class DirectionsInputActivity extends FragmentActivity {
 
 	protected static final int RESULT_CODE = 123;
 	private EditText from;
@@ -33,8 +33,8 @@ public class DirectionsInputFragment extends FragmentActivity {
 				Intent data = new Intent();
 				data.putExtra("from", from.getText().toString());
 				data.putExtra("to", to.getText().toString());
-				DirectionsInputFragment.this.setResult(RESULT_CODE, data);
-				DirectionsInputFragment.this.finish();
+				DirectionsInputActivity.this.setResult(RESULT_CODE, data);
+				DirectionsInputActivity.this.finish();
 			}
 		});
 	}

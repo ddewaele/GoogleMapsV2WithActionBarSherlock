@@ -55,7 +55,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.ecs.google.maps.v2.fragment.DirectionsInputFragment"
+            android:name="com.ecs.google.maps.v2.fragment.DirectionsInputActivity"
             android:label="@string/directions_input" >
         </activity>
     </application>

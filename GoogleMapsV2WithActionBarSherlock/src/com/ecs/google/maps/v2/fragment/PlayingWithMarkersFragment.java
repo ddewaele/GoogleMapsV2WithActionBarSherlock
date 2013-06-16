@@ -143,7 +143,7 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 //		  } else if (item.getItemId() == R.id.action_bar_toggle_controls) {
 //			  toggleControls();
 		  } else if (item.getItemId() == R.id.action_bar_directions) {
-		  		startActivityForResult(new Intent(getActivity(), DirectionsInputFragment.class), DirectionsInputFragment.RESULT_CODE);
+		  		startActivityForResult(new Intent(getActivity(), DirectionsInputActivity.class), DirectionsInputActivity.RESULT_CODE);
 			  //GoogleMapUtis.fixZoom(googleMap, markers);
 			  //new DirectionsFetcher().execute();
 		  } else if (item.getItemId() == R.id.action_bar_zoom) {
@@ -355,7 +355,7 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 	  @Override
 	public void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
-		if (resultCode==DirectionsInputFragment.RESULT_CODE) {
+		if (resultCode==DirectionsInputActivity.RESULT_CODE) {
 			String from = data.getExtras().getString("from");
 			String to = data.getExtras().getString("to");
 			System.out.println("from = " + from);
