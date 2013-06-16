@@ -3,6 +3,8 @@ package com.ecs.google.maps.v2.util;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.location.Location;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
@@ -18,6 +20,19 @@ public class GoogleMapUtis {
 			googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 		}
 	}
+	
+	public static Location convertLatLngToLocation(LatLng latLng) {
+		Location loc = new Location("someLoc");
+		loc.setLatitude(latLng.latitude);
+		loc.setLongitude(latLng.longitude);
+		return loc;
+	}
+	
+	public static float bearingBetweenLatLngs(LatLng begin,LatLng end) {
+		Location beginL= convertLatLngToLocation(begin);
+		Location endL= convertLatLngToLocation(end);
+		return beginL.bearingTo(endL);
+	}	
 	
 	public static String encodeMarkerForDirection(Marker marker) {
 		return marker.getPosition().latitude + "," + marker.getPosition().longitude;
