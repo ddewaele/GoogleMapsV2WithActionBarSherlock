@@ -2,6 +2,7 @@ package com.ecs.google.maps.v2.fragment;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import android.location.Location;
 import android.os.Bundle;
@@ -16,10 +17,14 @@ import android.view.animation.Interpolator;
 import android.view.animation.LinearInterpolator;
 import android.widget.FrameLayout;
 
+import com.actionbarsherlock.view.Menu;
+import com.actionbarsherlock.view.MenuInflater;
+import com.actionbarsherlock.view.MenuItem;
+import com.ecs.google.maps.v2.actionbarsherlock.R;
+import com.ecs.google.maps.v2.component.SherlockMapFragment;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
@@ -36,7 +41,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
  * @author ddewaele
  *
  */
-public class AnimatingMarkersFragment extends SupportMapFragment /*SherlockMapFragment */{
+public class AnimatingMarkersFragment extends SherlockMapFragment {
 	
 	private static final int ANIMATE_SPEEED = 1500;
 	private static final int ANIMATE_SPEEED_TURN = 1000;
@@ -57,25 +62,34 @@ public class AnimatingMarkersFragment extends SupportMapFragment /*SherlockMapFr
 	private boolean showPolyline = false;
 	private Polyline polyLine;
 	private PolylineOptions rectOptions = new PolylineOptions();
-	
+
+	Handler handler = new Handler();
+	Random random = new Random();
+	Runnable runner = new Runnable() {
+        @Override
+        public void run() {
+            setHasOptionsMenu(true);
+        }
+    };
+    
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		
+		handler.postDelayed(runner, random.nextInt(2000));
 		
 		View root = super.onCreateView(inflater, container, savedInstanceState);
 		googleMap = getMap();
 		googleMap.setMyLocationEnabled(true);
 		//googleMap.getUiSettings().setMyLocationButtonEnabled(true);
 		
-		googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+		googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 			
 			@Override
-			public boolean onMarkerClick(Marker marker) {
-				System.out.println("Clicked on map... ");
-				marker.hideInfoWindow();
-				selectedMarker = marker;
-				return false;
+			public void onMapClick(LatLng latLng) {
+				addMarkerToMap(latLng);
 			}
+
 		});
 		
 		initializeMargin(root);
@@ -94,6 +108,46 @@ public class AnimatingMarkersFragment extends SupportMapFragment /*SherlockMapFr
 		    ((ViewGroup) root).addView(frameLayout,
 		        new ViewGroup.LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.FILL_PARENT));
 	}
+	
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		menu.clear();
+		inflater.inflate(R.menu.animating_menu, menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		  if (item.getItemId() == R.id.action_bar_remove_location) {
+			  removeSelectedMarker();
+		  } else if (item.getItemId() == R.id.action_bar_add_default_locations) {
+			  addDefaultLocations();
+		  } else if (item.getItemId() == R.id.action_bar_start_animation) {
+			  startAnimation(true);
+		  } else if (item.getItemId() == R.id.action_bar_stop_animation) {
+			  stopAnimation();
+		  } else if (item.getItemId() == R.id.action_bar_clear_locations) {
+			  clearMarkers();
+		  } else if (item.getItemId() == R.id.action_bar_toggle_style) {
+			  toggleStyle();
+		  }
+		  return true;
+	}	
+	
+	private void addDefaultLocations() {
+        addMarkerToMap(new LatLng(50.961813797827055,3.5168474167585373));
+        addMarkerToMap(new LatLng(50.96085423274633,3.517405651509762));
+        addMarkerToMap(new LatLng(50.96020550146382,3.5177918896079063));
+        addMarkerToMap(new LatLng(50.95936754348453,3.518972061574459));
+        addMarkerToMap(new LatLng(50.95877285446026,3.5199161991477013));
+        addMarkerToMap(new LatLng(50.958179213755905,3.520646095275879));
+        addMarkerToMap(new LatLng(50.95901719316589,3.5222768783569336));
+        addMarkerToMap(new LatLng(50.95954430150347,3.523542881011963));
+        addMarkerToMap(new LatLng(50.95873336312275,3.5244011878967285));
+        addMarkerToMap(new LatLng(50.95955781702322,3.525688648223877));
+        addMarkerToMap(new LatLng(50.958855004782116,3.5269761085510254));
+	}
+
 	
 	public void startAnimation(boolean showPolyLine) {
 		animator.reset();

@@ -11,6 +11,7 @@ import android.view.Window;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 import com.ecs.google.maps.v2.fragment.AnimatingMarkersFragment;
+import com.ecs.google.maps.v2.fragment.DirectionsMapFragment;
 import com.ecs.google.maps.v2.fragment.PlayingWithMarkersFragment;
 import com.ecs.google.maps.v2.fragment.SimpleCardFragment;
 import com.ecs.google.maps.v2.fragment.SupportMapFragmentWithMenu;
@@ -69,7 +70,8 @@ public class TabbedActivity extends SherlockFragmentActivity {
 
 		private final String[] TITLES = { 	"Simple Map", 
 											"Playing With Markers", 
-											"Animation", 
+											"Animation",
+											"Directions API", 
 											"Maps Utils Library"};
 
 		public MyPagerAdapter(FragmentManager fm) {
@@ -124,6 +126,19 @@ public class TabbedActivity extends SherlockFragmentActivity {
 				b.putInt("position", position);
 				f.setArguments(b);
 				return f;
+			} else if (position==3) {
+				
+				Fragment fragmentByTag = getSupportFragmentManager().findFragmentByTag(makeFragmentName(R.id.pager, position));
+				System.out.println("*********** fragmentByTag = " + fragmentByTag);
+
+				
+				DirectionsMapFragment f = new DirectionsMapFragment();
+				//f.setHasOptionsMenu(true); // Important ... do not forget this.
+				Bundle b = new Bundle();
+				b.putInt("position", position);
+				f.setArguments(b);
+				return f;
+
 			} else {
 				return SimpleCardFragment.newInstance(position);
 			}

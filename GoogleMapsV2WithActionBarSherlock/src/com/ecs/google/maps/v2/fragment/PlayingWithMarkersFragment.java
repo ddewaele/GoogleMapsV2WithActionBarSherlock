@@ -1,20 +1,14 @@
 package com.ecs.google.maps.v2.fragment;
 
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -30,18 +24,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
-import com.google.api.client.extensions.android.http.AndroidHttp;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpRequestInitializer;
-import com.google.api.client.http.HttpResponse;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.JsonObjectParser;
-import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.Key;
-import com.google.maps.android.PolyUtil;
 
 /**
  * 
@@ -140,12 +122,6 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 			  clearMarkers();
 		  } else if (item.getItemId() == R.id.action_bar_add_default_locations) {
 			  addDefaultLocations();
-//		  } else if (item.getItemId() == R.id.action_bar_toggle_controls) {
-//			  toggleControls();
-		  } else if (item.getItemId() == R.id.action_bar_directions) {
-		  		startActivityForResult(new Intent(getActivity(), DirectionsInputActivity.class), DirectionsInputActivity.RESULT_CODE);
-			  //GoogleMapUtis.fixZoom(googleMap, markers);
-			  //new DirectionsFetcher().execute();
 		  } else if (item.getItemId() == R.id.action_bar_zoom) {
 			  GoogleMapUtis.fixZoom(googleMap, markers);
 		  } else if (item.getItemId() == R.id.action_bar_toggle_style) {
@@ -153,7 +129,6 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 			  
 		  }
 		  
-	      Toast.makeText(getActivity(), "Menu id  \"" + item.getItemId() + "\" clicked.", Toast.LENGTH_SHORT).show();
 	      return true;
 	}
 
@@ -270,98 +245,4 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 		polyLine.setPoints(points);
 	}	
 	
-	static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
-	static final JsonFactory JSON_FACTORY = new JacksonFactory();
-
-	 private class DirectionsFetcher extends AsyncTask<URL, Integer, Void> {
-	     
-		 private List<LatLng> latLngs = new ArrayList<LatLng>();
-		private String origin;
-		private String destination;
-		 
-		 public DirectionsFetcher(String origin,String destination) {
-			this.origin = origin;
-			this.destination = destination;
-		}
-		 
-		 @Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			clearMarkers();
-			getActivity().setProgressBarIndeterminateVisibility(Boolean.TRUE);
-			
-		}
-		 
-		 protected Void doInBackground(URL... urls) {
-			 android.os.Debug.waitForDebugger();
-	    	 try {
-	    		 HttpRequestFactory requestFactory = HTTP_TRANSPORT.createRequestFactory(new HttpRequestInitializer() {
-	    			 @Override
-	    		     public void initialize(HttpRequest request) {
-	    				 request.setParser(new JsonObjectParser(JSON_FACTORY));
-	    			 }
-	    		     });
-	    	 
-		    	 GenericUrl url = new GenericUrl("http://maps.googleapis.com/maps/api/directions/json");
-		    	 
-		    	 
-		    	 url.put("origin", origin);
-		    	 url.put("destination", destination);
-		    	 url.put("sensor",false);
-	    	 
-    		    HttpRequest request = requestFactory.buildGetRequest(url);
-    		    HttpResponse httpResponse = request.execute();
-    		    DirectionsResult directionsResult = httpResponse.parseAs(DirectionsResult.class);
-    		    String encodedPoints = directionsResult.routes.get(0).overviewPolyLine.points;
-    		    latLngs = PolyUtil.decode(encodedPoints);
-	    	 } catch (Exception ex) {
-	    		 ex.printStackTrace();
-	    	 }
-	    	 return null;
-	     
-	     }
-
-	     protected void onProgressUpdate(Integer... progress) {
-	     }
-
-	     protected void onPostExecute(Void result) {
-	         //showDialog("Downloaded " + result + " bytes");
-	    	 addMarkersToMap(latLngs);
-	    	 GoogleMapUtis.fixZoom(googleMap, markers);
-	    	 getActivity().setProgressBarIndeterminateVisibility(Boolean.FALSE);
-	     }
-	 }	
-	 
-	 /** Feed of Google+ activities. */
-	  public static class DirectionsResult {
-
-	    @Key("routes")
-	    public List<Route> routes;
-
-	  }
-
-	  public static class Route {
-		  @Key("overview_polyline")
-		  public OverviewPolyLine overviewPolyLine;
-		  
-	  }
-
-	  public static class OverviewPolyLine {
-		  @Key("points")
-		  public String points;
-		  
-	  }
-	  
-	  @Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		if (resultCode==DirectionsInputActivity.RESULT_CODE) {
-			String from = data.getExtras().getString("from");
-			String to = data.getExtras().getString("to");
-			System.out.println("from = " + from);
-			System.out.println("to = " + to);
-			new DirectionsFetcher(from,to).execute();
-		}
-	}
-	  
 }
