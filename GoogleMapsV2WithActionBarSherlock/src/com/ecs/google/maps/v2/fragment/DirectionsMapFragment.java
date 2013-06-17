@@ -18,12 +18,14 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.ecs.google.maps.v2.actionbarsherlock.R;
 import com.ecs.google.maps.v2.component.SherlockMapFragment;
+import com.ecs.google.maps.v2.util.FileUtils;
 import com.ecs.google.maps.v2.util.GoogleMapUtis;
 import com.ecs.google.maps.v2.util.ViewUtils;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -83,6 +85,17 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 			addMarkerToMap(latLng);
 		}
 	}
+	
+	/**
+	 * Adds a list of markers to the map.
+	 */
+	public void addPolygonToMap(List<LatLng> latLngs) {
+		PolygonOptions options = new PolygonOptions();
+		for (LatLng latLng : latLngs) {
+			options.add(latLng);
+		}
+		googleMap.addPolygon(options);
+	}	
 
 	/**
 	 * Clears all markers from the map.
@@ -104,7 +117,7 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 		  if (item.getItemId() == R.id.action_bar_directions) {
 			  startActivityForResult(new Intent(getActivity(), DirectionsInputActivity.class), DirectionsInputActivity.RESULT_CODE);
 		  } else if (item.getItemId() == R.id.action_bar_zoom) {
-			  GoogleMapUtis.fixZoom(googleMap, markers);
+			  GoogleMapUtis.fixZoomForMarkers(googleMap, markers);
 		  } else if (item.getItemId() == R.id.action_bar_toggle_style) {
 			  GoogleMapUtis.toggleStyle(googleMap);
 			  
@@ -152,6 +165,9 @@ public class DirectionsMapFragment extends SherlockMapFragment {
     		    HttpRequest request = requestFactory.buildGetRequest(url);
     		    HttpResponse httpResponse = request.execute();
     		    DirectionsResult directionsResult = httpResponse.parseAs(DirectionsResult.class);
+//    		    String parseAsString = httpResponse.parseAsString();
+//    		    FileUtils.writeToFile("directions.json", parseAsString, getActivity());
+    		    
     		    String encodedPoints = directionsResult.routes.get(0).overviewPolyLine.points;
     		    latLngs = PolyUtil.decode(encodedPoints);
 	    	 } catch (Exception ex) {
@@ -165,9 +181,9 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 	     }
 
 	     protected void onPostExecute(Void result) {
-	         //showDialog("Downloaded " + result + " bytes");
-	    	 addMarkersToMap(latLngs);
-	    	 GoogleMapUtis.fixZoom(googleMap, markers);
+	    	 //addMarkersToMap(latLngs);
+	    	 addPolygonToMap(latLngs);
+	    	 GoogleMapUtis.fixZoomForLatLngs(googleMap, latLngs);
 	    	 getActivity().setProgressBarIndeterminateVisibility(Boolean.FALSE);
 	     }
 	 }	

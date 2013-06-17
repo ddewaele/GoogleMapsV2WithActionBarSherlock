@@ -91,7 +91,7 @@ public class SimpleAnimation extends SherlockFragmentActivity {
 	                   } else {
 	                	   mapView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 	                   }
-	                   GoogleMapUtis.fixZoom(googleMap,markers);
+	                   GoogleMapUtis.fixZoomForMarkers(googleMap,markers);
 	               }
 	           });
 	       }	       
@@ -216,7 +216,7 @@ public class SimpleAnimation extends SherlockFragmentActivity {
 		
 		@Override
 		public void onFinish() {
-			GoogleMapUtis.fixZoom(googleMap,markers);
+			GoogleMapUtis.fixZoomForMarkers(googleMap,markers);
 		}
 		
 		@Override

@@ -123,7 +123,7 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 		  } else if (item.getItemId() == R.id.action_bar_add_default_locations) {
 			  addDefaultLocations();
 		  } else if (item.getItemId() == R.id.action_bar_zoom) {
-			  GoogleMapUtis.fixZoom(googleMap, markers);
+			  GoogleMapUtis.fixZoomForMarkers(googleMap, markers);
 		  } else if (item.getItemId() == R.id.action_bar_toggle_style) {
 			  GoogleMapUtis.toggleStyle(googleMap);
 			  
