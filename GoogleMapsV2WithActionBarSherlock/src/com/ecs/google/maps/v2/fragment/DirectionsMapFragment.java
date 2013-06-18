@@ -9,23 +9,30 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Interpolator;
+import android.view.animation.LinearInterpolator;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.ecs.google.maps.v2.actionbarsherlock.R;
 import com.ecs.google.maps.v2.component.SherlockMapFragment;
-import com.ecs.google.maps.v2.util.FileUtils;
 import com.ecs.google.maps.v2.util.GoogleMapUtis;
 import com.ecs.google.maps.v2.util.ViewUtils;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.GoogleMap.CancelableCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolygonOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -69,32 +76,32 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 		return view;
 	}
 	
-	private void addMarkerToMap(LatLng latLng) {
-		Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
-				 .title("title")
-				 .snippet("snippet"));
-		markers.add(marker);
-		
-	}
+//	private void addMarkerToMap(LatLng latLng) {
+//		Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
+//				 .title("title")
+//				 .snippet("snippet"));
+//		markers.add(marker);
+//		
+//	}
+//	
+//	/**
+//	 * Adds a list of markers to the map.
+//	 */
+//	public void addMarkersToMap(List<LatLng> latLngs) {
+//		for (LatLng latLng : latLngs) {
+//			addMarkerToMap(latLng);
+//		}
+//	}
 	
 	/**
 	 * Adds a list of markers to the map.
 	 */
-	public void addMarkersToMap(List<LatLng> latLngs) {
-		for (LatLng latLng : latLngs) {
-			addMarkerToMap(latLng);
-		}
-	}
-	
-	/**
-	 * Adds a list of markers to the map.
-	 */
-	public void addPolygonToMap(List<LatLng> latLngs) {
-		PolygonOptions options = new PolygonOptions();
+	public void addPolylineToMap(List<LatLng> latLngs) {
+		PolylineOptions options = new PolylineOptions();
 		for (LatLng latLng : latLngs) {
 			options.add(latLng);
 		}
-		googleMap.addPolygon(options);
+		googleMap.addPolyline(options);
 	}	
 
 	/**
@@ -128,7 +135,7 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 	
 	 private class DirectionsFetcher extends AsyncTask<URL, Integer, Void> {
 	     
-		 private List<LatLng> latLngs = new ArrayList<LatLng>();
+		private List<LatLng> latLngs = new ArrayList<LatLng>();
 		private String origin;
 		private String destination;
 		 
@@ -182,13 +189,13 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 
 	     protected void onPostExecute(Void result) {
 	    	 //addMarkersToMap(latLngs);
-	    	 addPolygonToMap(latLngs);
+	    	 addPolylineToMap(latLngs);
+	    	 
 	    	 GoogleMapUtis.fixZoomForLatLngs(googleMap, latLngs);
 	    	 getActivity().setProgressBarIndeterminateVisibility(Boolean.FALSE);
 	     }
 	 }	
 	 
-	 /** Feed of Google+ activities. */
 	  public static class DirectionsResult {
 
 	    @Key("routes")
@@ -219,4 +226,257 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 			new DirectionsFetcher(from,to).execute();
 		}
 	}
+	  
+	  private Animator animator = new Animator();
+	  private final Handler mHandler = new Handler();
+	  
+	  public class Animator implements Runnable {
+			
+			private static final int ANIMATE_SPEEED = 1500;
+			private static final int ANIMATE_SPEEED_TURN = 1000;
+			private static final int BEARING_OFFSET = 20;
+
+			private final Interpolator interpolator = new LinearInterpolator();
+			
+			private List<LatLng> latLngs = new ArrayList<LatLng>();
+			
+			int currentIndex = 0;
+			
+			float tilt = 90;
+			float zoom = 15.5f;
+			boolean upward=true;
+			
+			long start = SystemClock.uptimeMillis();
+			
+			LatLng endLatLng = null; 
+			LatLng beginLatLng = null;
+			
+			boolean showPolyline = false;
+			
+			private Marker trackingMarker;
+			
+			public void reset() {
+				resetMarkers();
+				start = SystemClock.uptimeMillis();
+				currentIndex = 0;
+				endLatLng = getEndLatLng();
+				beginLatLng = getBeginLatLng();
+				
+			}
+			
+			public void stop() {
+				trackingMarker.remove();
+				mHandler.removeCallbacks(animator);
+				
+			}
+
+			public void initialize(boolean showPolyLine) {
+				reset();
+				this.showPolyline = showPolyLine;
+				
+				highLightMarker(0);
+				
+				if (showPolyLine) {
+					polyLine = initializePolyLine();
+				}
+				
+				// We first need to put the camera in the correct position for the first run (we need 2 markers for this).....
+				LatLng markerPos = markers.get(0).getPosition();
+				LatLng secondPos = markers.get(1).getPosition();
+				
+				setupCameraPositionForMovement(markerPos, secondPos);
+				
+			}
+			
+			private void setupCameraPositionForMovement(LatLng markerPos,
+					LatLng secondPos) {
+				
+				float bearing = GoogleMapUtis.bearingBetweenLatLngs(markerPos,secondPos);
+				
+				trackingMarker = googleMap.addMarker(new MarkerOptions().position(markerPos)
+						 .title("title")
+						 .snippet("snippet"));
+
+				CameraPosition cameraPosition =
+						new CameraPosition.Builder()
+								.target(markerPos)
+								.bearing(bearing + BEARING_OFFSET)
+			                    .tilt(90)
+			                    .zoom(googleMap.getCameraPosition().zoom >=16 ? googleMap.getCameraPosition().zoom : 16)
+			                    .build();
+				
+				googleMap.animateCamera(
+						CameraUpdateFactory.newCameraPosition(cameraPosition), 
+						ANIMATE_SPEEED_TURN,
+						new CancelableCallback() {
+							
+							@Override
+							public void onFinish() {
+								System.out.println("finished camera");
+								animator.reset();
+								Handler handler = new Handler();
+								handler.post(animator);	
+							}
+							
+							@Override
+							public void onCancel() {
+								System.out.println("cancelling camera");									
+							}
+						}
+				);
+			}		
+			
+			private Polyline polyLine;
+			private PolylineOptions rectOptions = new PolylineOptions();
+
+			
+			private Polyline initializePolyLine() {
+				//polyLinePoints = new ArrayList<LatLng>();
+				rectOptions.add(markers.get(0).getPosition());
+				return googleMap.addPolyline(rectOptions);
+			}
+			
+			/**
+			 * Add the marker to the polyline.
+			 */
+			private void updatePolyLine(LatLng latLng) {
+				List<LatLng> points = polyLine.getPoints();
+				points.add(latLng);
+				polyLine.setPoints(points);
+			}
+			
+			public void stopAnimation() {
+				animator.stop();
+			}
+			
+			public void startAnimation(boolean showPolyLine,List<LatLng> latLngs) {
+				if (markers.size()>2) {
+					initialize(showPolyLine);
+				}
+				this.latLngs=latLngs;
+			}				
+
+
+			@Override
+			public void run() {
+				
+				long elapsed = SystemClock.uptimeMillis() - start;
+				double t = interpolator.getInterpolation((float)elapsed/ANIMATE_SPEEED);
+				
+//				LatLng endLatLng = getEndLatLng();
+//				LatLng beginLatLng = getBeginLatLng();
+				
+				double lat = t * endLatLng.latitude + (1-t) * beginLatLng.latitude;
+				double lng = t * endLatLng.longitude + (1-t) * beginLatLng.longitude;
+				LatLng newPosition = new LatLng(lat, lng);
+				
+				trackingMarker.setPosition(newPosition);
+				
+				if (showPolyline) {
+					updatePolyLine(newPosition);
+				}
+				
+				// It's not possible to move the marker + center it through a cameraposition update while another camerapostioning was already happening.
+				//navigateToPoint(newPosition,tilt,bearing,currentZoom,false);
+				//navigateToPoint(newPosition,false);
+
+				if (t< 1) {
+					mHandler.postDelayed(this, 16);
+				} else {
+					
+					System.out.println("Move to next marker.... current = " + currentIndex + " and size = " + markers.size());
+					// imagine 5 elements -  0|1|2|3|4 currentindex must be smaller than 4
+					if (currentIndex<markers.size()-2) {
+					
+						currentIndex++;
+						
+						endLatLng = getEndLatLng();
+						beginLatLng = getBeginLatLng();
+
+						
+						start = SystemClock.uptimeMillis();
+
+						LatLng begin = getBeginLatLng();
+						LatLng end = getEndLatLng();
+						
+						float bearingL = GoogleMapUtis.bearingBetweenLatLngs(begin, end);
+						
+						highLightMarker(currentIndex);
+						
+						CameraPosition cameraPosition =
+								new CameraPosition.Builder()
+										.target(end) // changed this...
+					                    .bearing(bearingL  + BEARING_OFFSET)
+					                    .tilt(tilt)
+					                    .zoom(googleMap.getCameraPosition().zoom)
+					                    .build();
+
+						
+						googleMap.animateCamera(
+								CameraUpdateFactory.newCameraPosition(cameraPosition), 
+								ANIMATE_SPEEED_TURN,
+								null
+						);
+						
+						start = SystemClock.uptimeMillis();
+						mHandler.postDelayed(animator, 16);					
+						
+					} else {
+						currentIndex++;
+						highLightMarker(currentIndex);
+						stopAnimation();
+					}
+					
+				}
+			}
+			
+
+			
+			private LatLng getEndLatLng() {
+				return markers.get(currentIndex+1).getPosition();
+			}
+			
+			private LatLng getBeginLatLng() {
+				return markers.get(currentIndex).getPosition();
+			}
+
+		};		  
+	  
+		/**
+		 * Highlight the marker by index.
+		 */
+		private void highLightMarker(int index) {
+			highLightMarker(markers.get(index));
+		}
+
+		/**
+		 * Highlight the marker by marker.
+		 */
+		private void highLightMarker(Marker marker) {
+			
+			/*
+			for (Marker foundMarker : this.markers) {
+				if (!foundMarker.equals(marker)) {
+					foundMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+				} else {
+					foundMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+					foundMarker.showInfoWindow();
+				}
+			}
+			*/
+			marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+			marker.showInfoWindow();
+
+			//Utils.bounceMarker(googleMap, marker);
+			
+			//TODO: DDW FIX THIS
+			//this.selectedMarker=marker;
+		}	
+
+		private void resetMarkers() {
+			for (Marker marker : this.markers) {
+				marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+			}
+		}		
+	  
 }
