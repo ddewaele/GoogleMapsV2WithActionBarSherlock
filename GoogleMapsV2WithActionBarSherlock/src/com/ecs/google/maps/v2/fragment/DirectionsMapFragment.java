@@ -48,17 +48,18 @@ import com.google.maps.android.PolyUtil;
 
 public class DirectionsMapFragment extends SherlockMapFragment {
 
-	static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
-	static final JsonFactory JSON_FACTORY = new JacksonFactory();
-
-	Handler handler = new Handler();
-	Random random = new Random();
-	Runnable runner = new Runnable() {
+	private static final HttpTransport HTTP_TRANSPORT = AndroidHttp.newCompatibleTransport();
+	private static final JsonFactory JSON_FACTORY = new JacksonFactory();
+	
+	private Handler handler = new Handler();
+	private Random random = new Random();
+	private Runnable runner = new Runnable() {
         @Override
         public void run() {
             setHasOptionsMenu(true);
         }
     };
+    
 	private GoogleMap googleMap;
 	private List<Marker> markers = new ArrayList<Marker>();
     
@@ -112,19 +113,37 @@ public class DirectionsMapFragment extends SherlockMapFragment {
     	markers.clear();		
 	}
 	
+	private Menu menu;
+	private boolean directionsFetched = false;
+	
+	 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
 		super.onCreateOptionsMenu(menu, inflater);
-		menu.clear();
+		this.menu = menu;
+		//menu.clear();
 		inflater.inflate(R.menu.directions_menu, menu);
+		updateNavigationStopStart();
 	}
+	
+
+    private void updateNavigationStopStart() {
+        MenuItem startAnimation = this.menu.findItem(R.id.action_bar_start_animation);
+        startAnimation.setVisible(!animator.isAnimating() && directionsFetched);
+        MenuItem stopAnimation = this.menu.findItem(R.id.action_bar_stop_animation);
+        stopAnimation.setVisible(animator.isAnimating());
+    }
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		  if (item.getItemId() == R.id.action_bar_directions) {
 			  startActivityForResult(new Intent(getActivity(), DirectionsInputActivity.class), DirectionsInputActivity.RESULT_CODE);
-		  } else if (item.getItemId() == R.id.action_bar_zoom) {
-			  GoogleMapUtis.fixZoomForMarkers(googleMap, markers);
+		  } else if (item.getItemId() == R.id.action_bar_start_animation) {
+			  animator.startAnimation(true,latLngs);
+			  updateNavigationStopStart();
+		  } else if (item.getItemId() == R.id.action_bar_stop_animation) {
+			  animator.stopAnimation();
+			  updateNavigationStopStart();
 		  } else if (item.getItemId() == R.id.action_bar_toggle_style) {
 			  GoogleMapUtis.toggleStyle(googleMap);
 			  
@@ -133,9 +152,11 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 	      return true;
 	}	
 	
+	private List<LatLng> latLngs = new ArrayList<LatLng>();
+	
 	 private class DirectionsFetcher extends AsyncTask<URL, Integer, Void> {
 	     
-		private List<LatLng> latLngs = new ArrayList<LatLng>();
+		
 		private String origin;
 		private String destination;
 		 
@@ -153,7 +174,6 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 		}
 		 
 		 protected Void doInBackground(URL... urls) {
-			 android.os.Debug.waitForDebugger();
 	    	 try {
 	    		 HttpRequestFactory requestFactory = HTTP_TRANSPORT.createRequestFactory(new HttpRequestInitializer() {
 	    			 @Override
@@ -169,8 +189,11 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 		    	 url.put("destination", destination);
 		    	 url.put("sensor",false);
 	    	 
+		    	 System.out.println("Building get request");
     		    HttpRequest request = requestFactory.buildGetRequest(url);
+    		    System.out.println("Executing get request");
     		    HttpResponse httpResponse = request.execute();
+    		    System.out.println("Got response");
     		    DirectionsResult directionsResult = httpResponse.parseAs(DirectionsResult.class);
 //    		    String parseAsString = httpResponse.parseAsString();
 //    		    FileUtils.writeToFile("directions.json", parseAsString, getActivity());
@@ -188,10 +211,14 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 	     }
 
 	     protected void onPostExecute(Void result) {
-	    	 //addMarkersToMap(latLngs);
+	    	 directionsFetched=true;
+	    	 System.out.println("Adding polyline");
 	    	 addPolylineToMap(latLngs);
-	    	 
+	    	 System.out.println("Fix Zoom");
 	    	 GoogleMapUtis.fixZoomForLatLngs(googleMap, latLngs);
+	    	 System.out.println("Start anim");
+	    	 animator.startAnimation(false, latLngs);
+	    	 updateNavigationStopStart();
 	    	 getActivity().setProgressBarIndeterminateVisibility(Boolean.FALSE);
 	     }
 	 }	
@@ -237,6 +264,9 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 			private static final int BEARING_OFFSET = 20;
 
 			private final Interpolator interpolator = new LinearInterpolator();
+			//private final Interpolator interpolator = new AccelerateDecelerateInterpolator();
+			
+			private boolean animating = false;
 			
 			private List<LatLng> latLngs = new ArrayList<LatLng>();
 			
@@ -265,7 +295,10 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 			}
 			
 			public void stop() {
-				trackingMarker.remove();
+				if (trackingMarker!=null) {
+					trackingMarker.remove();
+				}
+				animating=false;
 				mHandler.removeCallbacks(animator);
 				
 			}
@@ -281,8 +314,8 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 				}
 				
 				// We first need to put the camera in the correct position for the first run (we need 2 markers for this).....
-				LatLng markerPos = markers.get(0).getPosition();
-				LatLng secondPos = markers.get(1).getPosition();
+				LatLng markerPos = latLngs.get(0);
+				LatLng secondPos = latLngs.get(1);
 				
 				setupCameraPositionForMovement(markerPos, secondPos);
 				
@@ -332,7 +365,7 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 			
 			private Polyline initializePolyLine() {
 				//polyLinePoints = new ArrayList<LatLng>();
-				rectOptions.add(markers.get(0).getPosition());
+				rectOptions.add(latLngs.get(0));
 				return googleMap.addPolyline(rectOptions);
 			}
 			
@@ -350,11 +383,17 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 			}
 			
 			public void startAnimation(boolean showPolyLine,List<LatLng> latLngs) {
-				if (markers.size()>2) {
+				this.animating = true;
+				this.latLngs=latLngs;
+				if (latLngs.size()>2) {
 					initialize(showPolyLine);
 				}
-				this.latLngs=latLngs;
+				
 			}				
+			
+			public boolean isAnimating() {
+				return this.animating;
+			}
 
 
 			@Override
@@ -362,18 +401,19 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 				
 				long elapsed = SystemClock.uptimeMillis() - start;
 				double t = interpolator.getInterpolation((float)elapsed/ANIMATE_SPEEED);
-				
-//				LatLng endLatLng = getEndLatLng();
-//				LatLng beginLatLng = getBeginLatLng();
+				System.out.println("Found elapsed = " + elapsed  + " t = " + t);
 				
 				double lat = t * endLatLng.latitude + (1-t) * beginLatLng.latitude;
 				double lng = t * endLatLng.longitude + (1-t) * beginLatLng.longitude;
-				LatLng newPosition = new LatLng(lat, lng);
 				
-				trackingMarker.setPosition(newPosition);
+				LatLng intermediatePosition = new LatLng(lat, lng);
+			
+				System.out.println(intermediatePosition);
+				
+				trackingMarker.setPosition(intermediatePosition);
 				
 				if (showPolyline) {
-					updatePolyLine(newPosition);
+					updatePolyLine(intermediatePosition);
 				}
 				
 				// It's not possible to move the marker + center it through a cameraposition update while another camerapostioning was already happening.
@@ -384,9 +424,9 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 					mHandler.postDelayed(this, 16);
 				} else {
 					
-					System.out.println("Move to next marker.... current = " + currentIndex + " and size = " + markers.size());
+					System.out.println("Move to next marker.... current = " + currentIndex + " and size = " + latLngs.size());
 					// imagine 5 elements -  0|1|2|3|4 currentindex must be smaller than 4
-					if (currentIndex<markers.size()-2) {
+					if (currentIndex<latLngs.size()-2) {
 					
 						currentIndex++;
 						
@@ -433,11 +473,11 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 
 			
 			private LatLng getEndLatLng() {
-				return markers.get(currentIndex+1).getPosition();
+				return latLngs.get(currentIndex+1);
 			}
 			
 			private LatLng getBeginLatLng() {
-				return markers.get(currentIndex).getPosition();
+				return latLngs.get(currentIndex);
 			}
 
 		};		  
@@ -446,7 +486,9 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 		 * Highlight the marker by index.
 		 */
 		private void highLightMarker(int index) {
-			highLightMarker(markers.get(index));
+			if (markers.size()>=index+1) {
+				highLightMarker(markers.get(index));
+			}
 		}
 
 		/**
@@ -464,8 +506,10 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 				}
 			}
 			*/
-			marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-			marker.showInfoWindow();
+			if (marker!=null) {
+				marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+				marker.showInfoWindow();
+			}
 
 			//Utils.bounceMarker(googleMap, marker);
 			

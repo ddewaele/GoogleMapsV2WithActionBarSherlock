@@ -23,6 +23,7 @@
         android:text="label_from"
         android:textColor="?android:textColorSecondary" />
 
+<!--
 <EditText
         android:id="@+id/from"
         app:layout_gravity="fill_horizontal"
@@ -32,6 +33,14 @@
 
     <requestFocus />
 </EditText>
+-->
+
+<AutoCompleteTextView android:id="@+id/from"
+    app:layout_gravity="fill_horizontal"
+    android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+	android:completionThreshold="3"
+/>
 
 <TextView
         android:id="@+id/to_label"
@@ -39,11 +48,21 @@
         android:text="label_to"
         android:textColor="?android:textColorSecondary" />
 
+<!-- 
 <EditText
         android:id="@+id/to"
         app:layout_gravity="fill_horizontal"
         android:ems="10"
         android:hint="hint_to"/>
+-->
+
+<AutoCompleteTextView android:id="@+id/to"
+    app:layout_gravity="fill_horizontal"
+    android:layout_width="fill_parent"
+android:layout_height="wrap_content"
+	android:completionThreshold="3"
+/>
+
 
 <Button
         android:id="@+id/load_directions"

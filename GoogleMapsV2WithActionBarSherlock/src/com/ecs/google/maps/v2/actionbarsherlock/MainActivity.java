@@ -81,9 +81,9 @@ public class MainActivity extends SherlockFragmentActivity {
 	  if (item.getItemId() == R.id.action_bar_remove_location) {
 		  mapFragment.removeSelectedMarker();
 	  } else if (item.getItemId() == R.id.action_bar_start) {
-		  mapFragment.startAnimation(true);
+		  //mapFragment.startAnimation(true);
 	  } else if (item.getItemId() == R.id.action_bar_stop) {
-		  mapFragment.stopAnimation();
+		  //mapFragment.stopAnimation();
 	  } else if (item.getItemId() == R.id.action_bar_clear_locations) {
 	    	mapFragment.clearMarkers();
 	  } else if (item.getItemId() == R.id.action_bar_pan_camera) {

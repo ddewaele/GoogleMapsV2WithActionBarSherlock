@@ -5,6 +5,13 @@
         android:showAsAction="ifRoom"
         android:title="Directions"/>	
         
+		<item android:id="@+id/action_bar_start_animation"
+        android:showAsAction="ifRoom"
+        android:title="Start Animation"/>			
+							
+		<item android:id="@+id/action_bar_stop_animation"
+        android:showAsAction="ifRoom"
+        android:title="Stop Animation"/>			
                 
 		<item android:id="@+id/action_bar_toggle_style"
         android:showAsAction="ifRoom"

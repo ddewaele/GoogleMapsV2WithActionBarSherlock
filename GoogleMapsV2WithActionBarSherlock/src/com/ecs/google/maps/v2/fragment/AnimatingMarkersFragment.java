@@ -43,9 +43,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
  */
 public class AnimatingMarkersFragment extends SherlockMapFragment {
 	
-	private static final int ANIMATE_SPEEED = 1500;
-	private static final int ANIMATE_SPEEED_TURN = 1000;
-	private static final int BEARING_OFFSET = 20;
 	
 	// Keep track of our markers
 	private List<Marker> markers = new ArrayList<Marker>();
@@ -54,14 +51,12 @@ public class AnimatingMarkersFragment extends SherlockMapFragment {
 
 	private final Handler mHandler = new Handler();
 	
-	private final Interpolator interpolator = new LinearInterpolator();
+	
 
-	private Marker trackingMarker;
+	
 	private Marker selectedMarker;
 	
-	private boolean showPolyline = false;
-	private Polyline polyLine;
-	private PolylineOptions rectOptions = new PolylineOptions();
+	
 
 	Handler handler = new Handler();
 	Random random = new Random();
@@ -123,9 +118,9 @@ public class AnimatingMarkersFragment extends SherlockMapFragment {
 		  } else if (item.getItemId() == R.id.action_bar_add_default_locations) {
 			  addDefaultLocations();
 		  } else if (item.getItemId() == R.id.action_bar_start_animation) {
-			  startAnimation(true);
+			  animator.startAnimation(true);
 		  } else if (item.getItemId() == R.id.action_bar_stop_animation) {
-			  stopAnimation();
+			  animator.stopAnimation();
 		  } else if (item.getItemId() == R.id.action_bar_clear_locations) {
 			  clearMarkers();
 		  } else if (item.getItemId() == R.id.action_bar_toggle_style) {
@@ -149,82 +144,7 @@ public class AnimatingMarkersFragment extends SherlockMapFragment {
 	}
 
 	
-	public void startAnimation(boolean showPolyLine) {
-		animator.reset();
-		
-		this.showPolyline = showPolyLine;
-		
-		highLightMarker(0);
-		
-		if (this.showPolyline) {
-			polyLine = initializePolyLine();
-		}
-		
-		System.out.println("Markers (" + this.markers.size() + ")");
-		System.out.println("-------");
-		for (Marker marker : this.markers) {
-			System.out.println(marker.getPosition());
-		}
-		
-		
-//		googleMap.animateCamera(
-//				CameraUpdateFactory.zoomTo(googleMap.getCameraPosition().zoom + 0.5f), 
-//				3000,
-//				MyCancelableCallback);						
-//		
-//		currentPt = 0-1;
-		
-		// We first need to put the camera in the correct position for the first run (we need 2 markers for this).....
-		LatLng markerPos = this.markers.get(0).getPosition();
-		LatLng secondPos = this.markers.get(1).getPosition();
-		
-		setupCameraPositionForMovement(markerPos, secondPos);
-	}
 
-	private void setupCameraPositionForMovement(LatLng markerPos,
-			LatLng secondPos) {
-		
-		float bearing = bearingBetweenLatLngs(markerPos,secondPos);
-		
-		trackingMarker = googleMap.addMarker(new MarkerOptions().position(markerPos)
-				 .title("title")
-				 .snippet("snippet"));
-
-		CameraPosition cameraPosition =
-				new CameraPosition.Builder()
-						.target(markerPos)
-						.bearing(bearing + BEARING_OFFSET)
-	                    .tilt(90)
-	                    .zoom(googleMap.getCameraPosition().zoom >=16 ? googleMap.getCameraPosition().zoom : 16)
-	                    .build();
-		
-		googleMap.animateCamera(
-				CameraUpdateFactory.newCameraPosition(cameraPosition), 
-				ANIMATE_SPEEED_TURN,
-				new CancelableCallback() {
-					
-					@Override
-					public void onFinish() {
-						System.out.println("finished camera");
-						animator.reset();
-						Handler handler = new Handler();
-						handler.post(animator);	
-					}
-					
-					@Override
-					public void onCancel() {
-						System.out.println("cancelling camera");									
-					}
-				}
-		);
-	}
-	
-	public void stopAnimation() {
-		trackingMarker.remove();
-		//animator.reset();
-		mHandler.removeCallbacks(animator);
-	}
-	
 
 	private Animator animator = new Animator();
 	
@@ -293,23 +213,13 @@ public class AnimatingMarkersFragment extends SherlockMapFragment {
 		
 	};
 	
-	
-	private Polyline initializePolyLine() {
-		//polyLinePoints = new ArrayList<LatLng>();
-		rectOptions.add(this.markers.get(0).getPosition());
-		return googleMap.addPolyline(rectOptions);
-	}
-	
-	/**
-	 * Add the marker to the polyline.
-	 */
-	private void updatePolyLine(LatLng latLng) {
-		List<LatLng> points = polyLine.getPoints();
-		points.add(latLng);
-		polyLine.setPoints(points);
-	}
-	
 	public class Animator implements Runnable {
+		
+		private static final int ANIMATE_SPEEED = 1500;
+		private static final int ANIMATE_SPEEED_TURN = 1000;
+		private static final int BEARING_OFFSET = 20;
+
+		private final Interpolator interpolator = new LinearInterpolator();
 		
 		int currentIndex = 0;
 		
@@ -322,6 +232,10 @@ public class AnimatingMarkersFragment extends SherlockMapFragment {
 		LatLng endLatLng = null; 
 		LatLng beginLatLng = null;
 		
+		boolean showPolyline = false;
+		
+		private Marker trackingMarker;
+		
 		public void reset() {
 			resetMarkers();
 			start = SystemClock.uptimeMillis();
@@ -331,6 +245,99 @@ public class AnimatingMarkersFragment extends SherlockMapFragment {
 			
 		}
 		
+		public void stop() {
+			trackingMarker.remove();
+			mHandler.removeCallbacks(animator);
+			
+		}
+
+		public void initialize(boolean showPolyLine) {
+			reset();
+			this.showPolyline = showPolyLine;
+			
+			highLightMarker(0);
+			
+			if (showPolyLine) {
+				polyLine = initializePolyLine();
+			}
+			
+			// We first need to put the camera in the correct position for the first run (we need 2 markers for this).....
+			LatLng markerPos = markers.get(0).getPosition();
+			LatLng secondPos = markers.get(1).getPosition();
+			
+			setupCameraPositionForMovement(markerPos, secondPos);
+			
+		}
+		
+		private void setupCameraPositionForMovement(LatLng markerPos,
+				LatLng secondPos) {
+			
+			float bearing = bearingBetweenLatLngs(markerPos,secondPos);
+			
+			trackingMarker = googleMap.addMarker(new MarkerOptions().position(markerPos)
+					 .title("title")
+					 .snippet("snippet"));
+
+			CameraPosition cameraPosition =
+					new CameraPosition.Builder()
+							.target(markerPos)
+							.bearing(bearing + BEARING_OFFSET)
+		                    .tilt(90)
+		                    .zoom(googleMap.getCameraPosition().zoom >=16 ? googleMap.getCameraPosition().zoom : 16)
+		                    .build();
+			
+			googleMap.animateCamera(
+					CameraUpdateFactory.newCameraPosition(cameraPosition), 
+					ANIMATE_SPEEED_TURN,
+					new CancelableCallback() {
+						
+						@Override
+						public void onFinish() {
+							System.out.println("finished camera");
+							animator.reset();
+							Handler handler = new Handler();
+							handler.post(animator);	
+						}
+						
+						@Override
+						public void onCancel() {
+							System.out.println("cancelling camera");									
+						}
+					}
+			);
+		}		
+		
+		private Polyline polyLine;
+		private PolylineOptions rectOptions = new PolylineOptions();
+
+		
+		private Polyline initializePolyLine() {
+			//polyLinePoints = new ArrayList<LatLng>();
+			rectOptions.add(markers.get(0).getPosition());
+			return googleMap.addPolyline(rectOptions);
+		}
+		
+		/**
+		 * Add the marker to the polyline.
+		 */
+		private void updatePolyLine(LatLng latLng) {
+			List<LatLng> points = polyLine.getPoints();
+			points.add(latLng);
+			polyLine.setPoints(points);
+		}
+		
+
+		public void stopAnimation() {
+			animator.stop();
+		}
+		
+		public void startAnimation(boolean showPolyLine) {
+			if (markers.size()>2) {
+				animator.initialize(showPolyLine);
+			}
+		}		
+
+
 		@Override
 		public void run() {
 			
@@ -403,6 +410,7 @@ public class AnimatingMarkersFragment extends SherlockMapFragment {
 				
 			}
 		}
+		
 		
 
 		
