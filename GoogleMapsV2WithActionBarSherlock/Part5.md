@@ -34,6 +34,9 @@ We need to add a reference to the Google Play Services library project.
 
 [INSERT link to article explaining that]
 
+Next up is to reference the android-maps-utils Library project on our project.
+
+[INSERT screenshot] 
 
 
 ##References

@@ -200,18 +200,19 @@ And our FragmentActivity will look like this :
 		}
 	}
 
-Keep in mind that although the MapFragment can run in an Activity, the SupportMapFragment cannot, and needs to run in a FragmentActivity. 
+Important note : Keep in mind that although the ```MapFragment``` can run in an ```Activity```, the ```SupportMapFragment``` cannot, and needs to run in a ```FragmentActivity```. 
 
 Simply have your activity extend SupportFragment instead of Activity in order to resolve this. 
 
-If not, you'll get the following error:
+If you attempt to run a SupportMapFragment inside an activity, you'll get the following error:
 
 	Caused by: java.lang.ClassCastException: com.google.android.gms.maps.SupportMapFragment cannot be cast to android.app.Fragment
 
 
 ### Adding the actionBar.
 
-The point of this article was to show you how you can include the ActionBarSherlock in your app.
+The point of this article was to show you how you can include the ActionBarSherlock in your app, so lets get started with that.
+
 With ABS 4.3 it couldn't be simpler. Simply have your activity extend SherlockFragmentActivity like this
 
 	public class SimpleSherlockFragmentActivity extends SherlockFragmentActivity {
