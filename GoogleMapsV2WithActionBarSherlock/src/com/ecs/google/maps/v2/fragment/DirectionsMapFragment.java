@@ -45,6 +45,7 @@ import com.google.api.client.json.JsonObjectParser;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Key;
 import com.google.maps.android.PolyUtil;
+import com.google.maps.android.SphericalUtil;
 
 public class DirectionsMapFragment extends SherlockMapFragment {
 
@@ -401,14 +402,7 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 				
 				long elapsed = SystemClock.uptimeMillis() - start;
 				double t = interpolator.getInterpolation((float)elapsed/ANIMATE_SPEEED);
-				System.out.println("Found elapsed = " + elapsed  + " t = " + t);
-				
-				double lat = t * endLatLng.latitude + (1-t) * beginLatLng.latitude;
-				double lng = t * endLatLng.longitude + (1-t) * beginLatLng.longitude;
-				
-				LatLng intermediatePosition = new LatLng(lat, lng);
-			
-				System.out.println(intermediatePosition);
+				LatLng intermediatePosition = SphericalUtil.interpolate(beginLatLng, endLatLng, t);
 				
 				trackingMarker.setPosition(intermediatePosition);
 				
@@ -416,10 +410,6 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 					updatePolyLine(intermediatePosition);
 				}
 				
-				// It's not possible to move the marker + center it through a cameraposition update while another camerapostioning was already happening.
-				//navigateToPoint(newPosition,tilt,bearing,currentZoom,false);
-				//navigateToPoint(newPosition,false);
-
 				if (t< 1) {
 					mHandler.postDelayed(this, 16);
 				} else {
@@ -436,17 +426,14 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 						
 						start = SystemClock.uptimeMillis();
 
-						LatLng begin = getBeginLatLng();
-						LatLng end = getEndLatLng();
-						
-						float bearingL = GoogleMapUtis.bearingBetweenLatLngs(begin, end);
+						Double heading = SphericalUtil.computeHeading(beginLatLng, endLatLng);
 						
 						highLightMarker(currentIndex);
 						
 						CameraPosition cameraPosition =
 								new CameraPosition.Builder()
-										.target(end) // changed this...
-					                    .bearing(bearingL  + BEARING_OFFSET)
+										.target(endLatLng) // changed this...
+					                    .bearing(heading.floatValue() + BEARING_OFFSET) // .bearing(bearingL  + BEARING_OFFSET)
 					                    .tilt(tilt)
 					                    .zoom(googleMap.getCameraPosition().zoom)
 					                    .build();

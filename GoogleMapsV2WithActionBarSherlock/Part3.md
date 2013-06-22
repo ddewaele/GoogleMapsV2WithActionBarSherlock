@@ -118,7 +118,7 @@ cross over the 1.5seconds.
 We're also going to use a LinearInterpolator that will return as a number between 0 and 1 to indicate how far we our in our animation
 
 We'll use that number to calculate the coordinates of the intermediate point.
-
+Once we have those coordinates, we set our tracking marker to that new position.
 
 	long elapsed = SystemClock.uptimeMillis() - start;
 	double t = interpolator.getInterpolation((float)elapsed/ANIMATE_SPEEED);
@@ -129,7 +129,19 @@ We'll use that number to calculate the coordinates of the intermediate point.
 	LatLng intermediatePosition = new LatLng(lat, lng);
 			
 	trackingMarker.setPosition(intermediatePosition);
-				
+
+We'll also update our polyline with the new marker position, creating a trailing effect on the polyline.
+
+	private void updatePolyLine(LatLng latLng) {
+		List<LatLng> points = polyLine.getPoints();
+		points.add(latLng);
+		polyLine.setPoints(points);
+	}
+
+
+As long as the interpolator returns a value below 1, we'll continue this process.
+
+Once it hits 1, we know we've reached the end-position for this animation.				
 			
 
 06-19 07:36:57.728: I/System.out(4153): Move to next marker.... current = 7 and size = 55

@@ -64,12 +64,13 @@ public class DirectionsInputActivity extends FragmentActivity {
 		
 
 		from = (AutoCompleteTextView) findViewById(R.id.from);
-	    from.setAdapter(new PlacesAutoCompleteAdapter(this, android.R.layout.simple_dropdown_item_1line));
 		to = (AutoCompleteTextView) findViewById(R.id.to);
-		to.setAdapter(new PlacesAutoCompleteAdapter(this, android.R.layout.simple_dropdown_item_1line));
-		
+
 		from.setText("Fisherman's Wharf, San Francisco, CA, United States");
 		to.setText("The Moscone Center, Howard Street, San Francisco, CA, United States");
+
+		from.setAdapter(new PlacesAutoCompleteAdapter(this, android.R.layout.simple_dropdown_item_1line));
+		to.setAdapter(new PlacesAutoCompleteAdapter(this, android.R.layout.simple_dropdown_item_1line));
 		
 	}
 
