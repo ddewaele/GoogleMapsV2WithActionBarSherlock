@@ -2,8 +2,8 @@
 ### Introduction
 
 In this article, I'll show you some simple ways of dealing with Markers on your map. 
-Markers have finally become first class citizens in the Google Maps for Android v2 API. Gone are the days where you need to work with low-level overlays and overlayitems
-to get a simple marker on the Map. As of v2, we finally have `Marker` objects and an `addMarkerToMap`, so let's see what we can do with it...
+Markers have finally become first class citizens in the Google Maps for Android v2 API. Gone are the days where you need to work with low-level overlays and overlay items to get a simple marker on the Map. 
+As of v2, we finally have `Marker` objects and an `addMarkerToMap` method on the map, so let's see what we can do with it...
 
 But first we're going to take a little side-track. 
 
@@ -48,8 +48,8 @@ When you have a marker somewhere on the map and you didn't store the resulting m
 			}
 	);
 
-If you wan to print all the markers on the map, or programmatically highlight a specific marker you cannot do it.
-By storing the markers in an external list, we can add some flexibility regarding the way we can interact with these markers
+If you wan to print all the markers on the map, programmatically highlight a specific marker, or jump from one marker to another you cannot do it unless you have some way of referencing these markers.
+By keeping the track of the markers in an external list we can add some flexibility regarding the way we can interact with these markers.
 
 ### The selected marker
 
@@ -65,7 +65,7 @@ Our method to remove the selected marker would look like this:
 	}
 
 As we have a reference to the selected marker, it's simply a matter of removing it from our internal list and removing it from the map.
-Keep in mind that it's your responsibility to make sure the internal list is kept in symc with whatever is shown on the map.
+Keep in mind that it's your responsibility to make sure the internal list is kept in sync with whatever is shown on the map.
 	
 ### Highlighting a marker
 

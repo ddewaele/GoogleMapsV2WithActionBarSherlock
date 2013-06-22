@@ -8,8 +8,10 @@ The goal is to create a skeleton project that loads up a map using the new Googl
 The new Google Maps Android API v2 is a vast improvement over the original one and comes with many new features. 
 Not only does it really stand out from a UI perspective but also on an API level is the new Maps v2 library a "delight" for both end-users and developers.
 
-Before the Google Maps Android API v2 was released, developers were forced to embed a MapView component in their MapActivity. If you compared the Google Maps application with third party applications using the MapView compeonent you could immediately see a big difference.
-Not only were the tiles of much higher quality in the maps component, but subtle differences like auto-orienting streetnames and labels were present in the Google Maps application, but were not available in the MapView compeonent.
+Before the Google Maps Android API v2 was released, developers were forced to embed a ```MapView``` component in a special type of Activity called a ```MapActivity```. 
+
+When developers created map applications using the MapView component, you could immediately see a big difference between those applications and the Google Maps applications.
+Not only were the tiles of much higher quality in the Google Maps application, but subtle differences like auto-orienting street-names and labels that were present in the Google Maps application were not available in the MapView component.
 
 This has all changes with the new Google Maps Android v2 API.
 
