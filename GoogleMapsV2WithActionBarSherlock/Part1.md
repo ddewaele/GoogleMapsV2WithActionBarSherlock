@@ -1,14 +1,20 @@
-#Part 1 : Setting up the project.
+##Part 1 : Setting up the project.
 
-##Introduction
+###Introduction
 
 In the first part of this tutorial I will show you can start using Google Maps Android API v2 in your Android application. 
-The goal is to create a skeleton project that loads up a map using the new Google Map for Android API v2 as well as ActionBarsherlock.
+The goal is to create a skeleton project that 
+
+-is capable of displaying a map using the new Google Map for Android API v2
+-uses ActionBarsherlock.
+-can run on older versions of Android (2.x and up).
+ 
+###Google Maps Android API v2
  
 The new Google Maps Android API v2 is a vast improvement over the original one and comes with many new features. 
 Not only does it really stand out from a UI perspective but also on an API level is the new Maps v2 library a "delight" for both end-users and developers.
 
-Before the Google Maps Android API v2 was released, developers were forced to embed a ```MapView``` component in a special type of Activity called a ```MapActivity```. 
+Before the Google Maps Android API v2 was released, developers were forced to embed a `MapView` component in a special type of Activity called a `MapActivity`. 
 
 When developers created map applications using the MapView component, you could immediately see a big difference between those applications and the Google Maps applications.
 Not only were the tiles of much higher quality in the Google Maps application, but subtle differences like auto-orienting street-names and labels that were present in the Google Maps application were not available in the MapView component.
@@ -34,29 +40,45 @@ I'm going to be using Eclipse ADT 22 to build the project. We'll start by creati
 
 Our project is going to use the following Android libraries
 
-- the new Google Maps V2 library for Android
+- the new Google Maps Android API v2
 - ActionBarSherlock library 
 
 Please checkout the resources at the end of the document on how to obtain these projects.
 
 ### Installing the library projects.
 
-The first thing we need to do is download the library projects.
+The first thing we need to do is retrieve the library projects.
 
-- Google Play Services (downloaded through the Android SDK Manager and extracted in sdk/extras/google/google_play_services)
-- [ActionBarSherlock](http://actionbarsherlock.com/) can be downloaded from its homepage.
+- Google Play Services 
+- [ActionBarSherlock](http://actionbarsherlock.com/) 
+
+Google Play Services can be downloaded using the android SDK Manager. Navigate to the Extras folder and select Google Play Services.
+
+![Android SDK Manager](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/android-sdk-manager.png)
+
+Google Play Services will be extracted in sdk/extras/google/google_play_services)
 
 When importing Library projects into your Eclipse workspace, it's safer to have them somewhere outside of the current workspace before importing them.
 Otherwise, you might run into the following error :
 
-[TODO: add screenshot here] 
+	Invalid project description.
+	  /Users/ddewaele/Projects/workspace-android/actionbarsherlock overlaps the location of another project: 'actionbarsherlock'
 
-We are going to add the library projects into our Eclipse workspace by importing them. Browse to the Google Play Services path in the SDK and import the project. Do the same for ActionBarSherlock.
+To workaround this problem, simply put the project(s) you want to import in a location outside of your current workspace, and while importing select the *Copy projects into workspce* option.
+
+![Import Android projects eclipse](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/import-android-project-eclipse.png)
+
+We are going to add the library projects into our Eclipse workspace by importing them. Browse to the Google Play Services path in the SDK and import the project. 
+Do the same for ActionBarSherlock.
 Once both projects compile in your workspace, you can start adding these library projects as dependencies to our project.
+
+![Library dependencies](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/library-dependencies.png)
 
 ### Adding the necessary permissions
 
-You need to make sure that the following properties are added to your manifest. (put them before the starting application tag) :
+In order to run Google Maps in your android application, you need to add a set of permissions to your applications manifest.
+
+You need to make sure that the following properties are added. (put them before the starting application tag) :
 
 	<!-- Specify the correct minSDK and targetSDK versions. -->
 	<uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17"/>
@@ -104,8 +126,8 @@ In order to add the map to our application we need to do 2 things.
 
 Adding the fragment to a layout is very simple. 
 
-The Google Play Services library provides a simple MapFragment (com.google.android.gms.maps.MapFragment) that can be used out of the box.
-Note that the MapFragment requires the native API Level 11 fragment implementation, so it's only available on devices with API level 11 and higher.
+The Google Play Services library provides a simple MapFragment (`com.google.android.gms.maps.MapFragment`) that can be used out of the box.
+Note that the `MapFragment` requires the native API Level 11 fragment implementation, so it's only available on devices with API level 11 and higher.
 Attempting to run the example below on devices with a lower API level will fail with the following error 
 
 	Caused by: java.lang.ClassNotFoundException: android.view.fragment in loader dalvik.system.PathClassLoader[/data/app/com.ecs.google.maps.v2.actionbarsherlock-2.apk]
@@ -202,7 +224,7 @@ And our FragmentActivity will look like this :
 		}
 	}
 
-Important note : Keep in mind that although the ```MapFragment``` can run in an ```Activity```, the ```SupportMapFragment``` cannot, and needs to run in a ```FragmentActivity```. 
+Important note : Keep in mind that although the `MapFragment` can run in an `Activity`, the `SupportMapFragment` cannot, and needs to run in a `FragmentActivity`. 
 
 Simply have your activity extend SupportFragment instead of Activity in order to resolve this. 
 
