@@ -2,6 +2,7 @@
 ### Introduction
 
 In this article, I'll show you some simple ways of dealing with Markers on your map. 
+
 [Markers][0] have finally become first class citizens in the Google Maps for Android v2 API. Gone are the days where you need to work with low-level overlays and overlay items to get a simple marker on the Map. 
 As of v2, we finally have `Marker` objects and an `addMarkerToMap` method on the map, so let's see what we can do with it...
 
@@ -10,10 +11,92 @@ But first we're going to take a little side-track.
 ### Adding some tabs to our application.
 
 The next 4 parts in this series will be included in a single Android demo application.
-I'm going to use a wonderful library from [Andreas Stütz](https://plus.google.com/117122118961369445953/posts) called [PagerSlidingTabStrip](https://github.com/astuetz/PagerSlidingTabStrip) that adds a nice set of tabs to the application.
+I'm going to use a wonderful library from [Andreas Stütz][1]called [PagerSlidingTabStrip][2]that adds a nice set of tabs to the application.
 Setting up the project is really easy. Go checkout the Github page and download the library and the sample project if you're interested in finding out more.
 
 
+
+The main layout of the application looks like this:
+
+	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		xmlns:app="http://schemas.android.com/apk/res-auto"
+		xmlns:tools="http://schemas.android.com/tools"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent" >
+	
+		<FrameLayout
+			android:id="@+id/fragmentContainer"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent" />
+	
+		<com.astuetz.viewpager.extensions.PagerSlidingTabStrip
+			android:id="@+id/tabs"
+			android:layout_width="match_parent"
+			android:layout_height="48dip"
+			android:background="@drawable/background_tabs" />
+	
+		<com.ecs.google.maps.v2.component.CustomViewPager
+			android:id="@+id/pager"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_below="@+id/tabs"
+			tools:context=".MainActivity" >
+		</com.ecs.google.maps.v2.component.CustomViewPager>
+	
+	</RelativeLayout>
+
+The actual activity code is also pretty straightforward 
+
+We have maintain a reference to 
+
+-our PagerSlidingTabStrip component (responsible for drawing the tabs)
+-our ViewPager component (responsible for hosting the pages)
+-our PagerAdapter (responsible for providing the ViewPager with the pages).
+
+We glue them together by setting the PagerAdapter on the ViewPager, and attaching the ViewPager to the PagerSlidingTabStrip component.
+
+	public class TabbedActivity extends SherlockFragmentActivity { 
+	
+		private PagerSlidingTabStrip tabs;
+		private ViewPager pager;
+		private MyPagerAdapter adapter;
+	
+		@Override
+		protected void onCreate(Bundle savedInstanceState) {
+			super.onCreate(savedInstanceState);
+			requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+			setContentView(R.layout.activity_tabs);
+	
+			tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+			pager = (ViewPager) findViewById(R.id.pager);
+			adapter = new MyPagerAdapter(getSupportFragmentManager());
+			
+			pager.setAdapter(adapter);
+			
+			final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
+					.getDisplayMetrics());
+			pager.setPageMargin(pageMargin);
+	
+			tabs.setViewPager(pager);
+	
+		}
+		
+The component gives us a nice look and feel as far as tabs are concerned, resembling the way the Google Play store does it. I highly recommend you taking a look at the project.
+
+### Screenshots
+
+#### Gingerbread
+
+![gingerbread-tabs](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/gingerbread-tabs.png)
+
+### ICS and Jelly Bean
+
+![jellybean-tabs](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/jellybean-tabs.png)
+
+The lauyout looks like this :
+
+		
+		
 ### Adding markers to the map
 
 Adding a marker to the map is very simple. The only thing you need to do is call the `addMarkerToMap` method on the googleMap.
@@ -187,5 +270,11 @@ Simply doing polyLine.getPoints().add(latLng) doesn't work.
 
 ## References
 
+-[Android Markers][0]: https://developers.google.com/maps/documentation/android/marker
+-[Andreas Stütz][1] - [PagerSlidingTabStrip][2]
+-[Maps Shortcuts: Android Maps Utility Library][3]
+
 [0]: https://developers.google.com/maps/documentation/android/marker
-[1]: http://www.youtube.com/watch?feature=player_embedded&v=nb2X9IjjZpM#!
+[1]: https://plus.google.com/117122118961369445953/posts
+[2]: https://github.com/astuetz/PagerSlidingTabStrip
+[3]: http://www.youtube.com/watch?feature=player_embedded&v=nb2X9IjjZpM#!
