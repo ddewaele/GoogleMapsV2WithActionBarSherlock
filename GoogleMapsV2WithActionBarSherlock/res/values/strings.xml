@@ -10,5 +10,9 @@
     <string name="pancamera">PanCamera</string>
     <string name="toggle_style">Toggle Style</string>
     <string name="directions_input">Directions Input</string>
+	<string name="from">From</string>
+	<string name="to">To</string>
+    <string name="load_directions">Load directions</string>
+    
 
 </resources>

@@ -17,7 +17,8 @@ import com.ecs.google.maps.v2.component.SherlockMapFragment;
 
 /**
  * 
- * If you want to support menus on the ABS, you need to extend SherlockMapFragment instead of SupportMapFragment.
+ * If you want to support menus on the ABS, you need to extend SherlockMapFragment 
+ * instead of SupportMapFragment.
  * 
  * @author ddewaele
  *

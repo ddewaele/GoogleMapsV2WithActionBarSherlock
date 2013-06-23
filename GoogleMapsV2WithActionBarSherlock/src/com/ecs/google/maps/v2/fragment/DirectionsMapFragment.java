@@ -295,10 +295,7 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 				
 			}
 			
-			public void stop() {
-				if (trackingMarker!=null) {
-					trackingMarker.remove();
-				}
+			public void stopAnimation() {
 				animating=false;
 				mHandler.removeCallbacks(animator);
 				
@@ -379,11 +376,14 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 				polyLine.setPoints(points);
 			}
 			
-			public void stopAnimation() {
-				animator.stop();
-			}
+//			public void stopAnimation() {
+//				animator.stop();
+//			}
 			
 			public void startAnimation(boolean showPolyLine,List<LatLng> latLngs) {
+				if (trackingMarker!=null) {
+					trackingMarker.remove();
+				}
 				this.animating = true;
 				this.latLngs=latLngs;
 				if (latLngs.size()>2) {

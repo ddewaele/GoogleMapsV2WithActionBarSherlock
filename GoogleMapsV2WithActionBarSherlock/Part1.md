@@ -182,7 +182,7 @@ This call is only available on API level 11 and up so you need to have your minS
 
 ### Running on lower API levels
 
-Google also provides a com.google.android.gms.maps.SupportMapFragment in Google Play services to be used with the Android Support package's backport of fragments. 
+Google also provides a SupportMapFramgment (`com.google.android.gms.maps.SupportMapFragment`) in Google Play services to be used with the Android Support package's backport of fragments. 
 In other words, the SupportMapFragment can be used on Android devices running API 10 and lower, as well as Android devices running 11 and higher. 
 
 In order to use the new Google Maps V2 API on older devices we need to do 2 things 
@@ -264,9 +264,10 @@ If you want to include a menu simply add this
 		  getSupportMenuInflater().inflate(R.menu.main_menu, menu);
 	      return true;
 	  } 
-	  
+	
+If you want to split the actionbar you'll need to add the following option to your activity in the applications manifest.	  
 
-			android:uiOptions="splitActionBarWhenNarrow"
+	android:uiOptions="splitActionBarWhenNarrow"
 			
 
 ### Older Android version
@@ -299,7 +300,6 @@ The application crashes with the following error :
 		... 11 more
 
 
-
 Notice the following in the manifest
 
     <application
@@ -321,6 +321,19 @@ This can be easily fixed by using the Theme.Sherlock in our application.
 ## Application screenshots
 
 ### Android 2.3.3
+
+#### Gingerbread simple map (without menu)
+![](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/gingerbread-simple-map.png)
+
+#### Gingerbread simple map (with menu)
+![](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/gingerbread-simple-map-with-menu.png)
+
+#### ICS/Jelly Bean simple map (without menu)
+![](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/jellybean-simple-map.png)
+
+#### ICS/Jelly Bean simple map (with menu)
+![](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/jellybean-simple-map-with-menu.png)
+
 
 ### Android 4.2.3
 
