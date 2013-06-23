@@ -328,14 +328,18 @@ This can be easily fixed by using the Theme.Sherlock in our application.
 #### Gingerbread simple map (with menu)
 ![](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/gingerbread-simple-map-with-menu.png)
 
+### Android 4.2.3
+
 #### ICS/Jelly Bean simple map (without menu)
 ![](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/jellybean-simple-map.png)
 
 #### ICS/Jelly Bean simple map (with menu)
+
+As you can see, on my Galaxy Nexus I don't have a hardware menu button, so as per Google guidelines, the menu overflow icon (3 dots is shown).
+
 ![](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/jellybean-simple-map-with-menu.png)
 
 
-### Android 4.2.3
 
         
         

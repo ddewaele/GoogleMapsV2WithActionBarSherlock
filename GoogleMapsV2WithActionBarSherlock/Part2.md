@@ -2,7 +2,7 @@
 ### Introduction
 
 In this article, I'll show you some simple ways of dealing with Markers on your map. 
-Markers have finally become first class citizens in the Google Maps for Android v2 API. Gone are the days where you need to work with low-level overlays and overlay items to get a simple marker on the Map. 
+[Markers][0] have finally become first class citizens in the Google Maps for Android v2 API. Gone are the days where you need to work with low-level overlays and overlay items to get a simple marker on the Map. 
 As of v2, we finally have `Marker` objects and an `addMarkerToMap` method on the map, so let's see what we can do with it...
 
 But first we're going to take a little side-track. 
@@ -187,4 +187,5 @@ Simply doing polyLine.getPoints().add(latLng) doesn't work.
 
 ## References
 
-http://www.youtube.com/watch?feature=player_embedded&v=nb2X9IjjZpM#!
+[0]: https://developers.google.com/maps/documentation/android/marker
+[1]: http://www.youtube.com/watch?feature=player_embedded&v=nb2X9IjjZpM#!
