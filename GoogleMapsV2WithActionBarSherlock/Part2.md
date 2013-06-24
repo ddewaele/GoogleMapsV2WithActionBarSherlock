@@ -49,9 +49,9 @@ The actual activity code is also pretty straightforward
 
 We have maintain a reference to 
 
--our PagerSlidingTabStrip component (responsible for drawing the tabs)
--our ViewPager component (responsible for hosting the pages)
--our PagerAdapter (responsible for providing the ViewPager with the pages).
+- our `PagerSlidingTabStrip` component (responsible for drawing the tabs)
+- our `ViewPager` component (responsible for hosting the pages)
+- our `PagerAdapter` (responsible for providing the ViewPager with the pages).
 
 We glue them together by setting the PagerAdapter on the ViewPager, and attaching the ViewPager to the PagerSlidingTabStrip component.
 
@@ -93,8 +93,8 @@ The component gives us a nice look and feel as far as tabs are concerned, resemb
 
 ![jellybean-tabs](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/jellybean-tabs.png)
 
-The lauyout looks like this :
-
+Note again that on Gingerbread (using a Samsung Galaxy S in this case), the overflow menu on the ActionBar is not shown because the device has a hardware menu button.
+On the Jelly Bean device (Samsung Galaxy Nexus) the overflow menu is shown.
 		
 		
 ### Adding markers to the map
@@ -161,6 +161,8 @@ There are 2 ways to highlight a marker
 
 ### Clicking on a marker
 
+The default behavior when clicking on a marker is for the camera to move to the map and an info window to appear.
+
 If you want to intercept the user clicking on a marker, you simply need to implement an `OnMarkerClickListener`
 
 	googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -172,24 +174,28 @@ If you want to intercept the user clicking on a marker, you simply need to imple
 			}
 	);
 
+- You return false if the default behavior should occur.
 - You return true if the listener has consumed the event and you don't want the default behavior to occur).
-- You return false if  the default behavior should occur).
 
-The default behavior is for the camera to move to the map and an info window to appear.
-	
-For example you could call the following method upon clicking the marker to change it's color.
+For example suppose you want to change the color of the marker when clicking on it, but you don't want to shown the infoWindow or move the camera.
+In that case you could call the following function in the `onMarkerCick(Marker marker)`.
 	
 	private void highLightMarker(Marker marker) {
-		marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-		marker.showInfoWindow();
-		this.selectedMarker=marker;
-	}	
+		
+		for (Marker foundMarker : this.markers) {
+			if (!foundMarker.equals(marker)) {
+				foundMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+			} else {
+				foundMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+				foundMarker.showInfoWindow();
+			}
+		}
 
-TODO: showInfoWindow not needed ? depending on return true|false in onMarkerClick
-			
+		this.selectedMarker=marker;
+	}
+
 If you want to programmatically highlight a marker, and you either have a reference to it, or you know the index of the marker, simply call the highlightMarker directly.
 It will maintain the proper state (selectedMarker) and do the highlighting.
-
 
 ### Some useful methods to have to manage your markers
 
@@ -245,19 +251,27 @@ It's important to position them on the proper level in your code. Placing them o
 
 ### Custom InfoWindows
 	
-### Polylines
 	
-	
-	private Polyline initializePolyLine() {
-		//polyLinePoints = new ArrayList<LatLng>();
-		rectOptions.add(this.markers.get(0).getPosition());
-		return googleMap.addPolyline(rectOptions);
-	}
+The default infoWindow looks like this :
 
-As we add markers to the map we need to update the polyLine.
+![default-marker-infowindow.png](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/default-marker-infowindow.png)
+
+### Polylines
+
+You can also draw polyLines onto the map. For that you need to create a `Polyline` and a `PolylineOptions`
+
+	private Polyline polyLine;
+	private PolylineOptions rectOptions = new PolylineOptions();
+
+
+You get a reference to a polyLine by adding it to the map by calling the `addPolyLine` method.
+
+	polyLine = googleMap.addPolyline(rectOptions);
+
+
+In our sample, as we add markers to the map we also update the polyLine so that the markers are connected. 
 We do this by adding our the newly dropped marker onto the polyLine.
-Notice how we need to call setPoints again. 
-Simply doing polyLine.getPoints().add(latLng) doesn't work.
+Notice how we need to call setPoints again. Simply doing polyLine.getPoints().add(latLng) doesn't work.
 	
 	/**
 	 * Add the marker to the polyline.

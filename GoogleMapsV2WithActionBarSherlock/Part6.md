@@ -9,7 +9,7 @@ The Google Directions API is a service that calculates directions between locati
 
 ##Communicating the the Google Services
   
-The [0][Google HTTP Client Library for Java] provides an easy and convenient way to interact with JSON based webservices like the ones we'll be discussing today
+The [Google HTTP Client Library for Java][0] provides an easy and convenient way to interact with JSON based webservices like the ones we'll be discussing today
 
 We start our code by creating an `HttpTransport` and a` JsonFactory`. The type of `HttpTransport` that is to be used depends on the version of the target Android environment.
 
@@ -50,7 +50,7 @@ This will give us an `HttpRequest` that we can execute by calling its `execute()
 
 	HttpResponse httpResponse = request.execute();
 	
-The cool thing about the [0][Google HTTP Client Library for Java] is that it can parse the response properly and take care of the JSON response handling for us. 
+The cool thing about the [Google HTTP Client Library for Java][0] is that it can parse the response properly and take care of the JSON response handling for us. 
 This releaves us from the burden of writing our own JSON handling.
 
 When we call the `parseAs()` method on the HttpResponse object, we can provide a java class that the library will use to convert the JSON response.
@@ -58,7 +58,7 @@ When we call the `parseAs()` method on the HttpResponse object, we can provide a
 
 	DirectionsResult directionsResult = httpResponse.parseAs(DirectionsResult.class);
 
-So how will the library to the mapping from JSON to our Java object ? Well, we can provide hints using the @Key annotation.
+So how will the library to the mapping from JSON to our Java object ? Well, we can provide hints using the `@Key` annotation.
 
 Remember the Directions API returned a JSON string like this (removed the legs info for abbrevity.
 
@@ -163,9 +163,16 @@ The full code can be found here.
 	}	
 
 
-References
+###References
+
+- [Google HTTP Client Library for Java][[0]
+- [The Google Directions API][1]
+- [The Google Places API][2]
+- [Google Maps Android API v2][3]
+
 
 [0]: http://code.google.com/p/google-http-java-client/ "Google HTTP Client Library for Java"
 [1]: https://developers.google.com/maps/documentation/directions/ "The Google Directions API"
 [2]: https://developers.google.com/places/ "The Google Places API"
-[3]: https://developers.google.com/maps/documentation/android/ "Google Maps Android API v2"
+[3]: https://developers.google.com/places/training/autocomplete-android "Adding Autocomplete to your Android App"
+[4]: https://developers.google.com/maps/documentation/android/ "Google Maps Android API v2"
