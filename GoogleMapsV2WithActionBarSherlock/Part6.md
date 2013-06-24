@@ -3,11 +3,17 @@
 In the following part I'll show you howto integrate with 2 popular Google APIs that you can use to enrich your Maps experience, the `Directions API` and the `Places API`.
 We're going to be using AsyncTask to perform the HTTP processing in the background off the main thread. For the actual HTTP communication we're going to be using the [0][Google HTTP Client Library for Java].
 
-##The Google Directions API
-The Google Directions API is a service that calculates directions between locations using an HTTP request.
+###The Google Directions API
+The Google Directions API is a service that calculates directions between locations using an HTTP request. We'll use it to draw a path (a polyline) between 2 points (origin and destination).
 
+###The Google Places API
+The Google Places API is a service that returns information about Places — defined within this API as establishments, geographic locations, or prominent points of interest — using HTTP requests. Place requests specify locations as latitude/longitude coordinates.
+We're going to be using a small part of the Google Places API, namely the Places Autocomplete API.
 
-##Communicating the the Google Services
+###[Places Autocomplete][5]
+The Google Places Autocomplete API is a web service that returns Place information based on text search terms, and, optionally, geographic bounds. The API can be used to provide autocomplete functionality for text-based geographic searches, by returning Places such as businesses, addresses, and points of interest as a user types.
+
+###Communicating the the Google Services
   
 The [Google HTTP Client Library for Java][0] provides an easy and convenient way to interact with JSON based webservices like the ones we'll be discussing today
 
@@ -165,14 +171,16 @@ The full code can be found here.
 
 ###References
 
-- [Google HTTP Client Library for Java][[0]
+- [Google HTTP Client Library for Java][0]
 - [The Google Directions API][1]
 - [The Google Places API][2]
-- [Google Maps Android API v2][3]
-
+- [Places Autocomplete][5]
+- [Adding Autocomplete to your Android App][3]
+- [Google Maps Android API v2][4]
 
 [0]: http://code.google.com/p/google-http-java-client/ "Google HTTP Client Library for Java"
 [1]: https://developers.google.com/maps/documentation/directions/ "The Google Directions API"
 [2]: https://developers.google.com/places/ "The Google Places API"
 [3]: https://developers.google.com/places/training/autocomplete-android "Adding Autocomplete to your Android App"
 [4]: https://developers.google.com/maps/documentation/android/ "Google Maps Android API v2"
+[5]: https://developers.google.com/places/documentation/autocomplete "Places Autocomplete"
