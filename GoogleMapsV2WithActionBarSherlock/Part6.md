@@ -134,11 +134,11 @@ It looks like this :
 
 The actual activity looks like this:
 
-![directions_input][https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/directions_input.png]
+![directions_input](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/directions_input.png)
 
 As the user is typing, he'll get the hints from the Google Places Autocompletion / AutoCompleteTextView:
 
-![google-places-autocomplete][https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/google-places-autocomplete.png]
+![google-places-autocomplete](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/google-places-autocomplete.png)
 		
 The grunt of the work happens in the `autocomplete` method. I've used a different approach for that one as I wanted to use the [Google HTTP Client Library for Java][0] to connect to the Google API and parse the results, as opposed to using a lower-level `HttpURLConnection` to make the HTTP connection, and parsing the JSON response using a `JSONObject`.
 
