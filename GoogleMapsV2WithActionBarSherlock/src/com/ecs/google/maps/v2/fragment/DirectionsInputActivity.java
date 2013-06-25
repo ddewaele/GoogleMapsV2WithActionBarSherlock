@@ -74,23 +74,6 @@ public class DirectionsInputActivity extends FragmentActivity {
 		
 	}
 
-	
-	  public static class PlacesResult {
-
-		    @Key("predictions")
-		    public List<Prediction> predictions;
-
-		  }
-
-	  public static class Prediction {
-		  @Key("description")
-		  public String description;
-		  
-		  @Key("id")
-		  public String id;
-		  
-	  }
-	
 	  private class PlacesAutoCompleteAdapter extends ArrayAdapter<String> implements Filterable {
 		    private ArrayList<String> resultList;
 		    
@@ -138,38 +121,54 @@ public class DirectionsInputActivity extends FragmentActivity {
 		    }
 		}	
 	  
-	  private static final String PLACES_API_BASE = "https://maps.googleapis.com/maps/api/place";
-	  private static final String TYPE_AUTOCOMPLETE = "/autocomplete";
-	  private static final String OUT_JSON = "/json";
+	  private static final String PLACES_AUTOCOMPLETE_API = "https://maps.googleapis.com/maps/api/place/autocomplete/json";
 	  
 	  private ArrayList<String> autocomplete(String input) {
-		    ArrayList<String> resultList = new ArrayList<String>();
+		    
+		  	ArrayList<String> resultList = new ArrayList<String>();
 		    
 		    try {
 		    
-   		 	HttpRequestFactory requestFactory = HTTP_TRANSPORT.createRequestFactory(new HttpRequestInitializer() {
-			 @Override
-		     public void initialize(HttpRequest request) {
-				 request.setParser(new JsonObjectParser(JSON_FACTORY));
-			 }
-		     });
-		    
-	    	 GenericUrl url = new GenericUrl(PLACES_API_BASE + TYPE_AUTOCOMPLETE + OUT_JSON);
-	    	 url.put("input", input);
-	    	 url.put("key", PLACES_API_KEY);
-	    	 url.put("sensor",false);
-   	 
-		    HttpRequest request = requestFactory.buildGetRequest(url);
-		    HttpResponse httpResponse = request.execute();
-		    PlacesResult directionsResult = httpResponse.parseAs(PlacesResult.class);
-
-		    List<Prediction> predictions = directionsResult.predictions;
-		    for (Prediction prediction : predictions) {
-		    	resultList.add(prediction.description);
-			}
+	   		 	HttpRequestFactory requestFactory = HTTP_TRANSPORT.createRequestFactory(new HttpRequestInitializer() {
+						 @Override
+					     public void initialize(HttpRequest request) {
+							 request.setParser(new JsonObjectParser(JSON_FACTORY));
+						 }
+				     }
+	   		 	);
+			    
+	   		 	GenericUrl url = new GenericUrl(PLACES_AUTOCOMPLETE_API);
+		    	url.put("input", input);
+		    	url.put("key", PLACES_API_KEY);
+		    	url.put("sensor",false);
+	   	 
+			    HttpRequest request = requestFactory.buildGetRequest(url);
+			    HttpResponse httpResponse = request.execute();
+			    PlacesResult directionsResult = httpResponse.parseAs(PlacesResult.class);
+	
+			    List<Prediction> predictions = directionsResult.predictions;
+			    for (Prediction prediction : predictions) {
+			    	resultList.add(prediction.description);
+				}
 		    } catch (Exception ex) {
 		    	ex.printStackTrace();
 		    }
 		    return resultList;
-		}	  
+		}	
+	  
+	  public static class PlacesResult {
+
+		    @Key("predictions")
+		    public List<Prediction> predictions;
+
+		  }
+
+	  public static class Prediction {
+		  @Key("description")
+		  public String description;
+		  
+		  @Key("id")
+		  public String id;
+		  
+	  }	  
 }

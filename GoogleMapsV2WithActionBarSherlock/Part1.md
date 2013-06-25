@@ -5,13 +5,13 @@
 In the first part of this tutorial I will show you can start using Google Maps Android API v2 in your Android application. 
 The goal is to create a skeleton project that 
 
--is capable of displaying a map using the new Google Map for Android API v2
--uses ActionBarsherlock.
--can run on older versions of Android (2.x and up).
+- is capable of displaying a map using the new Google Map for Android API v2
+- uses ActionBarsherlock.
+- can run on older versions of Android (2.x and up).
  
 ###Google Maps Android API v2
  
-The new Google Maps Android API v2 is a vast improvement over the original one and comes with many new features. 
+The new Google Maps Android API v2 ((available through Google Play Services)) is a vast improvement over the original one and comes with many new features. 
 Not only does it really stand out from a UI perspective but also on an API level is the new Maps v2 library a "delight" for both end-users and developers.
 
 Before the Google Maps Android API v2 was released, developers were forced to embed a `MapView` component in a special type of Activity called a `MapActivity`. 
@@ -233,7 +233,7 @@ If you attempt to run a SupportMapFragment inside an activity, you'll get the fo
 	Caused by: java.lang.ClassCastException: com.google.android.gms.maps.SupportMapFragment cannot be cast to android.app.Fragment
 
 
-### Adding the actionBar.
+### Adding the ActionBarSherlock.
 
 The point of this article was to show you how you can include the ActionBarSherlock in your app, so lets get started with that.
 
@@ -317,6 +317,20 @@ This can be easily fixed by using the Theme.Sherlock in our application.
         android:label="@string/app_name"
         android:theme="@style/Theme.Sherlock">        
         
+Or even better by specifying your application style in the styles.xml file
+
+	<style name="AppTheme" parent="Theme.Sherlock.Light"/>
+	
+And using it in your application manifest like this:
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme" >
+ 
+	
+	        
         
 ## Application screenshots
 

@@ -23,6 +23,7 @@ import com.ecs.google.maps.v2.actionbarsherlock.R;
 import com.ecs.google.maps.v2.component.SherlockMapFragment;
 import com.ecs.google.maps.v2.util.GoogleMapUtis;
 import com.ecs.google.maps.v2.util.ViewUtils;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
@@ -64,15 +65,24 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 	private GoogleMap googleMap;
 	private List<Marker> markers = new ArrayList<Marker>();
     
+    public static DirectionsMapFragment newInstance(int position,String title) {
+    	DirectionsMapFragment fragment = new DirectionsMapFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("position", position);
+        bundle.putString("title", title);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+    
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
 		handler.postDelayed(runner, random.nextInt(2000));
 		
 		View view = super.onCreateView(inflater, container, savedInstanceState);
-
 		googleMap = getMap();
-
+		googleMap.setMyLocationEnabled(true);
+		
 		ViewUtils.initializeMargin(getActivity(), view);
 
 		return view;
@@ -184,20 +194,13 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 	    		     });
 	    	 
 		    	 GenericUrl url = new GenericUrl("http://maps.googleapis.com/maps/api/directions/json");
-		    	 
-		    	 
 		    	 url.put("origin", origin);
 		    	 url.put("destination", destination);
 		    	 url.put("sensor",false);
 	    	 
-		    	 System.out.println("Building get request");
     		    HttpRequest request = requestFactory.buildGetRequest(url);
-    		    System.out.println("Executing get request");
     		    HttpResponse httpResponse = request.execute();
-    		    System.out.println("Got response");
     		    DirectionsResult directionsResult = httpResponse.parseAs(DirectionsResult.class);
-//    		    String parseAsString = httpResponse.parseAsString();
-//    		    FileUtils.writeToFile("directions.json", parseAsString, getActivity());
     		    
     		    String encodedPoints = directionsResult.routes.get(0).overviewPolyLine.points;
     		    latLngs = PolyUtil.decode(encodedPoints);
@@ -249,8 +252,6 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 		if (resultCode==DirectionsInputActivity.RESULT_CODE) {
 			String from = data.getExtras().getString("from");
 			String to = data.getExtras().getString("to");
-			System.out.println("from = " + from);
-			System.out.println("to = " + to);
 			new DirectionsFetcher(from,to).execute();
 		}
 	}
@@ -261,7 +262,7 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 	  public class Animator implements Runnable {
 			
 			private static final int ANIMATE_SPEEED = 1500;
-			private static final int ANIMATE_SPEEED_TURN = 1000;
+			private static final int ANIMATE_SPEEED_TURN = 1500;
 			private static final int BEARING_OFFSET = 20;
 
 			private final Interpolator interpolator = new LinearInterpolator();
@@ -315,11 +316,11 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 				LatLng markerPos = latLngs.get(0);
 				LatLng secondPos = latLngs.get(1);
 				
-				setupCameraPositionForMovement(markerPos, secondPos);
+				setInitialCameraPosition(markerPos, secondPos);
 				
 			}
 			
-			private void setupCameraPositionForMovement(LatLng markerPos,
+			private void setInitialCameraPosition(LatLng markerPos,
 					LatLng secondPos) {
 				
 				float bearing = GoogleMapUtis.bearingBetweenLatLngs(markerPos,secondPos);
@@ -327,13 +328,15 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 				trackingMarker = googleMap.addMarker(new MarkerOptions().position(markerPos)
 						 .title("title")
 						 .snippet("snippet"));
-
+				
+				float mapZoom = googleMap.getCameraPosition().zoom >=16 ? googleMap.getCameraPosition().zoom : 16;
+				
 				CameraPosition cameraPosition =
 						new CameraPosition.Builder()
 								.target(markerPos)
 								.bearing(bearing + BEARING_OFFSET)
 			                    .tilt(90)
-			                    .zoom(googleMap.getCameraPosition().zoom >=16 ? googleMap.getCameraPosition().zoom : 16)
+			                    .zoom(mapZoom)
 			                    .build();
 				
 				googleMap.animateCamera(
@@ -376,10 +379,6 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 				polyLine.setPoints(points);
 			}
 			
-//			public void stopAnimation() {
-//				animator.stop();
-//			}
-			
 			public void startAnimation(boolean showPolyLine,List<LatLng> latLngs) {
 				if (trackingMarker!=null) {
 					trackingMarker.remove();
@@ -403,6 +402,11 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 				long elapsed = SystemClock.uptimeMillis() - start;
 				double t = interpolator.getInterpolation((float)elapsed/ANIMATE_SPEEED);
 				LatLng intermediatePosition = SphericalUtil.interpolate(beginLatLng, endLatLng, t);
+				
+				Double mapZoomDouble = 18.5-( Math.abs((0.5- t))*5);
+				float mapZoom =  mapZoomDouble.floatValue();
+				
+				System.out.println("mapZoom = " + mapZoom);
 				
 				trackingMarker.setPosition(intermediatePosition);
 				
@@ -432,21 +436,20 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 						
 						CameraPosition cameraPosition =
 								new CameraPosition.Builder()
-										.target(endLatLng) // changed this...
-					                    .bearing(heading.floatValue() + BEARING_OFFSET) // .bearing(bearingL  + BEARING_OFFSET)
+										.target(endLatLng)
+					                    .bearing(heading.floatValue() /*+ BEARING_OFFSET*/) // .bearing(bearingL  + BEARING_OFFSET)
 					                    .tilt(tilt)
 					                    .zoom(googleMap.getCameraPosition().zoom)
 					                    .build();
 
-						
 						googleMap.animateCamera(
 								CameraUpdateFactory.newCameraPosition(cameraPosition), 
 								ANIMATE_SPEEED_TURN,
 								null
 						);
 						
-						start = SystemClock.uptimeMillis();
-						mHandler.postDelayed(animator, 16);					
+						//start = SystemClock.uptimeMillis();
+						mHandler.postDelayed(this, 16);					
 						
 					} else {
 						currentIndex++;

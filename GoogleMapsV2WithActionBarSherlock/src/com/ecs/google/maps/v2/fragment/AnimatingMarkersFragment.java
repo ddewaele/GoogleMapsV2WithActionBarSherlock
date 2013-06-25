@@ -22,6 +22,7 @@ import com.actionbarsherlock.view.MenuInflater;
 import com.actionbarsherlock.view.MenuItem;
 import com.ecs.google.maps.v2.actionbarsherlock.R;
 import com.ecs.google.maps.v2.component.SherlockMapFragment;
+import com.ecs.google.maps.v2.tooltip.IconizedWindowAdapter;
 import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -46,17 +47,11 @@ public class AnimatingMarkersFragment extends SherlockMapFragment {
 	
 	// Keep track of our markers
 	private List<Marker> markers = new ArrayList<Marker>();
-	
-	private GoogleMap googleMap;
 
+	private GoogleMap googleMap;
 	private final Handler mHandler = new Handler();
 	
-	
-
-	
 	private Marker selectedMarker;
-	
-	
 
 	Handler handler = new Handler();
 	Random random = new Random();
@@ -66,6 +61,15 @@ public class AnimatingMarkersFragment extends SherlockMapFragment {
             setHasOptionsMenu(true);
         }
     };
+
+    public static AnimatingMarkersFragment newInstance(int position,String title) {
+    	AnimatingMarkersFragment fragment = new AnimatingMarkersFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("position", position);
+        bundle.putString("title", title);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
     
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -86,6 +90,8 @@ public class AnimatingMarkersFragment extends SherlockMapFragment {
 			}
 
 		});
+		
+		googleMap.setInfoWindowAdapter(new IconizedWindowAdapter(getActivity().getLayoutInflater()));
 		
 		initializeMargin(root);
 		   		
@@ -487,6 +493,7 @@ public class AnimatingMarkersFragment extends SherlockMapFragment {
 	private float bearingBetweenLatLngs(LatLng begin,LatLng end) {
 		Location beginL= convertLatLngToLocation(begin);
 		Location endL= convertLatLngToLocation(end);
+		
 		return beginL.bearingTo(endL);
 	}
 

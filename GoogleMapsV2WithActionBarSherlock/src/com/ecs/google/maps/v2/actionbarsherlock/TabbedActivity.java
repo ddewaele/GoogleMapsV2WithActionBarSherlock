@@ -13,6 +13,7 @@ import com.astuetz.viewpager.extensions.PagerSlidingTabStrip;
 import com.ecs.google.maps.v2.fragment.AnimatingMarkersFragment;
 import com.ecs.google.maps.v2.fragment.DirectionsMapFragment;
 import com.ecs.google.maps.v2.fragment.PlayingWithMarkersFragment;
+import com.ecs.google.maps.v2.fragment.SimpleAnimatingMarkersFragment;
 import com.ecs.google.maps.v2.fragment.SimpleCardFragment;
 import com.ecs.google.maps.v2.fragment.SupportMapFragmentWithMenu;
 
@@ -42,26 +43,6 @@ public class TabbedActivity extends SherlockFragmentActivity {
 
 	}
 
-//	@Override
-//	public boolean onCreateOptionsMenu(Menu menu) {
-//		getSupportMenuInflater().inflate(R.menu.main, menu);
-//		return true;
-//	}
-	
-	@Override
-	protected void onSaveInstanceState(Bundle outState) {
-		super.onSaveInstanceState(outState);
-		outState.putString("currentColor", "currentColor");
-	}
-
-	@Override
-	protected void onRestoreInstanceState(Bundle savedInstanceState) {
-		super.onRestoreInstanceState(savedInstanceState);
-		String currentColor = savedInstanceState.getString("currentColor");
-		//changeColor(currentColor);
-		System.out.println("Found color " + currentColor);
-	}	
-
 	private static String makeFragmentName(int viewId, int index) {
 	     return "android:switcher:" + viewId + ":" + index;
 	}
@@ -70,6 +51,7 @@ public class TabbedActivity extends SherlockFragmentActivity {
 
 		private final String[] TITLES = { 	"Simple Map", 
 											"Playing With Markers", 
+											"Simple Animation",
 											"Animation",
 											"Directions API", 
 											"Maps Utils Library"};
@@ -94,51 +76,32 @@ public class TabbedActivity extends SherlockFragmentActivity {
 				
 				Fragment fragmentByTag = getSupportFragmentManager().findFragmentByTag(makeFragmentName(R.id.pager, position));
 				System.out.println("*********** fragmentByTag = " + fragmentByTag);
+				return SupportMapFragmentWithMenu.newInstance(position, "Fragment with menu");
 				
-				SupportMapFragmentWithMenu f = new SupportMapFragmentWithMenu();
-				//SimpleSupportMapFragment f = new SimpleSupportMapFragment();
-				//MapFragment f = new MapFragment();
-				Bundle b = new Bundle();
-				b.putInt("position", position);
-				f.setArguments(b);
-				return f;
 			} else if (position==1) {
 				
 				Fragment fragmentByTag = getSupportFragmentManager().findFragmentByTag(makeFragmentName(R.id.pager, position));
 				System.out.println("*********** fragmentByTag = " + fragmentByTag);
-
+				return PlayingWithMarkersFragment.newInstance(position,"Playing with markers");
 				
-				PlayingWithMarkersFragment f = new PlayingWithMarkersFragment();
-				//f.setHasOptionsMenu(true); // Important ... do not forget this.
-				Bundle b = new Bundle();
-				b.putInt("position", position);
-				f.setArguments(b);
-				return f;
-			} else if (position==2) {
+			}  else if (position==2) {
 				
 				Fragment fragmentByTag = getSupportFragmentManager().findFragmentByTag(makeFragmentName(R.id.pager, position));
 				System.out.println("*********** fragmentByTag = " + fragmentByTag);
-
+				return SimpleAnimatingMarkersFragment.newInstance(position,"Simple Animations");
 				
-				AnimatingMarkersFragment f = new AnimatingMarkersFragment();
-				//f.setHasOptionsMenu(true); // Important ... do not forget this.
-				Bundle b = new Bundle();
-				b.putInt("position", position);
-				f.setArguments(b);
-				return f;
 			} else if (position==3) {
 				
 				Fragment fragmentByTag = getSupportFragmentManager().findFragmentByTag(makeFragmentName(R.id.pager, position));
 				System.out.println("*********** fragmentByTag = " + fragmentByTag);
-
+				return AnimatingMarkersFragment.newInstance(position,"Animating Markers");
 				
-				DirectionsMapFragment f = new DirectionsMapFragment();
-				//f.setHasOptionsMenu(true); // Important ... do not forget this.
-				Bundle b = new Bundle();
-				b.putInt("position", position);
-				f.setArguments(b);
-				return f;
+			} else if (position==4) {
 
+				Fragment fragmentByTag = getSupportFragmentManager().findFragmentByTag(makeFragmentName(R.id.pager, position));
+				System.out.println("*********** fragmentByTag = " + fragmentByTag);
+				return DirectionsMapFragment.newInstance(position,"Directions");
+				
 			} else {
 				return SimpleCardFragment.newInstance(position);
 			}

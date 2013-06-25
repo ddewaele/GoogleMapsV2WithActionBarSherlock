@@ -241,7 +241,7 @@ Highlight the marker by marker.
 ### Re-usability
 
 A lot of the stuff we've discussed here are generic / re-usable	that you want to have at your disposal when dealing with maps. 
-It's important to position them on the proper level in your code. Placing them on the MapFragment is an ideal way to promote re-use as
+It's important to position them on the proper level in your code. Placing them on the `MapFragment` is an ideal way to promote re-use as
 
 - the methods are tightly coupled with the map
 - the methods are eligable for re-used
@@ -253,7 +253,7 @@ The default infoWindow looks like this :
 
 ![default-marker-infowindow.png](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/default-marker-infowindow.png)
 
-You can customize the infoWindow 
+You can customize the infoWindow by specifying your own layout file:
 
 
 	<?xml version="1.0" encoding="utf-8"?>
@@ -291,6 +291,48 @@ You can customize the infoWindow
 		</LinearLayout>
 	
 	</LinearLayout>
+	
+	
+You also need to create an `InfoWindowAdapter` that will inflate the layout. 
+The layout contains an icon and we set the title and the snippet on the layout as well, passing it in via the marker.
+
+	import android.view.LayoutInflater;
+	import android.view.View;
+	import android.widget.TextView;
+	
+	import com.ecs.google.maps.v2.actionbarsherlock.R;
+	import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+	import com.google.android.gms.maps.model.Marker;
+	
+	public class IconizedWindowAdapter implements InfoWindowAdapter {
+	  LayoutInflater inflater=null;
+	
+	  public IconizedWindowAdapter(LayoutInflater inflater) {
+		this.inflater=inflater;
+	  }
+	
+	  @Override
+	  public View getInfoWindow(Marker marker) {
+		return(null);
+	  }
+	
+	  @Override
+	  public View getInfoContents(Marker marker) {
+		View popup=inflater.inflate(R.layout.marker_tooltip, null);
+	
+		TextView tv=(TextView)popup.findViewById(R.id.title);
+	
+		tv.setText(marker.getTitle());
+		tv=(TextView)popup.findViewById(R.id.snippet);
+		tv.setText(marker.getSnippet());
+	
+		return(popup);
+	  }
+	}	
+	
+And finally we need to set the `InfoWindowAdapter` on the map
+
+	googleMap.setInfoWindowAdapter(new IconizedWindowAdapter(getActivity().getLayoutInflater()));	
 
 ### Polylines
 

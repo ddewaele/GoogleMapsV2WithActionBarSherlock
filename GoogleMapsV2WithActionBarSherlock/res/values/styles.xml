@@ -12,19 +12,13 @@
         -->
     </style>
 
+    
     <style name="AppTheme" parent="Theme.Sherlock.Light">
+    <!--    
         <item name="android:windowBackground">@color/background_window</item>
-        <!-- 
         <item name="android:actionBarStyle">@style/ActionBarStyle</item>
-        -->
+	-->        
     </style>
 
-    <!-- 
-     parent="@android:style/Widget.Holo.Light.ActionBar.Solid.Inverse"
-     -->
-    <style name="ActionBarStyle">
-        <item name="android:icon">@drawable/ic_launcher</item>
-        <item name="android:background">#FF666666</item>
-    </style>    
 
 </resources>

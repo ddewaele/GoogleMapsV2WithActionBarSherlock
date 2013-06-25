@@ -58,6 +58,14 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
         }
     };
 	
+    public static PlayingWithMarkersFragment newInstance(int position,String title) {
+    	PlayingWithMarkersFragment fragment = new PlayingWithMarkersFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("position", position);
+        bundle.putString("title", title);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
     
     /**
      * 
@@ -82,18 +90,32 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 		//View view = inflater.inflate(R.id.fragmentContainer, container,false);
 
 		googleMap = getMap();
-		polyLine = initializePolyLine();
+		
+		if (googleMap!=null) {
+		
+			polyLine = initializePolyLine();
+	
+			googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+	
+				@Override
+				public void onMapClick(LatLng latLng) {
+					addMarkerToMap(latLng);
+					updatePolyLine(latLng);
+				}
+	
+			});
+			
+			googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+				
+				@Override
+				public boolean onMarkerClick(Marker marker) {
+					highLightMarker(marker);
+					return true;
+				}
+			});
 
-		googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
-
-			@Override
-			public void onMapClick(LatLng latLng) {
-				addMarkerToMap(latLng);
-				updatePolyLine(latLng);
-			}
-
-		});
-
+		}
+		
 		ViewUtils.initializeMargin(getActivity(), view);
 
 		return view;
@@ -207,7 +229,6 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 	
 	private void highLightMarker(Marker marker) {
 		
-		/*
 		for (Marker foundMarker : this.markers) {
 			if (!foundMarker.equals(marker)) {
 				foundMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
@@ -216,9 +237,6 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 				foundMarker.showInfoWindow();
 			}
 		}
-		*/
-		marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-		marker.showInfoWindow();
 
 		this.selectedMarker=marker;
 	}	
@@ -231,8 +249,6 @@ public class PlayingWithMarkersFragment extends SherlockMapFragment {
 	
 	private Polyline initializePolyLine() {
 		rectOptions = new PolylineOptions();
-		//polyLinePoints = new ArrayList<LatLng>();
-		//rectOptions.add(this.markers.get(0).getPosition());
 		return googleMap.addPolyline(rectOptions);
 	}
 	

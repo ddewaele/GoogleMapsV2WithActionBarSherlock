@@ -34,6 +34,16 @@ public class SupportMapFragmentWithMenu extends SherlockMapFragment {
         }
     };
     
+    public static SupportMapFragmentWithMenu newInstance(int position,String title) {
+    	SupportMapFragmentWithMenu fragment = new SupportMapFragmentWithMenu();
+        Bundle bundle = new Bundle();
+        bundle.putInt("position", position);
+        bundle.putString("title", title);
+        fragment.setArguments(bundle);
+        return fragment;
+    }
+    
+    
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
