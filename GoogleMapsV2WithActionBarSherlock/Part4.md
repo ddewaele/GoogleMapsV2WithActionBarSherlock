@@ -26,7 +26,29 @@ https://developers.google.com/maps/documentation/android/v1/reference/com/google
 	
 ##### Android Maps v2
 
-TODO	
+You can activate show a `My Location` button on the map very easily like this:
+
+	googleMap.setMyLocationEnabled(true);
+	
+The `My Location` button appears in the top right corner of the screen only when the My Location layer is enabled.
+When a user clicks the button, the camera animates to focus on the user's current location if the user's location is currently known.
+
+		LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+		Criteria criteria = new Criteria();
+
+		String provider = locationManager.getBestProvider(criteria, true);
+
+		Location location = locationManager.getLastKnownLocation(provider);
+
+		if(location!=null){
+			double latitude = location.getLatitude();
+			double longitude = location.getLongitude();
+
+			LatLng latLng = new LatLng(latitude, longitude);
+
+			googleMap.addMarker(new MarkerOptions().position(myPosition).title("Start"));
+		}
 
 #### Highlighting markers
 

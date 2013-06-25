@@ -32,9 +32,14 @@ In order to animate the camera, we first need to define where it should be point
 							.zoom(googleMap.getCameraPosition().zoom)
 							.build();
 
-the CameraPosition allows us to define the target (where does the camera needs to go), the bearing (where should the camera be pointing at), the tilt and the zoom.
+the CameraPosition allows us to define 
 
-If you can opt not to specify any values for them, the Camera will keep the current bearing, tilt and zoom while doing its movement.
+- the target (where does the camera needs to go)
+- the bearing (where should the camera be pointing at)
+- the tilt
+- the zoom.
+
+If you don't specify a values for either one of them, the Camera will keep the current bearing, tilt and zoom while doing its movement.
 
 We'll just hardcode these values for now...
 
@@ -60,9 +65,12 @@ The callback provides us hooks when the animation finishes.
 - onFinish is called after the animation has completely finished
 - onCancel is called when the animation has been stopped for some reason (call to stopAnimation or another animation started).
 
-Note that you cannot have 2 animations running at the same time. When the second animation starts, the first animation will be stopped abrublty, and you'll get a notification through the onCancel callback.
+Note that you cannot have 2 animations running at the same time. 
+As soon as the second animation is scheduled (through an animateCamera call), the first animation will be stopped abrublty, and you'll get a notification through the onCancel callback.
 
 ### Setting the correct bearing
+
+We're going to try and improve our animation by taking into account the bearing...
 
 The resulting animation will look like this. As you can see, we're "bouncing" from one marker to another. The first thing we'll fix is the bearing of the camera.
 
@@ -143,42 +151,88 @@ We'll also update our polyline with the new marker position, creating a trailing
 
 As long as the interpolator returns a value below 1, we'll continue this process.
 
-Once it hits 1, we know we've reached the end-position for this animation.				
-			
+Once it hits 1 or above, we know we've reached the end-marker for this animation, and we'll start with the next animation.
 
-06-19 07:36:57.728: I/System.out(4153): Move to next marker.... current = 7 and size = 55
-06-19 07:36:57.728: I/System.out(4153): Found elapsed = 1 t = 6.666666595265269E-4
-06-19 07:36:57.830: I/System.out(4153): Found elapsed = 103 t = 0.06866666674613953
-06-19 07:36:57.916: I/System.out(4153): Found elapsed = 187 t = 0.12466666847467422
-06-19 07:36:58.002: I/System.out(4153): Found elapsed = 271 t = 0.18066667020320892
-06-19 07:36:58.088: I/System.out(4153): Found elapsed = 360 t = 0.23999999463558197
-06-19 07:36:58.174: I/System.out(4153): Found elapsed = 441 t = 0.2939999997615814
-06-19 07:36:58.252: I/System.out(4153): Found elapsed = 523 t = 0.3486666679382324
-06-19 07:36:58.338: I/System.out(4153): Found elapsed = 608 t = 0.40533334016799927
-06-19 07:36:58.416: I/System.out(4153): Found elapsed = 689 t = 0.4593333303928375
-06-19 07:36:58.502: I/System.out(4153): Found elapsed = 777 t = 0.5180000066757202
-06-19 07:36:58.549: I/System.out(4153): Found elapsed = 825 t = 0.550000011920929
-06-19 07:36:58.572: I/System.out(4153): Found elapsed = 846 t = 0.5640000104904175
-06-19 07:36:58.595: I/System.out(4153): Found elapsed = 868 t = 0.5786666870117188
-06-19 07:36:58.627: I/System.out(4153): Found elapsed = 895 t = 0.596666693687439
-06-19 07:36:58.674: I/System.out(4153): Found elapsed = 949 t = 0.6326666474342346
-06-19 07:36:58.697: I/System.out(4153): Found elapsed = 973 t = 0.6486666798591614
-06-19 07:36:58.720: I/System.out(4153): Found elapsed = 997 t = 0.6646666526794434
-06-19 07:36:58.744: I/System.out(4153): Found elapsed = 1020 t = 0.6800000071525574
-06-19 07:36:58.775: I/System.out(4153): Found elapsed = 1046 t = 0.6973333358764648
-06-19 07:36:58.799: I/System.out(4153): Found elapsed = 1072 t = 0.7146666646003723
-06-19 07:36:58.822: I/System.out(4153): Found elapsed = 1096 t = 0.7306666374206543
-06-19 07:36:58.845: I/System.out(4153): Found elapsed = 1120 t = 0.746666669845581
-06-19 07:36:58.869: I/System.out(4153): Found elapsed = 1141 t = 0.7606666684150696
-06-19 07:36:58.986: I/System.out(4153): Found elapsed = 1262 t = 0.8413333296775818
-06-19 07:36:59.025: I/System.out(4153): Found elapsed = 1298 t = 0.8653333187103271
-06-19 07:36:59.064: I/System.out(4153): Found elapsed = 1336 t = 0.890666663646698
-06-19 07:36:59.088: I/System.out(4153): Found elapsed = 1361 t = 0.9073333144187927
-06-19 07:36:59.111: I/System.out(4153): Found elapsed = 1384 t = 0.9226666688919067
-06-19 07:36:59.142: I/System.out(4153): Found elapsed = 1417 t = 0.9446666836738586
-06-19 07:36:59.174: I/System.out(4153): Found elapsed = 1443 t = 0.9620000123977661
-06-19 07:36:59.197: I/System.out(4153): Found elapsed = 1466 t = 0.9773333072662354
-06-19 07:36:59.213: I/System.out(4153): Found elapsed = 1488 t = 0.9919999837875366
-06-19 07:36:59.236: I/System.out(4153): Found elapsed = 1511 t = 1.0073332786560059
-06-19 07:36:59.260: I/System.out(4153): Move to next marker.... current = 8 and size = 55
+	06-19 07:36:57.728: I/System.out(4153): Move to next marker.... current = 7 and size = 55
+	06-19 07:36:57.728: I/System.out(4153): Found elapsed = 1 t = 6.666666595265269E-4
+	06-19 07:36:57.830: I/System.out(4153): Found elapsed = 103 t = 0.06866666674613953
+	06-19 07:36:57.916: I/System.out(4153): Found elapsed = 187 t = 0.12466666847467422
+	06-19 07:36:58.002: I/System.out(4153): Found elapsed = 271 t = 0.18066667020320892
+	06-19 07:36:58.088: I/System.out(4153): Found elapsed = 360 t = 0.23999999463558197
+	06-19 07:36:58.174: I/System.out(4153): Found elapsed = 441 t = 0.2939999997615814
+	06-19 07:36:58.252: I/System.out(4153): Found elapsed = 523 t = 0.3486666679382324
+	06-19 07:36:58.338: I/System.out(4153): Found elapsed = 608 t = 0.40533334016799927
+	06-19 07:36:58.416: I/System.out(4153): Found elapsed = 689 t = 0.4593333303928375
+	06-19 07:36:58.502: I/System.out(4153): Found elapsed = 777 t = 0.5180000066757202
+	06-19 07:36:58.549: I/System.out(4153): Found elapsed = 825 t = 0.550000011920929
+	06-19 07:36:58.572: I/System.out(4153): Found elapsed = 846 t = 0.5640000104904175
+	06-19 07:36:58.595: I/System.out(4153): Found elapsed = 868 t = 0.5786666870117188
+	06-19 07:36:58.627: I/System.out(4153): Found elapsed = 895 t = 0.596666693687439
+	06-19 07:36:58.674: I/System.out(4153): Found elapsed = 949 t = 0.6326666474342346
+	06-19 07:36:58.697: I/System.out(4153): Found elapsed = 973 t = 0.6486666798591614
+	06-19 07:36:58.720: I/System.out(4153): Found elapsed = 997 t = 0.6646666526794434
+	06-19 07:36:58.744: I/System.out(4153): Found elapsed = 1020 t = 0.6800000071525574
+	06-19 07:36:58.775: I/System.out(4153): Found elapsed = 1046 t = 0.6973333358764648
+	06-19 07:36:58.799: I/System.out(4153): Found elapsed = 1072 t = 0.7146666646003723
+	06-19 07:36:58.822: I/System.out(4153): Found elapsed = 1096 t = 0.7306666374206543
+	06-19 07:36:58.845: I/System.out(4153): Found elapsed = 1120 t = 0.746666669845581
+	06-19 07:36:58.869: I/System.out(4153): Found elapsed = 1141 t = 0.7606666684150696
+	06-19 07:36:58.986: I/System.out(4153): Found elapsed = 1262 t = 0.8413333296775818
+	06-19 07:36:59.025: I/System.out(4153): Found elapsed = 1298 t = 0.8653333187103271
+	06-19 07:36:59.064: I/System.out(4153): Found elapsed = 1336 t = 0.890666663646698
+	06-19 07:36:59.088: I/System.out(4153): Found elapsed = 1361 t = 0.9073333144187927
+	06-19 07:36:59.111: I/System.out(4153): Found elapsed = 1384 t = 0.9226666688919067
+	06-19 07:36:59.142: I/System.out(4153): Found elapsed = 1417 t = 0.9446666836738586
+	06-19 07:36:59.174: I/System.out(4153): Found elapsed = 1443 t = 0.9620000123977661
+	06-19 07:36:59.197: I/System.out(4153): Found elapsed = 1466 t = 0.9773333072662354
+	06-19 07:36:59.213: I/System.out(4153): Found elapsed = 1488 t = 0.9919999837875366
+	06-19 07:36:59.236: I/System.out(4153): Found elapsed = 1511 t = 1.0073332786560059
+	06-19 07:36:59.260: I/System.out(4153): Move to next marker.... current = 8 and size = 55
+
+Animating between the subsequent markers involves the following code:
+
+
+	currentIndex++;
+	highLightMarker(currentIndex);
+						
+	beginLatLng = getBeginLatLng();
+	endLatLng = getEndLatLng();
+
+	start = SystemClock.uptimeMillis();
+
+	Double heading = SphericalUtil.computeHeading(beginLatLng, endLatLng);
+
+As you can see we update our currentIndex, highlight the marker, specify a new start time, and calculate a new heading for the animation.
+
+	CameraPosition cameraPosition =
+		new CameraPosition.Builder()
+		.target(endLatLng)
+		.bearing(heading.floatValue()) 
+		.tilt(tilt)
+		.zoom(googleMap.getCameraPosition().zoom)
+		.build();
+
+We transition to the next animation by first pointing our camera in the right direction.
+
+	googleMap.animateCamera(
+			CameraUpdateFactory.newCameraPosition(cameraPosition), 
+			ANIMATE_SPEEED_TURN,
+			null
+	);
+	
+And finally start the animation again.
+
+	mHandler.postDelayed(animator, 16);					
+
+						
+	
+
+
+###References
+
+[1]: http://www.geomidpoint.com/destination/
+[2]: http://grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/2.2_r1.1/android/location/Location.java#Location.computeDistanceAndBearing%28double%2Cdouble%2Cdouble%2Cdouble%2Cfloat%5B%5D%29
+[3]: http://williams.best.vwh.net/avform.htm#Intro "Aviation Formulary V1.46"
+
+
 

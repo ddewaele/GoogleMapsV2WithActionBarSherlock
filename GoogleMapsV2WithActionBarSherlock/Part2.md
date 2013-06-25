@@ -11,10 +11,8 @@ But first we're going to take a little side-track.
 ### Adding some tabs to our application.
 
 The next 4 parts in this series will be included in a single Android demo application.
-I'm going to use a wonderful library from [Andreas Stütz][1]called [PagerSlidingTabStrip][2]that adds a nice set of tabs to the application.
+I'm going to use a wonderful library from [Andreas Stütz][1] called [PagerSlidingTabStrip][2] that adds a nice set of tabs to the application.
 Setting up the project is really easy. Go checkout the Github page and download the library and the sample project if you're interested in finding out more.
-
-
 
 The main layout of the application looks like this:
 
