@@ -322,9 +322,10 @@ Notice how we need to call setPoints again. Simply doing polyLine.getPoints().ad
 
 ## References
 
--[Android Markers][0]: https://developers.google.com/maps/documentation/android/marker
--[Andreas Stütz][1] - [PagerSlidingTabStrip][2]
--[Maps Shortcuts: Android Maps Utility Library][3]
+- [Android Markers][0]
+- [Andreas Stütz][1] 
+- [PagerSlidingTabStrip][2]
+- [Maps Shortcuts: Android Maps Utility Library][3]
 
 [0]: https://developers.google.com/maps/documentation/android/marker
 [1]: https://plus.google.com/117122118961369445953/posts
