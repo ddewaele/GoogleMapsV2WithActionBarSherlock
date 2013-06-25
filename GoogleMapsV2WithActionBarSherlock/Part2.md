@@ -250,11 +250,49 @@ It's important to position them on the proper level in your code. Placing them o
 - the MapFragment containing these methods can be easily embedded in another layout
 
 ### Custom InfoWindows
-	
-	
+		
 The default infoWindow looks like this :
 
 ![default-marker-infowindow.png](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/default-marker-infowindow.png)
+
+You can customize the infoWindow 
+
+
+	<?xml version="1.0" encoding="utf-8"?>
+	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:orientation="horizontal">
+	
+		<ImageView
+			android:id="@+id/icon"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_gravity="center_vertical"
+			android:padding="2dip"
+			android:src="@drawable/ic_launcher"
+			android:contentDescription="@string/icon"/>
+	
+		<LinearLayout
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:orientation="vertical">
+	
+			<TextView
+				android:id="@+id/title"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="25sp"
+				android:textStyle="bold"/>
+	
+			<TextView
+				android:id="@+id/snippet"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:textSize="15sp"/>
+		</LinearLayout>
+	
+	</LinearLayout>
 
 ### Polylines
 

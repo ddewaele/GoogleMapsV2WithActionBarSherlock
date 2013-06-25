@@ -20,6 +20,8 @@ We'll start our animation by simply animating to the different markers on the ma
 
 We've already placed a couple of markers on the map to get us started.
 
+
+
 In order to animate the camera, we first need to define where it should be pointed at. We do this by building a new CameraPosition object.
 
 	CameraPosition cameraPosition =
