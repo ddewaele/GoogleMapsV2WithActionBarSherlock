@@ -1,6 +1,6 @@
 ---
 layout: index
-title: Google APIs on your map : Directions and Places
+title: Document Center3
 ---
 
 ##Using Google APIs on your map : Directions and Places
