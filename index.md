@@ -6,7 +6,7 @@ title: Document Center
 ## Google Map Markers
 ### Introduction
 
-In this article, I'll show you some simple ways of dealing with Markers on your map. 
+In this article I'll show you some simple ways of dealing with Markers on your map. 
 
 
 - [Goto part1][part1]
