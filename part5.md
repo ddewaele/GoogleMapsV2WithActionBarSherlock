@@ -1,6 +1,6 @@
 ---
 layout: index
-title: Document Center
+title: googleMapsUtils
 ---
 Using the library is simple.
 

@@ -1,6 +1,6 @@
 ---
 layout: index
-title: Document Center
+title: Animating the map
 ---
 ##Part 3 : Animating the map
 

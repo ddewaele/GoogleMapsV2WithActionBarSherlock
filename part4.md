@@ -1,6 +1,6 @@
 ---
 layout: index
-title: Document Center
+title: Migrating from v1 maps to v2 maps.
 ---
 ### Part 4 : Migrating from v1 maps to v2 maps.
 
