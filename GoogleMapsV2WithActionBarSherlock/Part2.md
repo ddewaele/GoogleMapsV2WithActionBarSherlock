@@ -255,7 +255,7 @@ The default infoWindow looks like this :
 
 You can customize the infoWindow by specifying your own layout file:
 
-
+{% highlight java %}
 	<?xml version="1.0" encoding="utf-8"?>
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent"
@@ -291,7 +291,7 @@ You can customize the infoWindow by specifying your own layout file:
 		</LinearLayout>
 	
 	</LinearLayout>
-	
+{% endhighlight %}
 	
 You also need to create an `InfoWindowAdapter` that will inflate the layout. 
 The layout contains an icon and we set the title and the snippet on the layout as well, passing it in via the marker.
