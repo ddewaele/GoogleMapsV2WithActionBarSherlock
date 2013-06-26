@@ -8,6 +8,10 @@ title: Document Center
 
 In this article, I'll show you some simple ways of dealing with Markers on your map. 
 
+
+- [Goto part1][part1]
+- [Goto part2][part2]
+
 [Markers][0] have finally become first class citizens in the Google Maps for Android v2 API. Gone are the days where you need to work with low-level overlays and overlay items to get a simple marker on the Map. 
 As of v2, we finally have `Marker` objects and an `addMarkerToMap` method on the map, so let's see what we can do with it...
 
@@ -21,33 +25,34 @@ Setting up the project is really easy. Go checkout the Github page and download 
 
 The main layout of the application looks like this:
 
-	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		xmlns:app="http://schemas.android.com/apk/res-auto"
-		xmlns:tools="http://schemas.android.com/tools"
-		android:layout_width="match_parent"
-		android:layout_height="match_parent" >
-	
-		<FrameLayout
-			android:id="@+id/fragmentContainer"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent" />
-	
-		<com.astuetz.viewpager.extensions.PagerSlidingTabStrip
-			android:id="@+id/tabs"
-			android:layout_width="match_parent"
-			android:layout_height="48dip"
-			android:background="@drawable/background_tabs" />
-	
-		<com.ecs.google.maps.v2.component.CustomViewPager
-			android:id="@+id/pager"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_below="@+id/tabs"
-			tools:context=".MainActivity" >
-		</com.ecs.google.maps.v2.component.CustomViewPager>
-	
-	</RelativeLayout>
+{% highlight xml %}
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" >
 
+	<FrameLayout
+		android:id="@+id/fragmentContainer"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent" />
+
+	<com.astuetz.viewpager.extensions.PagerSlidingTabStrip
+		android:id="@+id/tabs"
+		android:layout_width="match_parent"
+		android:layout_height="48dip"
+		android:background="@drawable/background_tabs" />
+
+	<com.ecs.google.maps.v2.component.CustomViewPager
+		android:id="@+id/pager"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/tabs"
+		tools:context=".MainActivity" >
+	</com.ecs.google.maps.v2.component.CustomViewPager>
+
+</RelativeLayout>
+{% endhighlight %}
 The actual activity code is also pretty straightforward 
 
 We have maintain a reference to 
@@ -58,32 +63,34 @@ We have maintain a reference to
 
 We glue them together by setting the PagerAdapter on the ViewPager, and attaching the ViewPager to the PagerSlidingTabStrip component.
 
-	public class TabbedActivity extends SherlockFragmentActivity { 
-	
-		private PagerSlidingTabStrip tabs;
-		private ViewPager pager;
-		private MyPagerAdapter adapter;
-	
-		@Override
-		protected void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-			requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-			setContentView(R.layout.activity_tabs);
-	
-			tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-			pager = (ViewPager) findViewById(R.id.pager);
-			adapter = new MyPagerAdapter(getSupportFragmentManager());
-			
-			pager.setAdapter(adapter);
-			
-			final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
-					.getDisplayMetrics());
-			pager.setPageMargin(pageMargin);
-	
-			tabs.setViewPager(pager);
-	
-		}
+{% highlight java %}
+public class TabbedActivity extends SherlockFragmentActivity { 
+
+	private PagerSlidingTabStrip tabs;
+	private ViewPager pager;
+	private MyPagerAdapter adapter;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setContentView(R.layout.activity_tabs);
+
+		tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+		pager = (ViewPager) findViewById(R.id.pager);
+		adapter = new MyPagerAdapter(getSupportFragmentManager());
 		
+		pager.setAdapter(adapter);
+		
+		final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
+				.getDisplayMetrics());
+		pager.setPageMargin(pageMargin);
+
+		tabs.setViewPager(pager);
+
+	}
+{% endhighlight %}
+
 The component gives us a nice look and feel as far as tabs are concerned, resembling the way the Google Play store does it. I highly recommend you taking a look at the project.
 
 ### Screenshots
@@ -104,15 +111,15 @@ On the Jelly Bean device (Samsung Galaxy Nexus) the overflow menu is shown.
 
 Adding a marker to the map is very simple. The only thing you need to do is call the `addMarkerToMap` method on the googleMap.
 Notice how we also store the returned marker from the addMarkerToMap method in an ArrayList here in order to do some Marker management later on.
+{% highlight java %}
+public void addMarkerToMap(LatLng latLng) {
+	Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
+			 .title("title")
+			 .snippet("snippet"));
+	markers.add(marker);
 
-	public void addMarkerToMap(LatLng latLng) {
-		Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
-				 .title("title")
-				 .snippet("snippet"));
-		markers.add(marker);
-
-	}
-	
+}
+{% endhighlight %}
 A title and snippet can be provided to be displayed on the `InfoWindow` when selecting the marker.
 
 ###  Marker management
@@ -377,3 +384,7 @@ Notice how we need to call setPoints again. Simply doing polyLine.getPoints().ad
 [2]: https://github.com/astuetz/PagerSlidingTabStrip
 [3]: http://www.youtube.com/watch?feature=player_embedded&v=nb2X9IjjZpM#!
 
+[part1]: /part1 "This is part1"
+[part2]: /part2 "This is part2"
+
+[Markers][0]
