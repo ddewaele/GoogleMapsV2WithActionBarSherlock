@@ -1,4 +1,5 @@
 ---
+layout: index
 title: Document Center
 ---
 
