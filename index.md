@@ -3,7 +3,7 @@ layout: index
 title: Document Center
 ---
 
-## Markers
+## Google Map Markers
 ### Introduction
 
 In this article, I'll show you some simple ways of dealing with Markers on your map. 
