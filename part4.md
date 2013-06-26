@@ -2,6 +2,7 @@
 layout: index
 title: Migrating from v1 maps to v2 maps.
 ---
+
 ### Part 4 : Migrating from v1 maps to v2 maps.
 
 When moving to v2 of the Maps API for Android, you'll immediately notice that this is a completely new API with very little regard to backwards compatibility ( = a good thing in this case). 
