@@ -384,7 +384,7 @@ Notice how we need to call setPoints again. Simply doing polyLine.getPoints().ad
 [2]: https://github.com/astuetz/PagerSlidingTabStrip
 [3]: http://www.youtube.com/watch?feature=player_embedded&v=nb2X9IjjZpM#!
 
-[part1]: /part1 "This is part1"
-[part2]: /part2 "This is part2"
+[part1]: ./part1 "This is part1"
+[part2]: ./part2 "This is part2"
 
 [Markers][0]
