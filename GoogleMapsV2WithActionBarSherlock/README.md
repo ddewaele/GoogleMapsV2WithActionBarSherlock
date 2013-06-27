@@ -1,3 +1,7 @@
+---
+layout: index
+title: Index
+---
 This sample application is part of a 3-part tutorial covering
 
 ####[Part 1 : Setting up the Maps component with ActionBarSherlock](docs/part1.md)
