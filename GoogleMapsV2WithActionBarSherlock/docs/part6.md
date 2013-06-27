@@ -1,3 +1,8 @@
+---
+layout: index
+title: Document Center3
+---
+
 ##Using Google APIs on your map : Directions and Places
 
 In the following part I'll show you howto integrate with 2 popular Google APIs that you can use to enrich your Maps experience, the `Directions API` and the `Places API`.

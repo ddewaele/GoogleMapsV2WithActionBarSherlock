@@ -1,3 +1,8 @@
+---
+layout: index
+title: Setting up the project
+---
+
 ##Part 1 : Setting up the project.
 
 ###Introduction

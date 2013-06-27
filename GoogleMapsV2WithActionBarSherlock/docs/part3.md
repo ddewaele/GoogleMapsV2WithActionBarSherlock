@@ -1,3 +1,8 @@
+---
+layout: index
+title: Animating the map
+---
+
 ##Part 3 : Animating the map
 
 In the previous sections we've seen how to setup your map applications, how to move around the map with the camera, and how to add markers and lines to the map.

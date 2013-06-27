@@ -1,3 +1,8 @@
+---
+layout: index
+title: Migrating from v1 maps to v2 maps.
+---
+
 ### Part 4 : Migrating from v1 maps to v2 maps.
 
 When moving to v2 of the Maps API for Android, you'll immediately notice that this is a completely new API with very little regard to backwards compatibility ( = a good thing in this case). 
@@ -208,73 +213,3 @@ TODO : use tabs in the app to show the different tutorial sections
 TODO : incorporate programmatic VS user moves.
 TODO : write something on the map
 TODO : add something about mock location testing (https://github.com/paulhoux/Android-MockProviderGPS/blob/master/src/nl/cowlumbus/android/mockgps/MockGpsProviderActivity.java)
-
-<uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" /> 
-http://pedroassuncao.com/2009/11/android-location-provider-mock/
-https://github.com/paulhoux/Android-MockProviderGPS.git
-
-http://ballardhack.wordpress.com/2010/09/23/location-gps-and-automated-testing-on-android
-
-Snippet for mock
-
-	public class MockLocationUtil {
-	public static final String PROVIDER NAME = "testProvider";
-	  public static void publishMockLocation(double latitude, double longitude, Context ctx) {
-	    LocationManager mLocationManager = (LocationManager) ctx.getSystemService(Service.LOCATION_SERVICE);
-	    for (String prov : mLocationManager.getAllProviders()) {
-	      Log.w(TAG, prov);
-	    }
-	    if (mLocationManager.getProvider(PROVIDER_NAME) != null) {
-	      Log.w(TAG, "Removing provider " + PROVIDER_NAME);
-	      mLocationManager.removeTestProvider(PROVIDER_NAME);
-	    }
-	    for (String prov : mLocationManager.getAllProviders()) {
-	      Log.w(TAG, prov);
-	    }
-	 
-	    if (mLocationManager.getProvider(PROVIDER_NAME) == null) {
-	      Log.w(TAG, "Adding provider " + PROVIDER_NAME + " again");
-	      mLocationManager.addTestProvider(PROVIDER_NAME, "requiresNetwork" == "", "requiresSatellite" == "",
-	          "requiresCell" == "", "hasMonetaryCost" == "", "supportsAltitude" == "", "supportsSpeed" == "",
-	          "supportsBearing" == "", android.location.Criteria.POWER_LOW, android.location.Criteria.ACCURACY_FINE);
-	    }
-	    for (String prov : mLocationManager.getAllProviders()) {
-	      Log.w(TAG, prov);
-	    }
-	 
-	    Location newLocation = new Location(PROVIDER_NAME);
-	 
-	    newLocation.setLatitude(latitude);
-	    newLocation.setLongitude(longitude);
-	    newLocation.setTime(System.currentTimeMillis());
-	    newLocation.setAccuracy(25);
-	 
-	    mLocationManager.setTestProviderEnabled(PROVIDER_NAME, true);
-	 
-	    mLocationManager.setTestProviderStatus(PROVIDER_NAME, LocationProvider.AVAILABLE, null, System.currentTimeMillis());
-	 
-	    mLocationManager.requestLocationUpdates(PROVIDER_NAME, 0, 0, new MockLocationListener());
-	 
-	    mLocationManager.setTestProviderLocation(PROVIDER_NAME, newLocation);
-	    Log.w(TAG, "published location: " + newLocation);
-	 
-	    Log.w(TAG, "LastKnownLocation of "+PROVIDER_NAME+" is: "+mLocationManager.getLastKnownLocation(PROVIDER_NAME));
-	  }
-	 
-	public Location getLastKnownLocationInApplication(Context ctx) {
-	Location testLoc;
-	LocationManager lm = (LocationManager) ctx.getSystemService(Context.LOCATION_SERVICE);
-	 
-	if (lm.getAllProviders().contains(PROVIDER_NAME)) {
-	      testLoc = lm.getLastKnownLocation(PROVIDER_NAME);
-	      Log.d(TAG, "TestLocation: " + testLoc);
-	    }
-	 
-	Location realLoc = lm.getLastKnownLocation();
-	 
-	if(testLoc != null) {
-	  return testLoc;
-	} else {
-	  return realLoc;
-	}
-	}

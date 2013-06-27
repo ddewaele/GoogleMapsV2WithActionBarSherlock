@@ -1,3 +1,8 @@
+---
+layout: index
+title: googleMapsUtils
+---
+
 Using the library is simple.
 
 Clone it from github like this

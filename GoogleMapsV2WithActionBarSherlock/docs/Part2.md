@@ -1,3 +1,8 @@
+---
+layout: index
+title: Markers
+---
+
 ## Markers
 ### Introduction
 
@@ -16,6 +21,7 @@ Setting up the project is really easy. Go checkout the Github page and download 
 
 The main layout of the application looks like this:
 
+{% highlight java %}
 	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		xmlns:app="http://schemas.android.com/apk/res-auto"
 		xmlns:tools="http://schemas.android.com/tools"
@@ -42,7 +48,7 @@ The main layout of the application looks like this:
 		</com.ecs.google.maps.v2.component.CustomViewPager>
 	
 	</RelativeLayout>
-
+{% endhighlight %}
 The actual activity code is also pretty straightforward 
 
 We have maintain a reference to 
@@ -255,7 +261,7 @@ The default infoWindow looks like this :
 
 You can customize the infoWindow by specifying your own layout file:
 
-{% highlight java %}
+
 	<?xml version="1.0" encoding="utf-8"?>
 	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
 		android:layout_width="fill_parent"
@@ -291,7 +297,7 @@ You can customize the infoWindow by specifying your own layout file:
 		</LinearLayout>
 	
 	</LinearLayout>
-{% endhighlight %}
+	
 	
 You also need to create an `InfoWindowAdapter` that will inflate the layout. 
 The layout contains an icon and we set the title and the snippet on the layout as well, passing it in via the marker.
