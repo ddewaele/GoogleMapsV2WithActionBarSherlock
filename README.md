@@ -1,9 +1,45 @@
-#Introduction
+##Introduction
 
-This is a skeleton project for using Google Maps v2 on Android with ActionBarSherlock 4.3.1
+This repository contains a number of projects that will help you get up to speed with Google Maps v2 on Android with ActionBarSherlock 4.3.1
 
+It contains the following folders
 
-#Beware of duplicate jars....
+- GoogleMapsV2WithActionBarSherlock (the complete sample application)
+- actionbarsherlock (The ActionBar we all love, put here for your convenience.)
+- google-play-services_lib (The Google Play Services lib, put here for your convenience.)
+
+##Tutorial
+
+The tutorial docs can be found in the docs folder of this project. It contains 6 parts
+
+This sample application is part of a 3-part tutorial covering
+
+####[Part 1 : Setting up the Maps component with ActionBarSherlock](GoogleMapsV2WithActionBarSherlock/docs/Part1.md)
+- Setup a skeleton project
+- Add the ActionBarSherlock and GooglePlayServices libs
+	
+####[Part 2 : Drawing on the Map : Markers and polylines.](GoogleMapsV2WithActionBarSherlock/docs/Part2.md)
+- Adding markers
+- Highlighting markers
+- Removing markers
+	
+####[#Part 3 : Animating the Map : Markers and polylines.](GoogleMapsV2WithActionBarSherlock/docs/Part3.md)
+- Animate through a set of markers on the map
+	
+####[#Part 4 : Part 4 : Migrating from v1 maps to v2 maps.](GoogleMapsV2WithActionBarSherlock/docs/Part4.md)
+- Some tips and tricks for migrating your old v1 apps to v2.
+- A rundown of all the changes.
+
+####[#Part 5 : Using the android-maps-utils.](Part5.md)
+- Using the Android Map Utils library (to be completed).
+	
+####[#Part 6 : Using Google APIs : Directions and Places API.](GoogleMapsV2WithActionBarSherlock/docs/Part6.md)
+- Use Google Places Autocomplete API
+- Use Google Directions API
+- Putting everything together.
+	
+	
+##Beware of duplicate jars.... (verify this)
 
 When creating a new project, the wizard will see 2 support JARs (one provided by ActionBarSherlock and one provided by your project).
 
