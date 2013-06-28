@@ -22,25 +22,31 @@ The tutorial docs can be found in the docs folder of this project. It contains 6
 This sample application is part of a 3-part tutorial covering
 
 ####[Part 1 : Setting up the Maps component with ActionBarSherlock](./part1)
+
 - Setup a skeleton project
 - Add the ActionBarSherlock and GooglePlayServices libs
 	
 ####[Part 2 : Drawing on the Map : Markers and polylines.](./part2)
+
 - Adding markers
 - Highlighting markers
 - Removing markers
 
 ####[Part 3 : Animating the Map : Markers and polylines.](./part3)
+
 - Animate through a set of markers on the map
 	
 ####[Part 4 : Migrating from v1 maps to v2 maps.](./part4)
+
 - Some tips and tricks for migrating your old v1 apps to v2.
 - A rundown of all the changes.
 
 ####[Part 5 : Using the android-maps-utils.](./part5)
+
 - Using the Android Map Utils library (to be completed).
 	
 ####[Part 6 : Using Google APIs : Directions and Places API.](./part6)
+
 - Use Google Places Autocomplete API
 - Use Google Directions API
 - Putting everything together.
