@@ -1,13 +1,13 @@
-package com.example.googlemapsv2skeleton;
-
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+package com.example.googlemaps.v2.skeleton.api8;
 
 import android.os.Bundle;
-import android.app.Activity;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 
-public class MainActivity extends Activity {
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
+
+public class MainActivity extends FragmentActivity {
 
 	private GoogleMap googleMap;
 
@@ -15,9 +15,10 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		MapFragment mapFragment = (com.google.android.gms.maps.MapFragment) getFragmentManager().findFragmentById(R.id.map);
+		
+		SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
 		googleMap = mapFragment.getMap();
-		googleMap.setMyLocationEnabled(true);	
+		googleMap.setMyLocationEnabled(true);		
 	}
 
 	@Override
