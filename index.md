@@ -17,9 +17,7 @@ It contains the following folders
 
 ##Tutorial
 
-The tutorial docs can be found in the docs folder of this project. It contains 6 parts
-
-This sample application is part of a 3-part tutorial covering
+The tutorial guides can be found in the docs folder of this project. The sample application is part of a 6-part tutorial covering
 
 [Part 1 : Setting up the Maps component with ActionBarSherlock](./part1)
 
