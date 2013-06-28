@@ -30,31 +30,32 @@ The tutorial guides can be found in the docs folder of this project. The sample 
 - Adding markers
 - Highlighting markers
 - Removing markers
-- [More](./part1)
+- [More](./part2)
 
 **Part 3 : Animating the Map**
 
 - Animate through a set of markers on the map
-- [More](./part1)
+- [More](./part3)
 
 **Part 4 : Migrating from v1 maps to v2 maps**
 
 - Some tips and tricks for migrating your old v1 apps to v2
 - A rundown of all the changes
-- [More](./part1)
+- [More](./part4)
 
 **Part 5 : Using the android-maps-utils**
 
 - Using the Android Map Utils library
 - Using the Android Map Utils library
-- [More](./part1)
+- [More](./part5)
 
 **Part 6 : Using Google APIs - Directions and Places API**
 
 - Use Google Places Autocomplete API
 - Use Google Directions API
 - Putting everything together
-- [More](./part1)
+- [More](./part6)
+
 
 
 
