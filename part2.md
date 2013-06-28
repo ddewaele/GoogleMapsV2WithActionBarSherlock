@@ -21,33 +21,33 @@ Setting up the project is really easy. Go checkout the Github page and download 
 
 The main layout of the application looks like this:
 
-{% highlight java %}
-	<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-		xmlns:app="http://schemas.android.com/apk/res-auto"
-		xmlns:tools="http://schemas.android.com/tools"
+{% highlight xml %}
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent" >
+
+	<FrameLayout
+		android:id="@+id/fragmentContainer"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent" />
+
+	<com.astuetz.viewpager.extensions.PagerSlidingTabStrip
+		android:id="@+id/tabs"
 		android:layout_width="match_parent"
-		android:layout_height="match_parent" >
-	
-		<FrameLayout
-			android:id="@+id/fragmentContainer"
-			android:layout_width="fill_parent"
-			android:layout_height="fill_parent" />
-	
-		<com.astuetz.viewpager.extensions.PagerSlidingTabStrip
-			android:id="@+id/tabs"
-			android:layout_width="match_parent"
-			android:layout_height="48dip"
-			android:background="@drawable/background_tabs" />
-	
-		<com.ecs.google.maps.v2.component.CustomViewPager
-			android:id="@+id/pager"
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:layout_below="@+id/tabs"
-			tools:context=".MainActivity" >
-		</com.ecs.google.maps.v2.component.CustomViewPager>
-	
-	</RelativeLayout>
+		android:layout_height="48dip"
+		android:background="@drawable/background_tabs" />
+
+	<com.ecs.google.maps.v2.component.CustomViewPager
+		android:id="@+id/pager"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_below="@+id/tabs"
+		tools:context=".MainActivity" >
+	</com.ecs.google.maps.v2.component.CustomViewPager>
+
+</RelativeLayout>
 {% endhighlight %}
 The actual activity code is also pretty straightforward 
 
@@ -59,32 +59,33 @@ We have maintain a reference to
 
 We glue them together by setting the PagerAdapter on the ViewPager, and attaching the ViewPager to the PagerSlidingTabStrip component.
 
-	public class TabbedActivity extends SherlockFragmentActivity { 
-	
-		private PagerSlidingTabStrip tabs;
-		private ViewPager pager;
-		private MyPagerAdapter adapter;
-	
-		@Override
-		protected void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-			requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
-			setContentView(R.layout.activity_tabs);
-	
-			tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-			pager = (ViewPager) findViewById(R.id.pager);
-			adapter = new MyPagerAdapter(getSupportFragmentManager());
-			
-			pager.setAdapter(adapter);
-			
-			final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
-					.getDisplayMetrics());
-			pager.setPageMargin(pageMargin);
-	
-			tabs.setViewPager(pager);
-	
-		}
+{% highlight java %}
+public class TabbedActivity extends SherlockFragmentActivity { 
+
+	private PagerSlidingTabStrip tabs;
+	private ViewPager pager;
+	private MyPagerAdapter adapter;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setContentView(R.layout.activity_tabs);
+
+		tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+		pager = (ViewPager) findViewById(R.id.pager);
+		adapter = new MyPagerAdapter(getSupportFragmentManager());
 		
+		pager.setAdapter(adapter);
+		
+		final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
+				.getDisplayMetrics());
+		pager.setPageMargin(pageMargin);
+
+		tabs.setViewPager(pager);
+
+	}
+{% endhighlight %}		
 The component gives us a nice look and feel as far as tabs are concerned, resembling the way the Google Play store does it. I highly recommend you taking a look at the project.
 
 ### Screenshots
@@ -106,14 +107,15 @@ On the Jelly Bean device (Samsung Galaxy Nexus) the overflow menu is shown.
 Adding a marker to the map is very simple. The only thing you need to do is call the `addMarkerToMap` method on the googleMap.
 Notice how we also store the returned marker from the addMarkerToMap method in an ArrayList here in order to do some Marker management later on.
 
-	public void addMarkerToMap(LatLng latLng) {
-		Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
-				 .title("title")
-				 .snippet("snippet"));
-		markers.add(marker);
+{% highlight java %}
+public void addMarkerToMap(LatLng latLng) {
+	Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
+			 .title("title")
+			 .snippet("snippet"));
+	markers.add(marker);
 
-	}
-	
+}
+{% endhighlight %}	
 A title and snippet can be provided to be displayed on the `InfoWindow` when selecting the marker.
 
 ###  Marker management
@@ -125,15 +127,17 @@ track of the markers being used on your app, so that you can refer to them in an
 It comes in handy when you want to interact with markers without going through the standard callbacks of the googleMap.
 
 When you have a marker somewhere on the map and you didn't store the resulting marker in a list, the only way to access the marker again is by clicking on it, and using the marker argument in the callback.
-	
-	googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 
-				@Override
-				public boolean onMarkerClick(Marker marker) {
-					return false;
-				}
+{% highlight java %}	
+googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
+			@Override
+			public boolean onMarkerClick(Marker marker) {
+				return false;
 			}
-	);
+		}
+);
+{% endhighlight %}	
 
 If you wan to print all the markers on the map, programmatically highlight a specific marker, or jump from one marker to another you cannot do it unless you have some way of referencing these markers.
 By keeping the track of the markers in an external list we can add some flexibility regarding the way we can interact with these markers.
@@ -145,11 +149,12 @@ Suppose you have a use-case where a user can select a marker, and pull up a menu
 The action to delete the marker needs to know what marker should be deleted, so it needs to rely on an instance variable for that.
 
 Our method to remove the selected marker would look like this:
-
-	public void removeSelectedMarker() {
-		this.markers.remove(this.selectedMarker);
-		this.selectedMarker.remove();
-	}
+{% highlight java %}
+public void removeSelectedMarker() {
+	this.markers.remove(this.selectedMarker);
+	this.selectedMarker.remove();
+}
+{% endhighlight %}	
 
 As we have a reference to the selected marker, it's simply a matter of removing it from our internal list and removing it from the map.
 Keep in mind that it's your responsibility to make sure the internal list is kept in sync with whatever is shown on the map.
@@ -169,34 +174,38 @@ The default behavior when clicking on a marker is for the camera to move to the 
 
 If you want to intercept the user clicking on a marker, you simply need to implement an `OnMarkerClickListener`
 
-	googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+{% highlight java %}
+googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
 
-				@Override
-				public boolean onMarkerClick(Marker marker) {
-					return false;
-				}
+			@Override
+			public boolean onMarkerClick(Marker marker) {
+				return false;
 			}
-	);
+		}
+);
+{% endhighlight %}	
 
 - You return false if the default behavior should occur.
 - You return true if the listener has consumed the event and you don't want the default behavior to occur).
 
 For example suppose you want to change the color of the marker when clicking on it, but you don't want to shown the infoWindow or move the camera.
 In that case you could call the following function in the `onMarkerCick(Marker marker)`.
-	
-	private void highLightMarker(Marker marker) {
-		
-		for (Marker foundMarker : this.markers) {
-			if (!foundMarker.equals(marker)) {
-				foundMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-			} else {
-				foundMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-				foundMarker.showInfoWindow();
-			}
-		}
 
-		this.selectedMarker=marker;
+{% highlight java %}	
+private void highLightMarker(Marker marker) {
+	
+	for (Marker foundMarker : this.markers) {
+		if (!foundMarker.equals(marker)) {
+			foundMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+		} else {
+			foundMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+			foundMarker.showInfoWindow();
+		}
 	}
+
+	this.selectedMarker=marker;
+}
+{% endhighlight %}	
 
 If you want to programmatically highlight a marker, and you either have a reference to it, or you know the index of the marker, simply call the highlightMarker directly.
 It will maintain the proper state (selectedMarker) and do the highlighting.
@@ -208,41 +217,51 @@ The following generic methods can be placed on the MapFragment so that you can n
 
 Adds a marker to the map.
 
-	public void addMarkerToMap(LatLng latLng) {
-		Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
-				 .title("title")
-				 .snippet("snippet"));
-		markers.add(marker);
+{% highlight java %}
+public void addMarkerToMap(LatLng latLng) {
+	Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
+			 .title("title")
+			 .snippet("snippet"));
+	markers.add(marker);
 
-	}
-	
+}
+{% endhighlight %}	
+
 Clears all markers from the map.
 
-	public void clearMarkers() {
-		googleMap.clear();
-    	markers.clear();		
-	}
+{% highlight java %}
+public void clearMarkers() {
+	googleMap.clear();
+	markers.clear();		
+}
+{% endhighlight %}	
 
 Remove the currently selected marker.
 
-	public void removeSelectedMarker() {
-		this.markers.remove(this.selectedMarker);
-		this.selectedMarker.remove();
-	}	
+{% highlight java %}
+public void removeSelectedMarker() {
+	this.markers.remove(this.selectedMarker);
+	this.selectedMarker.remove();
+}	
+{% endhighlight %}	
 
 Highlight the marker by index.
 
-	private void highLightMarker(int index) {
-		highLightMarker(markers.get(index));
-	}
+{% highlight java %}
+private void highLightMarker(int index) {
+	highLightMarker(markers.get(index));
+}
+{% endhighlight %}	
 
 Highlight the marker by marker.
 
-	private void highLightMarker(Marker marker) {
-		marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-		marker.showInfoWindow();
-		this.selectedMarker=marker;
-	}	
+{% highlight java %}
+private void highLightMarker(Marker marker) {
+	marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+	marker.showInfoWindow();
+	this.selectedMarker=marker;
+}
+{% endhighlight %}	
 	
 ### Re-usability
 
@@ -262,109 +281,118 @@ The default infoWindow looks like this :
 You can customize the infoWindow by specifying your own layout file:
 
 
-	<?xml version="1.0" encoding="utf-8"?>
-	<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+{% highlight xml %}
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content"
+	android:orientation="horizontal">
+
+	<ImageView
+		android:id="@+id/icon"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_gravity="center_vertical"
+		android:padding="2dip"
+		android:src="@drawable/ic_launcher"
+		android:contentDescription="@string/icon"/>
+
+	<LinearLayout
 		android:layout_width="fill_parent"
 		android:layout_height="wrap_content"
-		android:orientation="horizontal">
-	
-		<ImageView
-			android:id="@+id/icon"
+		android:orientation="vertical">
+
+		<TextView
+			android:id="@+id/title"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:layout_gravity="center_vertical"
-			android:padding="2dip"
-			android:src="@drawable/ic_launcher"
-			android:contentDescription="@string/icon"/>
-	
-		<LinearLayout
-			android:layout_width="fill_parent"
+			android:textSize="25sp"
+			android:textStyle="bold"/>
+
+		<TextView
+			android:id="@+id/snippet"
+			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:orientation="vertical">
-	
-			<TextView
-				android:id="@+id/title"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textSize="25sp"
-				android:textStyle="bold"/>
-	
-			<TextView
-				android:id="@+id/snippet"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"
-				android:textSize="15sp"/>
-		</LinearLayout>
-	
+			android:textSize="15sp"/>
 	</LinearLayout>
-	
+
+</LinearLayout>
+{% endhighlight %}		
 	
 You also need to create an `InfoWindowAdapter` that will inflate the layout. 
 The layout contains an icon and we set the title and the snippet on the layout as well, passing it in via the marker.
 
-	import android.view.LayoutInflater;
-	import android.view.View;
-	import android.widget.TextView;
-	
-	import com.ecs.google.maps.v2.actionbarsherlock.R;
-	import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
-	import com.google.android.gms.maps.model.Marker;
-	
-	public class IconizedWindowAdapter implements InfoWindowAdapter {
-	  LayoutInflater inflater=null;
-	
-	  public IconizedWindowAdapter(LayoutInflater inflater) {
-		this.inflater=inflater;
-	  }
-	
-	  @Override
-	  public View getInfoWindow(Marker marker) {
-		return(null);
-	  }
-	
-	  @Override
-	  public View getInfoContents(Marker marker) {
-		View popup=inflater.inflate(R.layout.marker_tooltip, null);
-	
-		TextView tv=(TextView)popup.findViewById(R.id.title);
-	
-		tv.setText(marker.getTitle());
-		tv=(TextView)popup.findViewById(R.id.snippet);
-		tv.setText(marker.getSnippet());
-	
-		return(popup);
-	  }
-	}	
-	
+{% highlight java %}
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+
+import com.ecs.google.maps.v2.actionbarsherlock.R;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+import com.google.android.gms.maps.model.Marker;
+
+public class IconizedWindowAdapter implements InfoWindowAdapter {
+  LayoutInflater inflater=null;
+
+  public IconizedWindowAdapter(LayoutInflater inflater) {
+	this.inflater=inflater;
+  }
+
+  @Override
+  public View getInfoWindow(Marker marker) {
+	return(null);
+  }
+
+  @Override
+  public View getInfoContents(Marker marker) {
+	View popup=inflater.inflate(R.layout.marker_tooltip, null);
+
+	TextView tv=(TextView)popup.findViewById(R.id.title);
+
+	tv.setText(marker.getTitle());
+	tv=(TextView)popup.findViewById(R.id.snippet);
+	tv.setText(marker.getSnippet());
+
+	return(popup);
+  }
+}	
+{% endhighlight %}	
+
 And finally we need to set the `InfoWindowAdapter` on the map
 
-	googleMap.setInfoWindowAdapter(new IconizedWindowAdapter(getActivity().getLayoutInflater()));	
+{% highlight java %}
+googleMap.setInfoWindowAdapter(new IconizedWindowAdapter(getActivity().getLayoutInflater()));	
+{% endhighlight %}	
 
 ### Polylines
 
 You can also draw polyLines onto the map. For that you need to create a `Polyline` and a `PolylineOptions`
 
-	private Polyline polyLine;
-	private PolylineOptions rectOptions = new PolylineOptions();
-
+{% highlight java %}
+private Polyline polyLine;
+private PolylineOptions rectOptions = new PolylineOptions();
+{% endhighlight %}	
 
 You get a reference to a polyLine by adding it to the map by calling the `addPolyLine` method.
 
-	polyLine = googleMap.addPolyline(rectOptions);
-
+{% highlight java %}
+polyLine = googleMap.addPolyline(rectOptions);
+{% endhighlight %}	
 
 In our sample, as we add markers to the map we also update the polyLine so that the markers are connected. 
 We do this by adding our the newly dropped marker onto the polyLine.
 Notice how we need to call setPoints again. Simply doing polyLine.getPoints().add(latLng) doesn't work.
-	
-	/**
-	 * Add the marker to the polyline.
-	 */
-	private void updatePolyLine(LatLng latLng) {
-		List<LatLng> points = polyLine.getPoints();
-		points.add(latLng);
-		polyLine.setPoints(points);
-	}
+
+{% highlight java %}	
+/**
+ * Add the marker to the polyline.
+ */
+private void updatePolyLine(LatLng latLng) {
+	List<LatLng> points = polyLine.getPoints();
+	points.add(latLng);
+	polyLine.setPoints(points);
+}
+{% endhighlight %}	
 
 ## References
 

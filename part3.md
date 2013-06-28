@@ -29,13 +29,15 @@ We've already placed a couple of markers on the map to get us started.
 
 In order to animate the camera, we first need to define where it should be pointed at. We do this by building a new CameraPosition object.
 
-	CameraPosition cameraPosition =
-					new CameraPosition.Builder()
-							.target(new LatLng(0,0))
-							.bearing(45)
-							.tilt(90)
-							.zoom(googleMap.getCameraPosition().zoom)
-							.build();
+{% highlight java %}
+CameraPosition cameraPosition =
+	new CameraPosition.Builder()
+			.target(new LatLng(0,0))
+			.bearing(45)
+			.tilt(90)
+			.zoom(googleMap.getCameraPosition().zoom)
+			.build();
+{% endhighlight %}
 
 the CameraPosition allows us to define 
 
@@ -50,21 +52,22 @@ We'll just hardcode these values for now...
 
 Once we have the CameraPosition, we can pass it on the Google Map animateCamera method:
 
-	googleMap.animateCamera(
-					CameraUpdateFactory.newCameraPosition(cameraPosition), 
-					ANIMATE_SPEEED_TURN,
-					new CancelableCallback() {
+{% highlight java %}
+googleMap.animateCamera(
+	CameraUpdateFactory.newCameraPosition(cameraPosition), 
+	ANIMATE_SPEEED_TURN,
+	new CancelableCallback() {
 
-						@Override
-						public void onFinish() {
-						}
+		@Override
+		public void onFinish() {
+		}
 
-						@Override
-						public void onCancel() {
-						}
-					}
-			);						
-
+		@Override
+		public void onCancel() {
+		}
+	}
+);						
+{% endhighlight %}
 The callback provides us hooks when the animation finishes. 
 
 - onFinish is called after the animation has completely finished
@@ -81,20 +84,24 @@ The resulting animation will look like this. As you can see, we're "bouncing" fr
 
 A bearing can be calculated between 2 android.location.Location objects. As we're working with com.google.android.gms.maps.model.LatLng objects here, we first need to convert them into Location objects.
 
-	private Location convertLatLngToLocation(LatLng latLng) {
-		Location location = new Location("someLoc");
-		location.setLatitude(latLng.latitude);
-		location.setLongitude(latLng.longitude);
-		return location;
-	}
+{% highlight java %}
+private Location convertLatLngToLocation(LatLng latLng) {
+	Location location = new Location("someLoc");
+	location.setLatitude(latLng.latitude);
+	location.setLongitude(latLng.longitude);
+	return location;
+}
+{% endhighlight %}
 
 Once we have 2 Location objects, we can calculate the bearing between the 2. This is what we need to put on the Camera when transitioning to the target (the endLocation).
 
-	private float bearingBetweenLatLngs(LatLng beginLatLng,LatLng endLatLng) {
-		Location beginLocation = convertLatLngToLocation(beginLatLng);
-		Location endLocation = convertLatLngToLocation(endLatLng);
-		return beginLocation.bearingTo(endLocation);
-	}
+{% highlight java %}
+private float bearingBetweenLatLngs(LatLng beginLatLng,LatLng endLatLng) {
+	Location beginLocation = convertLatLngToLocation(beginLatLng);
+	Location endLocation = convertLatLngToLocation(endLatLng);
+	return beginLocation.bearingTo(endLocation);
+}
+{% endhighlight %}	
 	
 [TODO refer to the google maps library for a better implementation]
 
@@ -135,23 +142,27 @@ We're also going to use a LinearInterpolator that will return as a number betwee
 We'll use that number to calculate the coordinates of the intermediate point.
 Once we have those coordinates, we set our tracking marker to that new position.
 
-	long elapsed = SystemClock.uptimeMillis() - start;
-	double t = interpolator.getInterpolation((float)elapsed/ANIMATE_SPEEED);
-	
-	double lat = t * endLatLng.latitude + (1-t) * beginLatLng.latitude;
-	double lng = t * endLatLng.longitude + (1-t) * beginLatLng.longitude;
-				
-	LatLng intermediatePosition = new LatLng(lat, lng);
+{% highlight java %}
+long elapsed = SystemClock.uptimeMillis() - start;
+double t = interpolator.getInterpolation((float)elapsed/ANIMATE_SPEEED);
+
+double lat = t * endLatLng.latitude + (1-t) * beginLatLng.latitude;
+double lng = t * endLatLng.longitude + (1-t) * beginLatLng.longitude;
 			
-	trackingMarker.setPosition(intermediatePosition);
+LatLng intermediatePosition = new LatLng(lat, lng);
+		
+trackingMarker.setPosition(intermediatePosition);
+{% endhighlight %}
 
 We'll also update our polyline with the new marker position, creating a trailing effect on the polyline.
 
-	private void updatePolyLine(LatLng latLng) {
-		List<LatLng> points = polyLine.getPoints();
-		points.add(latLng);
-		polyLine.setPoints(points);
-	}
+{% highlight java %}
+private void updatePolyLine(LatLng latLng) {
+	List<LatLng> points = polyLine.getPoints();
+	points.add(latLng);
+	polyLine.setPoints(points);
+}
+{% endhighlight %}
 
 
 As long as the interpolator returns a value below 1, we'll continue this process.
@@ -196,39 +207,45 @@ Once it hits 1 or above, we know we've reached the end-marker for this animation
 
 Animating between the subsequent markers involves the following code:
 
+{% highlight java %}
+currentIndex++;
+highLightMarker(currentIndex);
+					
+beginLatLng = getBeginLatLng();
+endLatLng = getEndLatLng();
 
-	currentIndex++;
-	highLightMarker(currentIndex);
-						
-	beginLatLng = getBeginLatLng();
-	endLatLng = getEndLatLng();
+start = SystemClock.uptimeMillis();
 
-	start = SystemClock.uptimeMillis();
-
-	Double heading = SphericalUtil.computeHeading(beginLatLng, endLatLng);
+Double heading = SphericalUtil.computeHeading(beginLatLng, endLatLng);
+{% endhighlight %}
 
 As you can see we update our currentIndex, highlight the marker, specify a new start time, and calculate a new heading for the animation.
 
-	CameraPosition cameraPosition =
-		new CameraPosition.Builder()
-		.target(endLatLng)
-		.bearing(heading.floatValue()) 
-		.tilt(tilt)
-		.zoom(googleMap.getCameraPosition().zoom)
-		.build();
+{% highlight java %}
+CameraPosition cameraPosition =
+	new CameraPosition.Builder()
+	.target(endLatLng)
+	.bearing(heading.floatValue()) 
+	.tilt(tilt)
+	.zoom(googleMap.getCameraPosition().zoom)
+	.build();
+{% endhighlight %}
 
 We transition to the next animation by first pointing our camera in the right direction.
 
-	googleMap.animateCamera(
-			CameraUpdateFactory.newCameraPosition(cameraPosition), 
-			ANIMATE_SPEEED_TURN,
-			null
-	);
+{% highlight java %}
+googleMap.animateCamera(
+		CameraUpdateFactory.newCameraPosition(cameraPosition), 
+		ANIMATE_SPEEED_TURN,
+		null
+);
+{% endhighlight %}
 	
 And finally start the animation again.
 
-	mHandler.postDelayed(animator, 16);					
-
+{% highlight java %}
+mHandler.postDelayed(animator, 16);					
+{% endhighlight %}
 						
 	
 

@@ -85,30 +85,31 @@ In order to run Google Maps in your android application, you need to add a set o
 
 You need to make sure that the following properties are added. (put them before the starting application tag) :
 
-	<!-- Specify the correct minSDK and targetSDK versions. -->
-	<uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17"/>
-	
-	<!-- Google Maps related permissions -->
-	<permission android:name="com.ecs.google.maps.v2.actionbarsherlock.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
-	<uses-permission android:name="com.example.mapdemo.permission.MAPS_RECEIVE"/>
-	 
-	<!-- Network connectivity permissions -->
-	<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
-	<uses-permission android:name="android.permission.INTERNET"/>
-	 
-	<!-- Access Google based webservices -->
-	<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
-	 
-	<!-- External storage for caching. -->
-	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-	
-	<!-- My Location -->
-	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
-	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-	
-	<!-- Maps API needs OpenGL ES 2.0. -->
-	<uses-feature android:glEsVersion="0x00020000" android:required="true"/>   
+{% highlight xml %}
+<!-- Specify the correct minSDK and targetSDK versions. -->
+<uses-sdk android:minSdkVersion="8" android:targetSdkVersion="17"/>
 
+<!-- Google Maps related permissions -->
+<permission android:name="com.ecs.google.maps.v2.actionbarsherlock.permission.MAPS_RECEIVE" android:protectionLevel="signature"/>
+<uses-permission android:name="com.example.mapdemo.permission.MAPS_RECEIVE"/>
+ 
+<!-- Network connectivity permissions -->
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+<uses-permission android:name="android.permission.INTERNET"/>
+ 
+<!-- Access Google based webservices -->
+<uses-permission android:name="com.google.android.providers.gsf.permission.READ_GSERVICES"/>
+ 
+<!-- External storage for caching. -->
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+<!-- My Location -->
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+
+<!-- Maps API needs OpenGL ES 2.0. -->
+<uses-feature android:glEsVersion="0x00020000" android:required="true"/>   
+{% endhighlight %}
 
 ### Setting up the map key  
 
@@ -149,41 +150,46 @@ We'll talk about how to run this example on lower API levels in a minute.
 
 For now, we'll stick with API level 11 and higher by adding the MapFragmnet to the layout like this :
 
-	<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:id="@+id/root"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-	    android:orientation="horizontal" >
-	
-	<fragment android:id="@+id/map"
-	          android:layout_width="match_parent"
-	          android:layout_height="match_parent"
-	          android:name="com.google.android.gms.maps.MapFragment"/>
-	</FrameLayout> 
+{% highlight xml %}
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/root"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="horizontal" >
+
+<fragment android:id="@+id/map"
+		  android:layout_width="match_parent"
+		  android:layout_height="match_parent"
+		  android:name="com.google.android.gms.maps.MapFragment"/>
+</FrameLayout> 
+{% endhighlight %}
 
 Create the activity that will load up the layout above:
 
-	public class SimpleMapActivity extends Activity{
-		
-		private com.google.android.gms.maps.MapFragment mapFragment;
-		private GoogleMap googleMap;
+{% highlight java %}
+public class SimpleMapActivity extends Activity{
 	
-		@Override
-		protected void onCreate(Bundle savedInstanceState) {
-			super.onCreate(savedInstanceState);
-			setContentView(R.layout.map_fragment);
-		}
-	
+	private com.google.android.gms.maps.MapFragment mapFragment;
+	private GoogleMap googleMap;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.map_fragment);
 	}
+
+}
+{% endhighlight %}
 	
 Note that in order to interact with the map, you need to get a reference to the GoogleMap object. The GoogleMap object can be retrieved via the MapFragment.
 In order to get a reference to the MapFragment in an Activity you need to retrieve the FragmentManager using the getFragmentManager call. 
 This call is only available on API level 11 and up so you need to have your minSDK set to 11 if you want to run this.
 
-			mapFragment = (com.google.android.gms.maps.MapFragment) getFragmentManager().findFragmentById(R.id.map);
-			googleMap = mapFragment.getMap();
-			googleMap.setMyLocationEnabled(true);		
-
+{% highlight java %}
+mapFragment = (com.google.android.gms.maps.MapFragment) getFragmentManager().findFragmentById(R.id.map);
+googleMap = mapFragment.getMap();
+googleMap.setMyLocationEnabled(true);		
+{% endhighlight %}
 
 ### Running on lower API levels
 
@@ -197,37 +203,41 @@ In order to use the new Google Maps V2 API on older devices we need to do 2 thin
 
 Our layout will now look like this :
 
-	<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-	    android:id="@+id/root"
-	    android:layout_width="match_parent"
-	    android:layout_height="match_parent"
-	    android:orientation="horizontal" >
-	
-	<fragment
-	  android:id="@+id/map"
-	  android:layout_width="match_parent"
-	  android:layout_height="match_parent"
-	  class="com.google.android.gms.maps.SupportMapFragment"/>
-	</FrameLayout> 
+{% highlight xml %}
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/root"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:orientation="horizontal" >
+
+<fragment
+  android:id="@+id/map"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  class="com.google.android.gms.maps.SupportMapFragment"/>
+</FrameLayout> 
+{% endhighlight %}
   
 And our FragmentActivity will look like this :
 
-	public class SimpleMapFragmentActivity extends FragmentActivity{
-	
-		private SupportMapFragment mapFragment;
-		private GoogleMap googleMap;
-	
-		@Override
-		protected void onCreate(Bundle arg0) {
-			super.onCreate(arg0);
-			setContentView(R.layout.support_map_fragment);
-			
-			mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-			googleMap = mapFragment.getMap();
-			googleMap.setMyLocationEnabled(true);
-			
-		}
+{% highlight java %}
+public class SimpleMapFragmentActivity extends FragmentActivity{
+
+	private SupportMapFragment mapFragment;
+	private GoogleMap googleMap;
+
+	@Override
+	protected void onCreate(Bundle arg0) {
+		super.onCreate(arg0);
+		setContentView(R.layout.support_map_fragment);
+		
+		mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+		googleMap = mapFragment.getMap();
+		googleMap.setMyLocationEnabled(true);
+		
 	}
+}
+{% endhighlight %}
 
 Important note : Keep in mind that although the `MapFragment` can run in an `Activity`, the `SupportMapFragment` cannot, and needs to run in a `FragmentActivity`. 
 
@@ -244,36 +254,39 @@ The point of this article was to show you how you can include the ActionBarSherl
 
 With ABS 4.3 it couldn't be simpler. Simply have your activity extend SherlockFragmentActivity like this
 
-	public class SimpleSherlockFragmentActivity extends SherlockFragmentActivity {
-	
-		private SupportMapFragment mapFragment;
-		private GoogleMap googleMap;
-	
-		@Override
-		protected void onCreate(Bundle bundle) {
-			super.onCreate(bundle);
-			setContentView(R.layout.simple_sherlock_map_fragment);
-			
-			mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-			googleMap = mapFragment.getMap();
-			googleMap.setMyLocationEnabled(true);
-	
-		}
+{% highlight java %}
+public class SimpleSherlockFragmentActivity extends SherlockFragmentActivity {
+
+	private SupportMapFragment mapFragment;
+	private GoogleMap googleMap;
+
+	@Override
+	protected void onCreate(Bundle bundle) {
+		super.onCreate(bundle);
+		setContentView(R.layout.simple_sherlock_map_fragment);
+		
+		mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+		googleMap = mapFragment.getMap();
+		googleMap.setMyLocationEnabled(true);
+
 	}
+}
+{% endhighlight %}
 
 
 If you want to include a menu simply add this
 
-	  @Override
-	  public boolean onCreateOptionsMenu(Menu menu) {
-		  getSupportMenuInflater().inflate(R.menu.main_menu, menu);
-	      return true;
-	  } 
+{% highlight java %}
+@Override
+public boolean onCreateOptionsMenu(Menu menu) {
+  getSupportMenuInflater().inflate(R.menu.main_menu, menu);
+  return true;
+} 
+{% endhighlight %}  
 	
 If you want to split the actionbar you'll need to add the following option to your activity in the applications manifest.	  
 
 	android:uiOptions="splitActionBarWhenNarrow"
-			
 
 ### Older Android version
 
@@ -307,35 +320,40 @@ The application crashes with the following error :
 
 Notice the following in the manifest
 
-    <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
-        
+{% highlight xml %}
+<application
+	android:allowBackup="true"
+	android:icon="@drawable/ic_launcher"
+	android:label="@string/app_name"
+	android:theme="@style/AppTheme" >
+{% endhighlight %}      
         
 This can be easily fixed by using the Theme.Sherlock in our application.
 
-    <application
-        android:allowBackup="true"
-        android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name"
-        android:theme="@style/Theme.Sherlock">        
-        
+{% highlight xml %}
+<application
+	android:allowBackup="true"
+	android:icon="@drawable/ic_launcher"
+	android:label="@string/app_name"
+	android:theme="@style/Theme.Sherlock">        
+{% endhighlight %}
+   
 Or even better by specifying your application style in the styles.xml file
 
+{% highlight xml %}	
 	<style name="AppTheme" parent="Theme.Sherlock.Light"/>
+{% endhighlight %}
 	
 And using it in your application manifest like this:
 
+{% highlight xml %}
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
- 
+{% endhighlight %} 
 	
-	        
         
 ## Application screenshots
 
@@ -358,9 +376,6 @@ As you can see, on my Galaxy Nexus I don't have a hardware menu button, so as pe
 
 ![](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/jellybean-simple-map-with-menu.png)
 
-
-
-        
         
 ## Resources
 
