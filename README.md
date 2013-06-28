@@ -4,6 +4,8 @@ This repository contains a number of projects that will help you get up to speed
 
 It contains the following folders
 
+- GoogleMapsV2SkeletonV11 (Skeleton project targetted at API level 11 and higher)
+- GoogleMapsV2SkeletonV8 (Skeleton project using Support Library targetted at API level 8 and higher)
 - GoogleMapsV2WithActionBarSherlock (the complete sample application)
 - actionbarsherlock (The ActionBar we all love, put here for your convenience.)
 - google-play-services_lib (The Google Play Services lib, put here for your convenience.)
