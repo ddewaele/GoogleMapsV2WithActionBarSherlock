@@ -11,7 +11,7 @@ The goal is to create a simple Directions application where the user can enter a
 As the user is typing the origin / destination, he'll receive hints from the Google Places API (autocompletion).
 After the user has entered an origin and a destination, we'll show the directions on a map by drawing a polyline and animating along the path.
 
-<object width="560" height="315"><param name="movie" value="//www.youtube.com/v/jen6zti4L3k?version=3&amp;hl=en_US&amp;rel=0"></param><param name="allowFullScreen" value="true"></param><param name="allowscriptaccess" value="always"></param><embed src="//www.youtube.com/v/jen6zti4L3k?version=3&amp;hl=en_US&amp;rel=0" type="application/x-shockwave-flash" width="560" height="315" allowscriptaccess="always" allowfullscreen="true"></embed></object>
+<iframe width="560" height="315" src="//www.youtube.com/embed/jen6zti4L3k?rel=0" frameborder="0"> </iframe>
 
 We're going to be using AsyncTask to perform the HTTP processing in the background off the main thread. 
 For the actual HTTP communication we're going to be using the [Google HTTP Client Library for Java][0].
