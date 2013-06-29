@@ -7,7 +7,7 @@ title: Document Center
 
 This repository contains a number of projects that will help you get up to speed with Google Maps v2 on Android with ActionBarSherlock 4.3.1
 
-It contains the following folders
+It contains the following folders :
 
 - [GoogleMapsV2SkeletonV11](https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock/tree/master/GoogleMapsV2SkeletonV11) (Skeleton project targetted at API level 11 and higher)
 - [GoogleMapsV2SkeletonV8](https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock/tree/master/GoogleMapsV2SkeletonV8) (Skeleton project using Support Library targetted at API level 8 and higher)
