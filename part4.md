@@ -68,18 +68,21 @@ private void highLightMarker(int index) {
 
 #### Animation
 
-The ability to animate the map using the CameraPositions is a vast improvement over the v1 api. \
+The ability to animate the map using the CameraPositions is a vast improvement over the v1 api.
 Not only is it a lot fancier from a UI perspective, but it also requires far less code than before.
 
 
 ##### Android Maps v1	
 
 The v1 API was very limited in turns of animations. Not only did the map lack many of the gestures (bearing / tilt) we have today, the only way to have some form of animation was to animate the map to a certain GeoPoint location, giving the user a sense of motion.
+
 We also didn't have marker objects, so we needed to model our own locationResources acting as markers.
+
 We needed to convert those objects to GeoPoints, as that is the only object that the MapView could animate to.
+
 We needed to manage a lot of state (is the animation still in progress, did the user press the stop button, ....)
 
-this resulted in a lot of code like this :
+This resulted in a lot of code like this :
 
 {% highlight java %}
 MapView map = (MapView) findViewById(R.id.map);

@@ -379,7 +379,7 @@ As you can see, on my Galaxy Nexus I don't have a hardware menu button, so as pe
         
 ## Resources
 
-
 - [Google Maps Android API v2](https://developers.google.com/maps/documentation/android/)
+- [ActionBarSherlock](http://actionbarsherlock.com/)
 - Google Play Services Map Samples (included in the SDK)
  
