@@ -103,10 +103,6 @@ private float bearingBetweenLatLngs(LatLng beginLatLng,LatLng endLatLng) {
 }
 {% endhighlight %}	
 	
-[TODO refer to the google maps library for a better implementation]
-
-This should give us a much cleaner animation.
-
 ### Moving the marker.
 
 Animating the map is great and moving between these markers provides a nice effect but
