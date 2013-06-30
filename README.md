@@ -71,6 +71,3 @@ The reason being that 2 different Android Support Library v4 JAR files are prese
 The solution is simple : Ensure that ActionBarSherlock is using the same version of the Android Support Library v4 JAR as the one your project is using.
 
 In the enclosed ActionBarSherlock in this github repository the support JAR has already been replace. : https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock/tree/master/actionbarsherlock/libs
-
-# Android Libraries
-
