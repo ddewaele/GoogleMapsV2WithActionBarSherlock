@@ -4,11 +4,11 @@ This repository contains a number of projects that will help you get up to speed
 
 It contains the following folders
 
-- GoogleMapsV2SkeletonV11 (Skeleton project targetted at API level 11 and higher)
-- GoogleMapsV2SkeletonV8 (Skeleton project using Support Library targetted at API level 8 and higher)
-- GoogleMapsV2WithActionBarSherlock (the complete sample application)
-- actionbarsherlock (The ActionBar we all love, put here for your convenience.)
-- google-play-services_lib (The Google Play Services lib, put here for your convenience.)
+- [GoogleMapsV2SkeletonV11](https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock/tree/master/GoogleMapsV2SkeletonV11) (Skeleton project targetted at API level 11 and higher)
+- [GoogleMapsV2SkeletonV8](https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock/tree/master/GoogleMapsV2SkeletonV8) (Skeleton project using Support Library targetted at API level 8 and higher)
+- [GoogleMapsV2WithActionBarSherlock](https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock/tree/master/GoogleMapsV2WithActionBarSherlock) (the complete sample application)
+- [ActionBarSherlock](http://actionbarsherlock.com/) (The ActionBar we all love, available in this repository for your convenience.)
+- google-play-services_lib (The Google Play Services lib, available in this repository for your convenience.)
 
 ##Tutorial
 
@@ -50,11 +50,10 @@ The tutorial guides can be found in the docs folder of this project. The sample 
 - Putting everything together.
 - [More](./part6)
 	
-##Beware of duplicate jars.... (verify this)
 
-When creating a new project, the wizard will see 2 support JARs (one provided by ActionBarSherlock and one provided by your project).
+** Important note: **
 
-It will spit out the message
+If you attempt to run an Android sample app with your own copy of ActionBarSherlock, you might run into the following issue:
 
 	Found 2 versions of android-support-v4.jar in the dependency list,
 	but not all the versions are identical (check is based on SHA-1 only at this time).
@@ -68,16 +67,10 @@ It will spit out the message
 		SHA-1: 53307dc2bd2b69fd5533458ee11885f55807de4b
 	Jar mismatch! Fix your dependencies
 
-The solution is to simply remove the GoogleMapsV2WithActionBarSherlock\libs\android-support-v4.jar file to fix the error.
+The reason being that 2 different Android Support Library v4 JAR files are present in the projects getting built. (one provided by ActionBarSherlock and one provided by your project).
+The solution is simple : Ensure that ActionBarSherlock is using the same version of the Android Support Library v4 JAR as the one your project is using.
+
+In the enclosed ActionBarSherlock in this github repository the support JAR has already been replace. : https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock/tree/master/actionbarsherlock/libs
 
 # Android Libraries
-
-This project depends on 2 Android libraries that have been included in this repo for your convenience.
-
-- Google Play Services (downloaded through the Android SDK Manager and extracted in sdk/extras/google/google_play_services)
-- [ActionBarSherlock](ActionBarSherlock)
-
-
-
-
 
