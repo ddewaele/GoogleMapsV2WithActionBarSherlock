@@ -30,6 +30,9 @@ The tutorial guides can be found in the docs folder of this project. The sample 
 - Adding markers
 - Highlighting markers
 - Removing markers
+- Marker Management
+- Custom Icons / InfoWindows
+- Polylines
 - [More](./part2)
 
 **Part 3 : Animating the Map**
@@ -43,18 +46,12 @@ The tutorial guides can be found in the docs folder of this project. The sample 
 - A rundown of all the changes
 - [More](./part4)
 
-**Part 5 : Using the android-maps-utils**
-
-- Using the Android Map Utils library
-- Using the Android Map Utils library
-- [More](./part5)
-
-**Part 6 : Using Google APIs - Directions and Places API**
+**Part 5 : Using Google APIs - Directions and Places API**
 
 - Use Google Places Autocomplete API
 - Use Google Directions API
 - Putting everything together
-- [More](./part6)
+- [More](./part5)
 
 
 

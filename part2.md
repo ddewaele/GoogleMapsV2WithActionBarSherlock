@@ -86,7 +86,7 @@ public class TabbedActivity extends SherlockFragmentActivity {
 
 	}
 {% endhighlight %}		
-The component gives us a nice look and feel as far as tabs are concerned, resembling the way the Google Play store does it. I highly recommend you taking a look at the project.
+The component gives us a nice look and feel as far as tabs are concerned, resembling the way the Google Play store does it. I highly recommend you taking a look at the [PagerSlidingTabStrip][2] project.
 
 ### Screenshots
 
@@ -168,9 +168,12 @@ There are 2 ways to highlight a marker
 - Clicking on a marker
 - Programmatically highlight a marker.
 
-### Clicking on a marker
+### Info Windows
 
-The default behavior when clicking on a marker is for the camera to move to the map and an info window to appear.
+The default behavior when clicking on a marker is 
+
+- move the camera to the marker
+- show an info window on the marker.
 
 If you want to intercept the user clicking on a marker, you simply need to implement an `OnMarkerClickListener`
 
@@ -210,67 +213,6 @@ private void highLightMarker(Marker marker) {
 If you want to programmatically highlight a marker, and you either have a reference to it, or you know the index of the marker, simply call the highlightMarker directly.
 It will maintain the proper state (selectedMarker) and do the highlighting.
 
-### Some useful methods to have to manage your markers
-
-If you're working with maps a lot, and you have more than one app that uses maps, it's interesting to encapsulate all of this into your own custom map fragment.
-The following generic methods can be placed on the MapFragment so that you can not only drop the fragment into your layout, but also re-use a lot of the business logic associated with marker management.
-
-Adds a marker to the map.
-
-{% highlight java %}
-public void addMarkerToMap(LatLng latLng) {
-	Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
-			 .title("title")
-			 .snippet("snippet"));
-	markers.add(marker);
-
-}
-{% endhighlight %}	
-
-Clears all markers from the map.
-
-{% highlight java %}
-public void clearMarkers() {
-	googleMap.clear();
-	markers.clear();		
-}
-{% endhighlight %}	
-
-Remove the currently selected marker.
-
-{% highlight java %}
-public void removeSelectedMarker() {
-	this.markers.remove(this.selectedMarker);
-	this.selectedMarker.remove();
-}	
-{% endhighlight %}	
-
-Highlight the marker by index.
-
-{% highlight java %}
-private void highLightMarker(int index) {
-	highLightMarker(markers.get(index));
-}
-{% endhighlight %}	
-
-Highlight the marker by marker.
-
-{% highlight java %}
-private void highLightMarker(Marker marker) {
-	marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-	marker.showInfoWindow();
-	this.selectedMarker=marker;
-}
-{% endhighlight %}	
-	
-### Re-usability
-
-A lot of the stuff we've discussed here are generic / re-usable	that you want to have at your disposal when dealing with maps. 
-It's important to position them on the proper level in your code. Placing them on the `MapFragment` is an ideal way to promote re-use as
-
-- the methods are tightly coupled with the map
-- the methods are eligable for re-used
-- the MapFragment containing these methods can be easily embedded in another layout
 
 ### Custom InfoWindows
 		
@@ -364,6 +306,91 @@ And finally we need to set the `InfoWindowAdapter` on the map
 googleMap.setInfoWindowAdapter(new IconizedWindowAdapter(getActivity().getLayoutInflater()));	
 {% endhighlight %}	
 
+### Custom markers
+
+Besides having custom info windows, it's also possible to put custom markers on the map.
+The easiest way to do that is to use the `setIcon` method on the `MarkerOptions`.
+
+	markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.arrow)));
+	
+For some more advanced custom markers, I recommend you checkout the excellent [android-maps-utils project on Github][4].
+
+It's a library project that you can add to your project and offers a BubbleIconFactory capable of creating Bitmaps that can be put on your marker.
+
+{% highlight java %}
+BubbleIconFactory factory = new BubbleIconFactory(getActivity());
+factory.setStyle(Style.PURPLE);
+factory.setRotation(360);
+factory.setContentRotation(90);
+Bitmap bitmap = factory.makeIcon("This is a test");
+{% endhighlight %}	
+
+The result looks like this:
+
+![BubbleIconFactory](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/bubbleIconFactory.png)
+
+### Some useful methods to have to manage your markers
+
+If you're working with maps a lot, and you have more than one app that uses maps, it's interesting to encapsulate all of this into your own custom map fragment.
+The following generic methods can be placed on the MapFragment so that you can not only drop the fragment into your layout, but also re-use a lot of the business logic associated with marker management.
+
+Adds a marker to the map.
+
+{% highlight java %}
+public void addMarkerToMap(LatLng latLng) {
+	Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
+			 .title("title")
+			 .snippet("snippet"));
+	markers.add(marker);
+
+}
+{% endhighlight %}	
+
+Clears all markers from the map.
+
+{% highlight java %}
+public void clearMarkers() {
+	googleMap.clear();
+	markers.clear();		
+}
+{% endhighlight %}	
+
+Remove the currently selected marker.
+
+{% highlight java %}
+public void removeSelectedMarker() {
+	this.markers.remove(this.selectedMarker);
+	this.selectedMarker.remove();
+}	
+{% endhighlight %}	
+
+Highlight the marker by index.
+
+{% highlight java %}
+private void highLightMarker(int index) {
+	highLightMarker(markers.get(index));
+}
+{% endhighlight %}	
+
+Highlight the marker by marker.
+
+{% highlight java %}
+private void highLightMarker(Marker marker) {
+	marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+	marker.showInfoWindow();
+	this.selectedMarker=marker;
+}
+{% endhighlight %}	
+	
+### Re-usability
+
+A lot of the stuff we've discussed here are generic / re-usable	that you want to have at your disposal when dealing with maps. 
+It's important to position them on the proper level in your code. Placing them on the `MapFragment` is an ideal way to promote re-use as
+
+- the methods are tightly coupled with the map
+- the methods are eligable for re-used
+- the MapFragment containing these methods can be easily embedded in another layout
+
 ### Polylines
 
 You can also draw polyLines onto the map. For that you need to create a `Polyline` and a `PolylineOptions`
@@ -400,8 +427,10 @@ private void updatePolyLine(LatLng latLng) {
 - [Andreas Stütz][1] 
 - [PagerSlidingTabStrip][2]
 - [Maps Shortcuts: Android Maps Utility Library][3]
+- [Android Maps Utils library][4]
 
 [0]: https://developers.google.com/maps/documentation/android/marker
 [1]: https://plus.google.com/117122118961369445953/posts
 [2]: https://github.com/astuetz/PagerSlidingTabStrip
 [3]: http://www.youtube.com/watch?feature=player_embedded&v=nb2X9IjjZpM#!
+[4]: https://github.com/googlemaps/android-maps-utils
