@@ -382,15 +382,6 @@ private void highLightMarker(Marker marker) {
 }
 {% endhighlight %}	
 	
-### Re-usability
-
-A lot of the stuff we've discussed here are generic / re-usable	that you want to have at your disposal when dealing with maps. 
-It's important to position them on the proper level in your code. Placing them on the `MapFragment` is an ideal way to promote re-use as
-
-- the methods are tightly coupled with the map
-- the methods are eligable for re-used
-- the MapFragment containing these methods can be easily embedded in another layout
-
 ### Polylines
 
 You can also draw polyLines onto the map. For that you need to create a `Polyline` and a `PolylineOptions`
@@ -420,6 +411,17 @@ private void updatePolyLine(LatLng latLng) {
 	polyLine.setPoints(points);
 }
 {% endhighlight %}	
+
+### Re-usability
+
+A lot of the stuff we've discussed here are generic / re-usable	that you want to have at your disposal when dealing with maps. 
+It's important to position them on the proper level in your code. 
+
+Placing them on a custom `MapFragment` subclass is an ideal way to promote re-use as
+
+- the methods are tightly coupled with the map
+- the methods are eligable for re-used
+- the MapFragment containing these methods can be easily embedded in another layout
 
 ## References
 
