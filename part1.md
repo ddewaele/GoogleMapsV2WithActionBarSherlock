@@ -198,8 +198,9 @@ In other words, the SupportMapFragment can be used on Android devices running AP
 
 In order to use the new Google Maps V2 API on older devices we need to do 2 things 
 
-- use a SupportMapFragment instead of a MapFragment
-- use a FragmentActivity instead of an Activity.
+- use a SupportMapFragment instead of a MapFragment in your layout
+- use a FragmentActivity instead of an Activity
+- use the SupportFragmentManager instead of the FragmentManager in your FragmentActivity
 
 Our layout will now look like this :
 
@@ -241,7 +242,7 @@ public class SimpleMapFragmentActivity extends FragmentActivity{
 
 Important note : Keep in mind that although the `MapFragment` can run in an `Activity`, the `SupportMapFragment` cannot, and needs to run in a `FragmentActivity`. 
 
-Simply have your activity extend SupportFragment instead of Activity in order to resolve this. 
+Simply let your activity extend from `FragmentActivity` instead of `Activity` to resolve this. 
 
 If you attempt to run a SupportMapFragment inside an activity, you'll get the following error:
 
