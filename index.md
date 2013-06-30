@@ -12,8 +12,8 @@ It contains the following folders :
 - [GoogleMapsV2SkeletonV11](https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock/tree/master/GoogleMapsV2SkeletonV11) (Skeleton project targetted at API level 11 and higher)
 - [GoogleMapsV2SkeletonV8](https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock/tree/master/GoogleMapsV2SkeletonV8) (Skeleton project using Support Library targetted at API level 8 and higher)
 - [GoogleMapsV2WithActionBarSherlock](https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock/tree/master/GoogleMapsV2WithActionBarSherlock) (the complete sample application)
-- actionbarsherlock (The ActionBar we all love, put here for your convenience.)
-- google-play-services_lib (The Google Play Services lib, put here for your convenience.)
+- [ActionBarSherlock](http://actionbarsherlock.com/) (The ActionBar we all love, available in this repository for your convenience.)
+- google-play-services_lib (The Google Play Services lib, available in this repository for your convenience.)
 
 ##Tutorial
 
