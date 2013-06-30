@@ -51,7 +51,7 @@ The tutorial guides can be found in the docs folder of this project. The sample 
 - [More](./part6)
 	
 
-** Important note: **
+**Important note:**
 
 If you attempt to run an Android sample app with your own copy of ActionBarSherlock, you might run into the following issue:
 
