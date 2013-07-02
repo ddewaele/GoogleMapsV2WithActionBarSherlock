@@ -18,37 +18,32 @@ The tutorial guides can be found in the docs folder of this project. The sample 
 
 - Setup a skeleton project
 - Add the ActionBarSherlock and GooglePlayServices libs
-- [More](./part1)
+- [More](./GoogleMapsV2WithActionBarSherlock/docs/part1.md)
 	
 ###Part 2 : Drawing on the Map - Markers and polylines
 
 - Adding markers
 - Highlighting markers
 - Removing markers
-- [More](./part2)
+- [More](./GoogleMapsV2WithActionBarSherlock/docs/part2.md)
 
 ###Part 3 : Animating the Map
 
 - Animate through a set of markers on the map
-- [More](./part3)
+- [More](./GoogleMapsV2WithActionBarSherlock/docs/part3.md)
 	
 ###Part 4 : Migrating from v1 maps to v2 maps
 
 - Some tips and tricks for migrating your old v1 apps to v2.
 - A rundown of all the changes.
-- [More](./part4)
+- [More](./GoogleMapsV2WithActionBarSherlock/docs/part4.md)
 
-###Part 5 : Using the android-maps-utils
-
-- Using the Android Map Utils library (to be completed).
-- [More](./part5)
-	
-###Part 6 : Using Google APIs : Directions and Places API
+###Part 5 : Using Google APIs : Directions and Places API
 
 - Use Google Places Autocomplete API
 - Use Google Directions API
 - Putting everything together.
-- [More](./part6)
+- [More](./GoogleMapsV2WithActionBarSherlock/docs/part6.md)
 	
 
 **Important note:**
