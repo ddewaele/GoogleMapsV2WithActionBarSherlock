@@ -84,6 +84,9 @@ There's an issue with ADT 22 that it sometimes "forgets" to export the libraries
 
 ![Android build path](./images/android-build-path.png)
 
+If this is not checked, the Google Play Services library doesn't get included in your APK and you won't be able to run your app.
+
+
 ### Adding the necessary permissions
 
 In order to run Google Maps in your android application, you need to add a set of permissions to your applications manifest.
@@ -201,7 +204,7 @@ googleMap.setMyLocationEnabled(true);
 Google also provides a SupportMapFramgment (`com.google.android.gms.maps.SupportMapFragment`) in Google Play services to be used with the Android Support package's backport of fragments. 
 In other words, the SupportMapFragment can be used on Android devices running API 10 and lower, as well as Android devices running 11 and higher. 
 
-In order to use the new Google Maps V2 API on older devices we need to do 2 things 
+In order to use the new Google Maps V2 API on older devices we need to do 3 things 
 
 - use a SupportMapFragment instead of a MapFragment in your layout
 - use a FragmentActivity instead of an Activity
