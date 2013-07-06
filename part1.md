@@ -79,6 +79,9 @@ Once both projects compile in your workspace, you can start adding these library
 
 ![Library dependencies](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/library-dependencies.png)
 
+### ADT 22 Android Private Libraries
+There's an issue with ADT 22 that it sometimes "forgets" to export the libraries to your APK. You can verify this by going into your build settings and ensuring that the `Android Private Libraries` are checked. This will ensure that whatever is stored in your projects `libs` folder will be properly exported in your APK.
+
 ### Adding the necessary permissions
 
 In order to run Google Maps in your android application, you need to add a set of permissions to your applications manifest.
