@@ -48,6 +48,19 @@ The tutorial guides can be found in the docs folder of this project. The sample 
 
 **Important note:**
 
+
+###API keys
+In order to run this application on your phone you'll first need to get an API key.
+
+Instructions on how to setup your API key can be found in the [Setting up an Android Maps V2 Project][0] article.
+
+You'll need to paste the API key into your application manifest on the following line:
+
+```xml
+<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="INSERT_YOUR_API_KEY_HERE"/>
+```
+
+###Library issues
 If you attempt to run an Android sample app with your own copy of ActionBarSherlock, you might run into the following issue:
 
 	Found 2 versions of android-support-v4.jar in the dependency list,
