@@ -20,7 +20,7 @@ I've also created a screencast that covers setting up a skeleton project (not co
 
 ###Google Maps Android API v2
  
-The new Google Maps Android API v2 ((available through Google Play Services)) is a vast improvement over the original one and comes with many new features. 
+The new Google Maps Android API v2 (available through Google Play Services) is a vast improvement over the original one and comes with many new features. 
 Not only does it really stand out from a UI perspective but also on an API level is the new Maps v2 library a "delight" for both end-users and developers.
 
 Before the Google Maps Android API v2 was released, developers were forced to embed a `MapView` component in a special type of Activity called a `MapActivity`. 
