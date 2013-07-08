@@ -11,9 +11,13 @@ In the first part of this tutorial I will show you can start using Google Maps A
 The goal is to create a skeleton project that 
 
 - is capable of displaying a map using the new Google Map for Android API v2
-- uses ActionBarsherlock.
+- uses ActionBarSherlock.
 - can run on older versions of Android (2.x and up).
- 
+
+I've also created a screencast that covers setting up a skeleton project (not covering ActionBarSherlock).
+
+<iframe width="560" height="315" src="//www.youtube.com/embed/jen6zti4L3k?rel=0" frameborder="0"> </iframe>
+
 ###Google Maps Android API v2
  
 The new Google Maps Android API v2 ((available through Google Play Services)) is a vast improvement over the original one and comes with many new features. 
@@ -384,6 +388,12 @@ And using it in your application manifest like this:
 As you can see, on my Galaxy Nexus I don't have a hardware menu button, so as per Google guidelines, the menu overflow icon (3 dots is shown).
 
 ![](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/jellybean-simple-map-with-menu.png)
+
+##Debugging issues
+
+Logcat is pretty clear 
+
+	07-06 13:14:46.722: E/Google Maps Android API(28279): Failed to load map. Error contacting Google servers. This is probably an authentication issue (but could be due to network errors).
 
         
 ## Resources
