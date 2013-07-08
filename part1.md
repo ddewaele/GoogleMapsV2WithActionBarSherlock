@@ -16,7 +16,7 @@ The goal is to create a skeleton project that
 
 I've also created a screencast that covers setting up a skeleton project (not covering ActionBarSherlock).
 
-<iframe width="560" height="315" src="//www.youtube.com/embed/jen6zti4L3k?rel=0" frameborder="0"> </iframe>
+<iframe width="560" height="315" src="//www.youtube.com/embed/Iz5cfPV200E?rel=0" frameborder="0"> </iframe>
 
 ###Google Maps Android API v2
  
