@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Googlemapsv2withactionbarsherlock : This is a skeleton project for using Google Maps v2 on Android with ActionBarSherlock 4.3.1" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/stylesheet2.css">
+
+    <title>Googlemapsv2withactionbarsherlock</title>
+  </head>
+
+  <body>
+  
+<a href="https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock"><img style="position: absolute; top: 0; right: 0; border: 0; -webkit-box-shadow: 0 0 0; box-shadow: 0 0 0; padding:0; margin:0" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer" style="background: url(./images/backdrop.png) center no-repeat;
+">
+
+          <h1 id="project_title"><a href="./" style="color:#FFFFFF">Maps V2 Android</a></h1>
+          <div id="project_tagline">
+              Guide for the new Android Maps V2 API.
+              Includes a sample app, full source code, screencast and guides.
+          </div>
+
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock">View on GitHub</a>
+
+
+            <!--
+            <section id="downloads">
+              
+              <a class="zip_download_link" href="https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock/tarball/master">Download this project as a tar.gz file</a>
+            
+            </section>
+            -->
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+	<h2 id='part_3__animating_the_map'>Part 3 : Animating the map</h2>
+
+<p>In the previous sections we&#8217;ve seen how to setup your map applications, how to move around the map with the camera, and how to add markers and lines to the map. In this last part we&#8217;re going to create an animation that resembles a fly-over.</p>
+
+<p>Given a series of LatLng points on the map, we would like to see the following happen when animating the map.</p>
+
+<ul>
+<li>Animate the camera on the map in the direction of the path represented by the first 2 points.</li>
+
+<li>Start animating a marker moving along these 2 points (first and second).</li>
+
+<li>When it reaches the second point, animate the camera so that it points to the third point.</li>
+
+<li>Start animating a marker moving along these 2 points (second and third).</li>
+</ul>
+
+<p>The final animation looks like this:</p>
+<iframe frameborder='0' width='560' height='315' src='//www.youtube.com/embed/HPWYorS68WE?rel=0'> </iframe>
+<p>Animating the camera on the map is one of the many cool new features of the Google Maps Android API v2.</p>
+
+<p>We&#8217;ll start our animation by simply animating to the different markers on the map. For the moment we won&#8217;t even take into account the bearing of the camera.</p>
+
+<p>We&#8217;ve already placed a couple of markers on the map to get us started.</p>
+
+<p>In order to animate the camera, we first need to define where it should be pointed at. We do this by building a new CameraPosition object.</p>
+<div class='highlight'><pre><code class='java'><span class='n'>CameraPosition</span> <span class='n'>cameraPosition</span> <span class='o'>=</span>
+	<span class='k'>new</span> <span class='n'>CameraPosition</span><span class='o'>.</span><span class='na'>Builder</span><span class='o'>()</span>
+			<span class='o'>.</span><span class='na'>target</span><span class='o'>(</span><span class='k'>new</span> <span class='n'>LatLng</span><span class='o'>(</span><span class='mi'>0</span><span class='o'>,</span><span class='mi'>0</span><span class='o'>))</span>
+			<span class='o'>.</span><span class='na'>bearing</span><span class='o'>(</span><span class='mi'>45</span><span class='o'>)</span>
+			<span class='o'>.</span><span class='na'>tilt</span><span class='o'>(</span><span class='mi'>90</span><span class='o'>)</span>
+			<span class='o'>.</span><span class='na'>zoom</span><span class='o'>(</span><span class='n'>googleMap</span><span class='o'>.</span><span class='na'>getCameraPosition</span><span class='o'>().</span><span class='na'>zoom</span><span class='o'>)</span>
+			<span class='o'>.</span><span class='na'>build</span><span class='o'>();</span>
+</code></pre></div>
+<p>the CameraPosition allows us to define</p>
+
+<ul>
+<li>the target (where does the camera needs to go)</li>
+
+<li>the bearing (where should the camera be pointing at)</li>
+
+<li>the tilt</li>
+
+<li>the zoom.</li>
+</ul>
+
+<p>If you don&#8217;t specify a values for either one of them, the Camera will keep the current bearing, tilt and zoom while doing its movement.</p>
+
+<p>We&#8217;ll just hardcode these values for now&#8230;</p>
+
+<p>Once we have the CameraPosition, we can pass it on the Google Map animateCamera method:</p>
+<div class='highlight'><pre><code class='java'><span class='n'>googleMap</span><span class='o'>.</span><span class='na'>animateCamera</span><span class='o'>(</span>
+	<span class='n'>CameraUpdateFactory</span><span class='o'>.</span><span class='na'>newCameraPosition</span><span class='o'>(</span><span class='n'>cameraPosition</span><span class='o'>),</span> 
+	<span class='n'>ANIMATE_SPEEED_TURN</span><span class='o'>,</span>
+	<span class='k'>new</span> <span class='nf'>CancelableCallback</span><span class='o'>()</span> <span class='o'>{</span>
+
+		<span class='nd'>@Override</span>
+		<span class='kd'>public</span> <span class='kt'>void</span> <span class='nf'>onFinish</span><span class='o'>()</span> <span class='o'>{</span>
+		<span class='o'>}</span>
+
+		<span class='nd'>@Override</span>
+		<span class='kd'>public</span> <span class='kt'>void</span> <span class='nf'>onCancel</span><span class='o'>()</span> <span class='o'>{</span>
+		<span class='o'>}</span>
+	<span class='o'>}</span>
+<span class='o'>);</span>						
+</code></pre></div>
+<p>The callback provides us hooks when the animation finishes.</p>
+
+<ul>
+<li>onFinish is called after the animation has completely finished</li>
+
+<li>onCancel is called when the animation has been stopped for some reason (call to stopAnimation or another animation started).</li>
+</ul>
+
+<p>Note that you cannot have 2 animations running at the same time. As soon as the second animation is scheduled (through an animateCamera call), the first animation will be stopped abrublty, and you&#8217;ll get a notification through the onCancel callback.</p>
+
+<h3 id='setting_the_correct_bearing'>Setting the correct bearing</h3>
+
+<p>We&#8217;re going to try and improve our animation by taking into account the bearing&#8230;</p>
+
+<p>The resulting animation will look like this. As you can see, we&#8217;re &#8220;bouncing&#8221; from one marker to another. The first thing we&#8217;ll fix is the bearing of the camera.</p>
+
+<p>A bearing can be calculated between 2 android.location.Location objects. As we&#8217;re working with com.google.android.gms.maps.model.LatLng objects here, we first need to convert them into Location objects.</p>
+<div class='highlight'><pre><code class='java'><span class='kd'>private</span> <span class='n'>Location</span> <span class='nf'>convertLatLngToLocation</span><span class='o'>(</span><span class='n'>LatLng</span> <span class='n'>latLng</span><span class='o'>)</span> <span class='o'>{</span>
+	<span class='n'>Location</span> <span class='n'>location</span> <span class='o'>=</span> <span class='k'>new</span> <span class='n'>Location</span><span class='o'>(</span><span class='s'>&quot;someLoc&quot;</span><span class='o'>);</span>
+	<span class='n'>location</span><span class='o'>.</span><span class='na'>setLatitude</span><span class='o'>(</span><span class='n'>latLng</span><span class='o'>.</span><span class='na'>latitude</span><span class='o'>);</span>
+	<span class='n'>location</span><span class='o'>.</span><span class='na'>setLongitude</span><span class='o'>(</span><span class='n'>latLng</span><span class='o'>.</span><span class='na'>longitude</span><span class='o'>);</span>
+	<span class='k'>return</span> <span class='n'>location</span><span class='o'>;</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p>Once we have 2 Location objects, we can calculate the bearing between the 2. This is what we need to put on the Camera when transitioning to the target (the endLocation).</p>
+<div class='highlight'><pre><code class='java'><span class='kd'>private</span> <span class='kt'>float</span> <span class='nf'>bearingBetweenLatLngs</span><span class='o'>(</span><span class='n'>LatLng</span> <span class='n'>beginLatLng</span><span class='o'>,</span><span class='n'>LatLng</span> <span class='n'>endLatLng</span><span class='o'>)</span> <span class='o'>{</span>
+	<span class='n'>Location</span> <span class='n'>beginLocation</span> <span class='o'>=</span> <span class='n'>convertLatLngToLocation</span><span class='o'>(</span><span class='n'>beginLatLng</span><span class='o'>);</span>
+	<span class='n'>Location</span> <span class='n'>endLocation</span> <span class='o'>=</span> <span class='n'>convertLatLngToLocation</span><span class='o'>(</span><span class='n'>endLatLng</span><span class='o'>);</span>
+	<span class='k'>return</span> <span class='n'>beginLocation</span><span class='o'>.</span><span class='na'>bearingTo</span><span class='o'>(</span><span class='n'>endLocation</span><span class='o'>);</span>
+<span class='o'>}</span>
+</code></pre></div>
+<h3 id='moving_the_marker'>Moving the marker.</h3>
+
+<p>Animating the map is great and moving between these markers provides a nice effect but there&#8217;s currently no notion of the &#8220;current position&#8221; in the animation.</p>
+
+<p>We&#8217;re going to add a tracker marker that represents this current position, and we&#8217;ll let that marker move along the path as we are moving the camera around.</p>
+
+<p>Moving the marker requires a bit more plumbing than the camera movement. There&#8217;s no public API to fluently move the marker from point A to point B, so we&#8217;ll need to do this ourselves. Moving a marker between 2 points means that we simply need to change the markers position from time to time to a location along the path between point A and point B.</p>
+
+<p>We need to take into account</p>
+
+<ul>
+<li>Setting the position of the marker to a new LatLng point.</li>
+
+<li>The different LatLng points between beginning and end that we&#8217;ll use to shift the marker.</li>
+
+<li>How much time is spent moving the marker from beginning to end and hwo many position updates do want.</li>
+</ul>
+
+<p>Setting the position of the marker to a new LatLng point is easy as it only takes a call to setPosition with the appropriate LatLng.</p>
+
+<p>For every line drawn between 2 points, there&#8217;s an infine number of markers we can put along the path between these 2 points. In our case howver, we&#8217;re going to limit ourselves :)</p>
+
+<p>We&#8217;re going to give outselves 1.5 seconds to move between the 2 points. Within that timeframe we&#8217;re going to put a marker every 16ms.</p>
+
+<p>We&#8217;re going to calculate the elapsed time between each frame to ensure we don&#8217;t cross over the 1.5seconds.</p>
+
+<p>We&#8217;re also going to use a LinearInterpolator that will return as a number between 0 and 1 to indicate how far we our in our animation</p>
+
+<p>We&#8217;ll use that number to calculate the coordinates of the intermediate point. Once we have those coordinates, we set our tracking marker to that new position.</p>
+<div class='highlight'><pre><code class='java'><span class='kt'>long</span> <span class='n'>elapsed</span> <span class='o'>=</span> <span class='n'>SystemClock</span><span class='o'>.</span><span class='na'>uptimeMillis</span><span class='o'>()</span> <span class='o'>-</span> <span class='n'>start</span><span class='o'>;</span>
+<span class='kt'>double</span> <span class='n'>t</span> <span class='o'>=</span> <span class='n'>interpolator</span><span class='o'>.</span><span class='na'>getInterpolation</span><span class='o'>((</span><span class='kt'>float</span><span class='o'>)</span><span class='n'>elapsed</span><span class='o'>/</span><span class='n'>ANIMATE_SPEEED</span><span class='o'>);</span>
+
+<span class='kt'>double</span> <span class='n'>lat</span> <span class='o'>=</span> <span class='n'>t</span> <span class='o'>*</span> <span class='n'>endLatLng</span><span class='o'>.</span><span class='na'>latitude</span> <span class='o'>+</span> <span class='o'>(</span><span class='mi'>1</span><span class='o'>-</span><span class='n'>t</span><span class='o'>)</span> <span class='o'>*</span> <span class='n'>beginLatLng</span><span class='o'>.</span><span class='na'>latitude</span><span class='o'>;</span>
+<span class='kt'>double</span> <span class='n'>lng</span> <span class='o'>=</span> <span class='n'>t</span> <span class='o'>*</span> <span class='n'>endLatLng</span><span class='o'>.</span><span class='na'>longitude</span> <span class='o'>+</span> <span class='o'>(</span><span class='mi'>1</span><span class='o'>-</span><span class='n'>t</span><span class='o'>)</span> <span class='o'>*</span> <span class='n'>beginLatLng</span><span class='o'>.</span><span class='na'>longitude</span><span class='o'>;</span>
+			
+<span class='n'>LatLng</span> <span class='n'>intermediatePosition</span> <span class='o'>=</span> <span class='k'>new</span> <span class='n'>LatLng</span><span class='o'>(</span><span class='n'>lat</span><span class='o'>,</span> <span class='n'>lng</span><span class='o'>);</span>
+		
+<span class='n'>trackingMarker</span><span class='o'>.</span><span class='na'>setPosition</span><span class='o'>(</span><span class='n'>intermediatePosition</span><span class='o'>);</span>
+</code></pre></div>
+<p>We&#8217;ll also update our polyline with the new marker position, creating a trailing effect on the polyline.</p>
+<div class='highlight'><pre><code class='java'><span class='kd'>private</span> <span class='kt'>void</span> <span class='nf'>updatePolyLine</span><span class='o'>(</span><span class='n'>LatLng</span> <span class='n'>latLng</span><span class='o'>)</span> <span class='o'>{</span>
+	<span class='n'>List</span><span class='o'>&lt;</span><span class='n'>LatLng</span><span class='o'>&gt;</span> <span class='n'>points</span> <span class='o'>=</span> <span class='n'>polyLine</span><span class='o'>.</span><span class='na'>getPoints</span><span class='o'>();</span>
+	<span class='n'>points</span><span class='o'>.</span><span class='na'>add</span><span class='o'>(</span><span class='n'>latLng</span><span class='o'>);</span>
+	<span class='n'>polyLine</span><span class='o'>.</span><span class='na'>setPoints</span><span class='o'>(</span><span class='n'>points</span><span class='o'>);</span>
+<span class='o'>}</span>
+</code></pre></div>
+<p>As long as the interpolator returns a value below 1, we&#8217;ll continue this process.</p>
+
+<p>Once it hits 1 or above, we know we&#8217;ve reached the end-marker for this animation, and we&#8217;ll start with the next animation.</p>
+
+<pre><code>06-19 07:36:57.728: I/System.out(4153): Move to next marker.... current = 7 and size = 55
+06-19 07:36:57.728: I/System.out(4153): Found elapsed = 1 t = 6.666666595265269E-4
+06-19 07:36:57.830: I/System.out(4153): Found elapsed = 103 t = 0.06866666674613953
+06-19 07:36:57.916: I/System.out(4153): Found elapsed = 187 t = 0.12466666847467422
+06-19 07:36:58.002: I/System.out(4153): Found elapsed = 271 t = 0.18066667020320892
+06-19 07:36:58.088: I/System.out(4153): Found elapsed = 360 t = 0.23999999463558197
+06-19 07:36:58.174: I/System.out(4153): Found elapsed = 441 t = 0.2939999997615814
+06-19 07:36:58.252: I/System.out(4153): Found elapsed = 523 t = 0.3486666679382324
+06-19 07:36:58.338: I/System.out(4153): Found elapsed = 608 t = 0.40533334016799927
+06-19 07:36:58.416: I/System.out(4153): Found elapsed = 689 t = 0.4593333303928375
+06-19 07:36:58.502: I/System.out(4153): Found elapsed = 777 t = 0.5180000066757202
+06-19 07:36:58.549: I/System.out(4153): Found elapsed = 825 t = 0.550000011920929
+06-19 07:36:58.572: I/System.out(4153): Found elapsed = 846 t = 0.5640000104904175
+06-19 07:36:58.595: I/System.out(4153): Found elapsed = 868 t = 0.5786666870117188
+06-19 07:36:58.627: I/System.out(4153): Found elapsed = 895 t = 0.596666693687439
+06-19 07:36:58.674: I/System.out(4153): Found elapsed = 949 t = 0.6326666474342346
+06-19 07:36:58.697: I/System.out(4153): Found elapsed = 973 t = 0.6486666798591614
+06-19 07:36:58.720: I/System.out(4153): Found elapsed = 997 t = 0.6646666526794434
+06-19 07:36:58.744: I/System.out(4153): Found elapsed = 1020 t = 0.6800000071525574
+06-19 07:36:58.775: I/System.out(4153): Found elapsed = 1046 t = 0.6973333358764648
+06-19 07:36:58.799: I/System.out(4153): Found elapsed = 1072 t = 0.7146666646003723
+06-19 07:36:58.822: I/System.out(4153): Found elapsed = 1096 t = 0.7306666374206543
+06-19 07:36:58.845: I/System.out(4153): Found elapsed = 1120 t = 0.746666669845581
+06-19 07:36:58.869: I/System.out(4153): Found elapsed = 1141 t = 0.7606666684150696
+06-19 07:36:58.986: I/System.out(4153): Found elapsed = 1262 t = 0.8413333296775818
+06-19 07:36:59.025: I/System.out(4153): Found elapsed = 1298 t = 0.8653333187103271
+06-19 07:36:59.064: I/System.out(4153): Found elapsed = 1336 t = 0.890666663646698
+06-19 07:36:59.088: I/System.out(4153): Found elapsed = 1361 t = 0.9073333144187927
+06-19 07:36:59.111: I/System.out(4153): Found elapsed = 1384 t = 0.9226666688919067
+06-19 07:36:59.142: I/System.out(4153): Found elapsed = 1417 t = 0.9446666836738586
+06-19 07:36:59.174: I/System.out(4153): Found elapsed = 1443 t = 0.9620000123977661
+06-19 07:36:59.197: I/System.out(4153): Found elapsed = 1466 t = 0.9773333072662354
+06-19 07:36:59.213: I/System.out(4153): Found elapsed = 1488 t = 0.9919999837875366
+06-19 07:36:59.236: I/System.out(4153): Found elapsed = 1511 t = 1.0073332786560059
+06-19 07:36:59.260: I/System.out(4153): Move to next marker.... current = 8 and size = 55</code></pre>
+
+<p>Animating between the subsequent markers involves the following code:</p>
+<div class='highlight'><pre><code class='java'><span class='n'>currentIndex</span><span class='o'>++;</span>
+<span class='n'>highLightMarker</span><span class='o'>(</span><span class='n'>currentIndex</span><span class='o'>);</span>
+					
+<span class='n'>beginLatLng</span> <span class='o'>=</span> <span class='n'>getBeginLatLng</span><span class='o'>();</span>
+<span class='n'>endLatLng</span> <span class='o'>=</span> <span class='n'>getEndLatLng</span><span class='o'>();</span>
+
+<span class='n'>start</span> <span class='o'>=</span> <span class='n'>SystemClock</span><span class='o'>.</span><span class='na'>uptimeMillis</span><span class='o'>();</span>
+
+<span class='n'>Double</span> <span class='n'>heading</span> <span class='o'>=</span> <span class='n'>SphericalUtil</span><span class='o'>.</span><span class='na'>computeHeading</span><span class='o'>(</span><span class='n'>beginLatLng</span><span class='o'>,</span> <span class='n'>endLatLng</span><span class='o'>);</span>
+</code></pre></div>
+<p>As you can see we update our currentIndex, highlight the marker, specify a new start time, and calculate a new heading for the animation.</p>
+<div class='highlight'><pre><code class='java'><span class='n'>CameraPosition</span> <span class='n'>cameraPosition</span> <span class='o'>=</span>
+	<span class='k'>new</span> <span class='n'>CameraPosition</span><span class='o'>.</span><span class='na'>Builder</span><span class='o'>()</span>
+	<span class='o'>.</span><span class='na'>target</span><span class='o'>(</span><span class='n'>endLatLng</span><span class='o'>)</span>
+	<span class='o'>.</span><span class='na'>bearing</span><span class='o'>(</span><span class='n'>heading</span><span class='o'>.</span><span class='na'>floatValue</span><span class='o'>())</span> 
+	<span class='o'>.</span><span class='na'>tilt</span><span class='o'>(</span><span class='n'>tilt</span><span class='o'>)</span>
+	<span class='o'>.</span><span class='na'>zoom</span><span class='o'>(</span><span class='n'>googleMap</span><span class='o'>.</span><span class='na'>getCameraPosition</span><span class='o'>().</span><span class='na'>zoom</span><span class='o'>)</span>
+	<span class='o'>.</span><span class='na'>build</span><span class='o'>();</span>
+</code></pre></div>
+<p>We transition to the next animation by first pointing our camera in the right direction.</p>
+<div class='highlight'><pre><code class='java'><span class='n'>googleMap</span><span class='o'>.</span><span class='na'>animateCamera</span><span class='o'>(</span>
+		<span class='n'>CameraUpdateFactory</span><span class='o'>.</span><span class='na'>newCameraPosition</span><span class='o'>(</span><span class='n'>cameraPosition</span><span class='o'>),</span> 
+		<span class='n'>ANIMATE_SPEEED_TURN</span><span class='o'>,</span>
+		<span class='kc'>null</span>
+<span class='o'>);</span>
+</code></pre></div>
+<p>And finally start the animation again.</p>
+<div class='highlight'><pre><code class='java'><span class='n'>mHandler</span><span class='o'>.</span><span class='na'>postDelayed</span><span class='o'>(</span><span class='n'>animator</span><span class='o'>,</span> <span class='mi'>16</span><span class='o'>);</span>					
+</code></pre></div>
+<h3 id='references'>References</h3>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Googlemapsv2withactionbarsherlock maintained by <a href="https://github.com/ddewaele">ddewaele</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>

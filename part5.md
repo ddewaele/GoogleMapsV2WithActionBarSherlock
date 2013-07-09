@@ -1,6 +1,6 @@
 ---
 layout: index
-title: Using Google APIs on your map : Directions and Places
+title: Using Google APIs on your map - Directions and Places
 ---
 
 ##Using Google APIs on your map : Directions and Places

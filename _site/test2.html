@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Googlemapsv2withactionbarsherlock : This is a skeleton project for using Google Maps v2 on Android with ActionBarSherlock 4.3.1" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/stylesheet2.css">
+
+    <title>Googlemapsv2withactionbarsherlock</title>
+  </head>
+
+  <body>
+  
+<a href="https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock"><img style="position: absolute; top: 0; right: 0; border: 0; -webkit-box-shadow: 0 0 0; box-shadow: 0 0 0; padding:0; margin:0" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer" style="background: url(./images/backdrop.png) center no-repeat;
+">
+
+          <h1 id="project_title"><a href="./" style="color:#FFFFFF">Maps V2 Android</a></h1>
+          <div id="project_tagline">
+              Guide for the new Android Maps V2 API.
+              Includes a sample app, full source code, screencast and guides.
+          </div>
+
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock">View on GitHub</a>
+
+
+            <!--
+            <section id="downloads">
+              
+              <a class="zip_download_link" href="https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock/tarball/master">Download this project as a tar.gz file</a>
+            
+            </section>
+            -->
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+	<h2 id='google_map_markers'>Google Map Markers</h2>
+
+<h3 id='introduction'>Introduction</h3>
+
+<p>In this article, I&#8217;ll show you some simple ways of dealing with Markers on your map.</p>
+
+<p><a href='https://developers.google.com/maps/documentation/android/marker'>Markers</a> have finally become first class citizens in the Google Maps for Android v2 API. Gone are the days where you need to work with low-level overlays and overlay items to get a simple marker on the Map. As of v2, we finally have <code>Marker</code> objects and an <code>addMarkerToMap</code> method on the map, so let&#8217;s see what we can do with it&#8230;</p>
+
+<p>But first we&#8217;re going to take a little side-track.</p>
+
+<h3 id='adding_some_tabs_to_our_application'>Adding some tabs to our application.</h3>
+
+<p>The next 4 parts in this series will be included in a single Android demo application. I&#8217;m going to use a wonderful library from <a href='https://plus.google.com/117122118961369445953/posts'>Andreas Stütz</a> called <a href='https://github.com/astuetz/PagerSlidingTabStrip'>PagerSlidingTabStrip</a> that adds a nice set of tabs to the application. Setting up the project is really easy. Go checkout the Github page and download the library and the sample project if you&#8217;re interested in finding out more.</p>
+
+<p>The main layout of the application looks like this:</p>
+
+<pre><code>&lt;RelativeLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+	xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot;
+	xmlns:tools=&quot;http://schemas.android.com/tools&quot;
+	android:layout_width=&quot;match_parent&quot;
+	android:layout_height=&quot;match_parent&quot; &gt;
+
+	&lt;FrameLayout
+		android:id=&quot;@+id/fragmentContainer&quot;
+		android:layout_width=&quot;fill_parent&quot;
+		android:layout_height=&quot;fill_parent&quot; /&gt;
+
+	&lt;com.astuetz.viewpager.extensions.PagerSlidingTabStrip
+		android:id=&quot;@+id/tabs&quot;
+		android:layout_width=&quot;match_parent&quot;
+		android:layout_height=&quot;48dip&quot;
+		android:background=&quot;@drawable/background_tabs&quot; /&gt;
+
+	&lt;com.ecs.google.maps.v2.component.CustomViewPager
+		android:id=&quot;@+id/pager&quot;
+		android:layout_width=&quot;match_parent&quot;
+		android:layout_height=&quot;wrap_content&quot;
+		android:layout_below=&quot;@+id/tabs&quot;
+		tools:context=&quot;.MainActivity&quot; &gt;
+	&lt;/com.ecs.google.maps.v2.component.CustomViewPager&gt;
+
+&lt;/RelativeLayout&gt;</code></pre>
+
+<p>The actual activity code is also pretty straightforward</p>
+
+<p>We have maintain a reference to</p>
+
+<ul>
+<li>our <code>PagerSlidingTabStrip</code> component (responsible for drawing the tabs)</li>
+
+<li>our <code>ViewPager</code> component (responsible for hosting the pages)</li>
+
+<li>our <code>PagerAdapter</code> (responsible for providing the ViewPager with the pages).</li>
+</ul>
+
+<p>We glue them together by setting the PagerAdapter on the ViewPager, and attaching the ViewPager to the PagerSlidingTabStrip component.</p>
+
+<pre><code>public class TabbedActivity extends SherlockFragmentActivity { 
+
+	private PagerSlidingTabStrip tabs;
+	private ViewPager pager;
+	private MyPagerAdapter adapter;
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
+		setContentView(R.layout.activity_tabs);
+
+		tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+		pager = (ViewPager) findViewById(R.id.pager);
+		adapter = new MyPagerAdapter(getSupportFragmentManager());
+		
+		pager.setAdapter(adapter);
+		
+		final int pageMargin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources()
+				.getDisplayMetrics());
+		pager.setPageMargin(pageMargin);
+
+		tabs.setViewPager(pager);
+
+	}</code></pre>
+
+<p>The component gives us a nice look and feel as far as tabs are concerned, resembling the way the Google Play store does it. I highly recommend you taking a look at the project.</p>
+
+<h3 id='screenshots'>Screenshots</h3>
+
+<h4 id='gingerbread'>Gingerbread</h4>
+
+<p><img alt='gingerbread-tabs' src='https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/gingerbread-tabs.png' /></p>
+
+<h3 id='ics_and_jelly_bean'>ICS and Jelly Bean</h3>
+
+<p><img alt='jellybean-tabs' src='https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/jellybean-tabs.png' /></p>
+
+<p>Note again that on Gingerbread (using a Samsung Galaxy S in this case), the overflow menu on the ActionBar is not shown because the device has a hardware menu button. On the Jelly Bean device (Samsung Galaxy Nexus) the overflow menu is shown.</p>
+
+<h3 id='adding_markers_to_the_map'>Adding markers to the map</h3>
+
+<p>Adding a marker to the map is very simple. The only thing you need to do is call the <code>addMarkerToMap</code> method on the googleMap. Notice how we also store the returned marker from the addMarkerToMap method in an ArrayList here in order to do some Marker management later on.</p>
+
+<pre><code>public void addMarkerToMap(LatLng latLng) {
+	Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
+			 .title(&quot;title&quot;)
+			 .snippet(&quot;snippet&quot;));
+	markers.add(marker);
+
+}</code></pre>
+
+<p>A title and snippet can be provided to be displayed on the <code>InfoWindow</code> when selecting the marker.</p>
+
+<h3 id='marker_management'>Marker management</h3>
+
+<p>The googleMap doesn&#8217;t expose a list of markers that have been added to the map, nor does it track the currently selected marker. In other words, you&#8217;ll need to do your own <code>marker management</code>. Marker management is all about having a flexible way to keep track of the markers being used on your app, so that you can refer to them in an easy way.</p>
+
+<p>It comes in handy when you want to interact with markers without going through the standard callbacks of the googleMap.</p>
+
+<p>When you have a marker somewhere on the map and you didn&#8217;t store the resulting marker in a list, the only way to access the marker again is by clicking on it, and using the marker argument in the callback.</p>
+
+<pre><code>googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
+			@Override
+			public boolean onMarkerClick(Marker marker) {
+				return false;
+			}
+		}
+);</code></pre>
+
+<p>If you wan to print all the markers on the map, programmatically highlight a specific marker, or jump from one marker to another you cannot do it unless you have some way of referencing these markers. By keeping the track of the markers in an external list we can add some flexibility regarding the way we can interact with these markers.</p>
+
+<h3 id='the_selected_marker'>The selected marker</h3>
+
+<p>It&#8217;s always interesting to know what marker is currently selected, and that&#8217;s also part of Marker management. Suppose you have a use-case where a user can select a marker, and pull up a menu to delete that marker. The action to delete the marker needs to know what marker should be deleted, so it needs to rely on an instance variable for that.</p>
+
+<p>Our method to remove the selected marker would look like this:</p>
+
+<pre><code>public void removeSelectedMarker() {
+	this.markers.remove(this.selectedMarker);
+	this.selectedMarker.remove();
+}</code></pre>
+
+<p>As we have a reference to the selected marker, it&#8217;s simply a matter of removing it from our internal list and removing it from the map. Keep in mind that it&#8217;s your responsibility to make sure the internal list is kept in sync with whatever is shown on the map.</p>
+
+<h3 id='highlighting_a_marker'>Highlighting a marker</h3>
+
+<p>If you want to highlight a marker, you typically want to change it&#8217;s appearance. One of the things you can change very easily now (since the latest Google Play Services update) is the icon on the map.</p>
+
+<p>There are 2 ways to highlight a marker</p>
+
+<ul>
+<li>Clicking on a marker</li>
+
+<li>Programmatically highlight a marker.</li>
+</ul>
+
+<h3 id='clicking_on_a_marker'>Clicking on a marker</h3>
+
+<p>The default behavior when clicking on a marker is for the camera to move to the map and an info window to appear.</p>
+
+<p>If you want to intercept the user clicking on a marker, you simply need to implement an <code>OnMarkerClickListener</code></p>
+
+<pre><code>googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+
+			@Override
+			public boolean onMarkerClick(Marker marker) {
+				return false;
+			}
+		}
+);</code></pre>
+
+<ul>
+<li>You return false if the default behavior should occur.</li>
+
+<li>You return true if the listener has consumed the event and you don&#8217;t want the default behavior to occur).</li>
+</ul>
+
+<p>For example suppose you want to change the color of the marker when clicking on it, but you don&#8217;t want to shown the infoWindow or move the camera. In that case you could call the following function in the <code>onMarkerCick(Marker marker)</code>.</p>
+
+<pre><code>private void highLightMarker(Marker marker) {
+	
+	for (Marker foundMarker : this.markers) {
+		if (!foundMarker.equals(marker)) {
+			foundMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
+		} else {
+			foundMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+			foundMarker.showInfoWindow();
+		}
+	}
+
+	this.selectedMarker=marker;
+}</code></pre>
+
+<p>If you want to programmatically highlight a marker, and you either have a reference to it, or you know the index of the marker, simply call the highlightMarker directly. It will maintain the proper state (selectedMarker) and do the highlighting.</p>
+
+<h3 id='some_useful_methods_to_have_to_manage_your_markers'>Some useful methods to have to manage your markers</h3>
+
+<p>If you&#8217;re working with maps a lot, and you have more than one app that uses maps, it&#8217;s interesting to encapsulate all of this into your own custom map fragment. The following generic methods can be placed on the MapFragment so that you can not only drop the fragment into your layout, but also re-use a lot of the business logic associated with marker management.</p>
+
+<p>Adds a marker to the map.</p>
+
+<pre><code>public void addMarkerToMap(LatLng latLng) {
+	Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
+			 .title(&quot;title&quot;)
+			 .snippet(&quot;snippet&quot;));
+	markers.add(marker);
+
+}</code></pre>
+
+<p>Clears all markers from the map.</p>
+
+<pre><code>public void clearMarkers() {
+	googleMap.clear();
+	markers.clear();		
+}</code></pre>
+
+<p>Remove the currently selected marker.</p>
+
+<pre><code>public void removeSelectedMarker() {
+	this.markers.remove(this.selectedMarker);
+	this.selectedMarker.remove();
+}	</code></pre>
+
+<p>Highlight the marker by index.</p>
+
+<pre><code>private void highLightMarker(int index) {
+	highLightMarker(markers.get(index));
+}</code></pre>
+
+<p>Highlight the marker by marker.</p>
+
+<pre><code>private void highLightMarker(Marker marker) {
+	marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
+	marker.showInfoWindow();
+	this.selectedMarker=marker;
+}	</code></pre>
+
+<h3 id='reusability'>Re-usability</h3>
+
+<p>A lot of the stuff we&#8217;ve discussed here are generic / re-usable that you want to have at your disposal when dealing with maps. It&#8217;s important to position them on the proper level in your code. Placing them on the <code>MapFragment</code> is an ideal way to promote re-use as</p>
+
+<ul>
+<li>the methods are tightly coupled with the map</li>
+
+<li>the methods are eligable for re-used</li>
+
+<li>the MapFragment containing these methods can be easily embedded in another layout</li>
+</ul>
+
+<h3 id='custom_infowindows'>Custom InfoWindows</h3>
+
+<p>The default infoWindow looks like this :</p>
+
+<p><img alt='default-marker-infowindow.png' src='https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/default-marker-infowindow.png' /></p>
+
+<p>You can customize the infoWindow by specifying your own layout file:</p>
+
+<pre><code>&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
+&lt;LinearLayout xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot;
+	android:layout_width=&quot;fill_parent&quot;
+	android:layout_height=&quot;wrap_content&quot;
+	android:orientation=&quot;horizontal&quot;&gt;
+
+	&lt;ImageView
+		android:id=&quot;@+id/icon&quot;
+		android:layout_width=&quot;wrap_content&quot;
+		android:layout_height=&quot;wrap_content&quot;
+		android:layout_gravity=&quot;center_vertical&quot;
+		android:padding=&quot;2dip&quot;
+		android:src=&quot;@drawable/ic_launcher&quot;
+		android:contentDescription=&quot;@string/icon&quot;/&gt;
+
+	&lt;LinearLayout
+		android:layout_width=&quot;fill_parent&quot;
+		android:layout_height=&quot;wrap_content&quot;
+		android:orientation=&quot;vertical&quot;&gt;
+
+		&lt;TextView
+			android:id=&quot;@+id/title&quot;
+			android:layout_width=&quot;wrap_content&quot;
+			android:layout_height=&quot;wrap_content&quot;
+			android:textSize=&quot;25sp&quot;
+			android:textStyle=&quot;bold&quot;/&gt;
+
+		&lt;TextView
+			android:id=&quot;@+id/snippet&quot;
+			android:layout_width=&quot;wrap_content&quot;
+			android:layout_height=&quot;wrap_content&quot;
+			android:textSize=&quot;15sp&quot;/&gt;
+	&lt;/LinearLayout&gt;
+
+&lt;/LinearLayout&gt;</code></pre>
+
+<p>You also need to create an <code>InfoWindowAdapter</code> that will inflate the layout. The layout contains an icon and we set the title and the snippet on the layout as well, passing it in via the marker.</p>
+
+<pre><code>import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
+
+import com.ecs.google.maps.v2.actionbarsherlock.R;
+import com.google.android.gms.maps.GoogleMap.InfoWindowAdapter;
+import com.google.android.gms.maps.model.Marker;
+
+public class IconizedWindowAdapter implements InfoWindowAdapter {
+  LayoutInflater inflater=null;
+
+  public IconizedWindowAdapter(LayoutInflater inflater) {
+	this.inflater=inflater;
+  }
+
+  @Override
+  public View getInfoWindow(Marker marker) {
+	return(null);
+  }
+
+  @Override
+  public View getInfoContents(Marker marker) {
+	View popup=inflater.inflate(R.layout.marker_tooltip, null);
+
+	TextView tv=(TextView)popup.findViewById(R.id.title);
+
+	tv.setText(marker.getTitle());
+	tv=(TextView)popup.findViewById(R.id.snippet);
+	tv.setText(marker.getSnippet());
+
+	return(popup);
+  }
+}	</code></pre>
+
+<p>And finally we need to set the <code>InfoWindowAdapter</code> on the map</p>
+
+<pre><code>googleMap.setInfoWindowAdapter(new IconizedWindowAdapter(getActivity().getLayoutInflater()));	</code></pre>
+
+<h3 id='polylines'>Polylines</h3>
+
+<p>You can also draw polyLines onto the map. For that you need to create a <code>Polyline</code> and a <code>PolylineOptions</code></p>
+
+<pre><code>private Polyline polyLine;
+private PolylineOptions rectOptions = new PolylineOptions();</code></pre>
+
+<p>You get a reference to a polyLine by adding it to the map by calling the <code>addPolyLine</code> method.</p>
+
+<pre><code>polyLine = googleMap.addPolyline(rectOptions);</code></pre>
+
+<p>In our sample, as we add markers to the map we also update the polyLine so that the markers are connected. We do this by adding our the newly dropped marker onto the polyLine. Notice how we need to call setPoints again. Simply doing polyLine.getPoints().add(latLng) doesn&#8217;t work.</p>
+
+<pre><code>/**
+ * Add the marker to the polyline.
+ */
+private void updatePolyLine(LatLng latLng) {
+	List&lt;LatLng&gt; points = polyLine.getPoints();
+	points.add(latLng);
+	polyLine.setPoints(points);
+}</code></pre>
+
+<h2 id='references'>References</h2>
+
+<ul>
+<li><a href='https://developers.google.com/maps/documentation/android/marker'>Android Markers</a></li>
+
+<li><a href='https://plus.google.com/117122118961369445953/posts'>Andreas Stütz</a></li>
+
+<li><a href='https://github.com/astuetz/PagerSlidingTabStrip'>PagerSlidingTabStrip</a></li>
+
+<li><a href='http://www.youtube.com/watch?feature=player_embedded&amp;v=nb2X9IjjZpM#!'>Maps Shortcuts: Android Maps Utility Library</a></li>
+</ul>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Googlemapsv2withactionbarsherlock maintained by <a href="https://github.com/ddewaele">ddewaele</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8' />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
+    <meta name="description" content="Googlemapsv2withactionbarsherlock : This is a skeleton project for using Google Maps v2 on Android with ActionBarSherlock 4.3.1" />
+
+    <link rel="stylesheet" type="text/css" media="screen" href="./stylesheets/stylesheet2.css">
+
+    <title>Googlemapsv2withactionbarsherlock</title>
+  </head>
+
+  <body>
+  
+<a href="https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock"><img style="position: absolute; top: 0; right: 0; border: 0; -webkit-box-shadow: 0 0 0; box-shadow: 0 0 0; padding:0; margin:0" src="https://s3.amazonaws.com/github/ribbons/forkme_right_orange_ff7600.png" alt="Fork me on GitHub"></a>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer" style="background: url(./images/backdrop.png) center no-repeat;
+">
+
+          <h1 id="project_title"><a href="./" style="color:#FFFFFF">Maps V2 Android</a></h1>
+          <div id="project_tagline">
+              Guide for the new Android Maps V2 API.
+              Includes a sample app, full source code, screencast and guides.
+          </div>
+
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock">View on GitHub</a>
+
+
+            <!--
+            <section id="downloads">
+              
+              <a class="zip_download_link" href="https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock/tarball/master">Download this project as a tar.gz file</a>
+            
+            </section>
+            -->
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+	<h3 id='part_4__migrating_from_v1_maps_to_v2_maps'>Part 4 : Migrating from v1 maps to v2 maps.</h3>
+
+<p>When moving to v2 of the Maps API for Android, you&#8217;ll immediately notice that this is a completely new API with very little regard to backwards compatibility ( = a good thing in this case). You&#8217;ll see a lot of compile errors as many of the existing classes will now be missing like MapActivity, GeoPoint, RecticleDrawMode and Overlay. The new objects are all included in the com.google.android.gms.maps.* package.</p>
+
+<p>In this section I would like to go over some of the differences between the v1 and v2 maps library.</p>
+
+<ul>
+<li>Users location</li>
+
+<li>Marker support</li>
+
+<li>HighLighting markers</li>
+
+<li>Animation</li>
+</ul>
+
+<h4 id='users_location'>Users location</h4>
+
+<h5 id='android_maps_v1'>Android Maps v1</h5>
+
+<p>In Maps v1, the <a href='https://developers.google.com/maps/documentation/android/v1/reference/com/google/android/maps/MyLocationOverlay'>MyLocationOverlay</a> was used to detect the users location</p>
+<div class='highlight'><pre><code class='java'><span class='n'>List</span> <span class='n'>overlaysoverlays</span> <span class='o'>=</span> <span class='n'>mapView</span><span class='o'>.</span><span class='na'>getOverlays</span><span class='o'>();</span>
+<span class='n'>MyLocationOverlay</span> <span class='n'>myLocationOverlay</span> <span class='o'>=</span> <span class='k'>new</span> <span class='n'>MyLocationOverlay</span><span class='o'>(</span><span class='k'>this</span><span class='o'>,</span> <span class='n'>mapView</span><span class='o'>);</span>
+<span class='n'>myLocationOverlay</span><span class='o'>.</span><span class='na'>enableMyLocation</span><span class='o'>();</span>
+<span class='n'>overlays</span><span class='o'>.</span><span class='na'>add</span><span class='o'>(</span><span class='n'>myLocationOverlay</span><span class='o'>);</span>
+</code></pre></div>
+<h5 id='android_maps_v2'>Android Maps v2</h5>
+
+<p>You can activate show a <code>My Location</code> button on the map very easily like this:</p>
+<div class='highlight'><pre><code class='java'><span class='n'>googleMap</span><span class='o'>.</span><span class='na'>setMyLocationEnabled</span><span class='o'>(</span><span class='kc'>true</span><span class='o'>);</span>
+</code></pre></div>
+<p>The <code>My Location</code> button appears in the top right corner of the screen only when the My Location layer is enabled. When a user clicks the button, the camera animates to focus on the user&#8217;s current location if the user&#8217;s location is currently known.</p>
+
+<h4 id='highlighting_markers'>Highlighting markers</h4>
+
+<p>Highlighting markers has become very simple. Changing the marker icon has become a one-liner.</p>
+
+<h5 id='android_maps_v1'>Android Maps v1</h5>
+<div class='highlight'><pre><code class='java'><span class='kd'>private</span> <span class='kt'>void</span> <span class='nf'>highlightMarker</span><span class='o'>(</span><span class='kt'>int</span> <span class='n'>index</span><span class='o'>)</span> <span class='o'>{</span>
+	<span class='n'>Drawable</span> <span class='n'>d</span> <span class='o'>=</span> <span class='n'>getResources</span><span class='o'>().</span><span class='na'>getDrawable</span><span class='o'>(</span><span class='n'>R</span><span class='o'>.</span><span class='na'>drawable</span><span class='o'>.</span><span class='na'>pin_green</span><span class='o'>);</span>
+	<span class='n'>Rect</span> <span class='n'>copyBounds</span> <span class='o'>=</span> <span class='n'>overlay</span><span class='o'>.</span><span class='na'>getMarker</span><span class='o'>(</span><span class='mi'>0</span><span class='o'>).</span><span class='na'>copyBounds</span><span class='o'>();</span>
+	<span class='n'>d</span><span class='o'>.</span><span class='na'>setBounds</span><span class='o'>(</span><span class='n'>copyBounds</span><span class='o'>);</span>
+	<span class='n'>overlay</span><span class='o'>.</span><span class='na'>setMarker</span><span class='o'>(</span><span class='n'>d</span><span class='o'>);</span>
+	<span class='n'>SitesOverlay</span> <span class='n'>sitesOverlay</span> <span class='o'>=</span>  <span class='o'>(</span><span class='n'>SitesOverlay</span><span class='o'>)</span> <span class='n'>map</span><span class='o'>.</span><span class='na'>getOverlays</span><span class='o'>().</span><span class='na'>get</span><span class='o'>(</span><span class='mi'>0</span><span class='o'>);</span>
+	<span class='n'>sitesOverlay</span><span class='o'>.</span><span class='na'>refresh</span><span class='o'>();</span>
+<span class='o'>}</span>
+</code></pre></div>
+<h5 id='android_maps_v2'>Android Maps v2</h5>
+<div class='highlight'><pre><code class='java'><span class='kd'>private</span> <span class='kt'>void</span> <span class='nf'>highLightMarker</span><span class='o'>(</span><span class='kt'>int</span> <span class='n'>index</span><span class='o'>)</span> <span class='o'>{</span>
+	<span class='n'>Marker</span> <span class='n'>marker</span> <span class='o'>=</span> <span class='n'>markers</span><span class='o'>.</span><span class='na'>get</span><span class='o'>(</span><span class='n'>index</span><span class='o'>))</span>
+	<span class='n'>marker</span><span class='o'>.</span><span class='na'>setIcon</span><span class='o'>(</span><span class='n'>BitmapDescriptorFactory</span><span class='o'>.</span><span class='na'>defaultMarker</span><span class='o'>(</span><span class='n'>BitmapDescriptorFactory</span><span class='o'>.</span><span class='na'>HUE_AZURE</span><span class='o'>));</span>
+<span class='o'>}</span>
+</code></pre></div>
+<h4 id='animation'>Animation</h4>
+
+<p>The ability to animate the map using the CameraPositions is a vast improvement over the v1 api. Not only is it a lot fancier from a UI perspective, but it also requires far less code than before.</p>
+
+<h5 id='android_maps_v1'>Android Maps v1</h5>
+
+<p>The v1 API was very limited in turns of animations. Not only did the map lack many of the gestures (bearing / tilt) we have today, the only way to have some form of animation was to animate the map to a certain GeoPoint location, giving the user a sense of motion.</p>
+
+<p>We also didn&#8217;t have marker objects, so we needed to model our own locationResources acting as markers.</p>
+
+<p>We needed to convert those objects to GeoPoints, as that is the only object that the MapView could animate to.</p>
+
+<p>We needed to manage a lot of state (is the animation still in progress, did the user press the stop button, &#8230;.)</p>
+
+<p>This resulted in a lot of code like this :</p>
+<div class='highlight'><pre><code class='java'><span class='n'>MapView</span> <span class='n'>map</span> <span class='o'>=</span> <span class='o'>(</span><span class='n'>MapView</span><span class='o'>)</span> <span class='n'>findViewById</span><span class='o'>(</span><span class='n'>R</span><span class='o'>.</span><span class='na'>id</span><span class='o'>.</span><span class='na'>map</span><span class='o'>);</span>
+<span class='n'>MapController</span> <span class='n'>mc</span> <span class='o'>=</span> <span class='n'>map</span><span class='o'>.</span><span class='na'>getController</span><span class='o'>();</span>			
+
+<span class='n'>ReplayRouteOnMap</span> <span class='n'>replayRouteOnMap</span><span class='o'>;</span> 
+<span class='n'>replayRouteOnMap</span><span class='o'>.</span><span class='na'>execute</span><span class='o'>();</span>		
+
+<span class='kd'>private</span> <span class='kd'>class</span> <span class='nc'>ReplayRouteOnMap</span> <span class='kd'>extends</span> <span class='n'>AsyncTask</span><span class='o'>&lt;</span><span class='n'>Uri</span><span class='o'>,</span> <span class='n'>String</span><span class='o'>,</span> <span class='n'>Void</span><span class='o'>&gt;</span> <span class='o'>{</span>
+
+	<span class='kt'>int</span> <span class='n'>replayIndex</span><span class='o'>=</span><span class='mi'>0</span><span class='o'>;</span>
+
+	<span class='nd'>@Override</span>
+	<span class='kd'>protected</span> <span class='n'>Void</span> <span class='nf'>doInBackground</span><span class='o'>(</span><span class='n'>Uri</span><span class='o'>...</span><span class='na'>params</span><span class='o'>)</span> <span class='o'>{</span>
+	
+		<span class='k'>for</span> <span class='o'>(</span><span class='n'>LocationResource</span> <span class='n'>locationResource</span> <span class='o'>:</span> <span class='n'>allLocationResources</span><span class='o'>)</span> <span class='o'>{</span>
+			<span class='k'>if</span> <span class='o'>(!</span><span class='n'>playbackRequestedToStop</span><span class='o'>)</span> <span class='o'>{</span>
+				<span class='n'>highlightMarker</span><span class='o'>(</span><span class='n'>replayIndex</span><span class='o'>-</span><span class='mi'>1</span><span class='o'>);</span>
+				<span class='n'>GeoPoint</span> <span class='n'>p</span> <span class='o'>=</span> <span class='k'>new</span> <span class='n'>GeoPoint</span><span class='o'>((</span><span class='kt'>int</span><span class='o'>)(</span><span class='n'>locationResource</span><span class='o'>.</span><span class='na'>getLatitude</span><span class='o'>()</span> <span class='o'>*</span> <span class='mi'>1</span><span class='n'>E6</span><span class='o'>),</span>  <span class='o'>(</span><span class='kt'>int</span><span class='o'>)(</span><span class='n'>locationResource</span><span class='o'>.</span><span class='na'>getLongitude</span><span class='o'>()*</span> <span class='mi'>1</span><span class='n'>E6</span><span class='o'>));</span>
+				
+				<span class='c1'>//TODO: should fix the Caused by: java.lang.NullPointerException at com.google.android.maps.MapController.animateTo(MapController.java:244) error</span>
+				<span class='c1'>//unsure what cause it.</span>
+				<span class='k'>try</span> <span class='o'>{</span>
+					<span class='n'>mc</span><span class='o'>.</span><span class='na'>animateTo</span><span class='o'>(</span><span class='n'>p</span><span class='o'>);</span>
+				<span class='o'>}</span> <span class='k'>catch</span> <span class='o'>(</span><span class='n'>Exception</span> <span class='n'>ex</span><span class='o'>)</span> <span class='o'>{</span>
+					<span class='n'>Utils</span><span class='o'>.</span><span class='na'>addErrorMsg</span><span class='o'>(</span><span class='k'>this</span><span class='o'>,</span> <span class='s'>&quot;Error during animateTo in history map&quot;</span><span class='o'>,</span> <span class='n'>ex</span><span class='o'>);</span>
+				<span class='o'>}</span>
+
+				<span class='k'>try</span> <span class='o'>{</span>
+					<span class='n'>publishProgress</span><span class='o'>(</span><span class='n'>allLocationResourcesAsString</span><span class='o'>.</span><span class='na'>get</span><span class='o'>(</span><span class='n'>replayIndex</span><span class='o'>-</span><span class='mi'>1</span><span class='o'>)</span> <span class='o'>+</span> <span class='s'>&quot; at &quot;</span> <span class='o'>+</span> <span class='n'>locationResource</span><span class='o'>.</span><span class='na'>getDateFormatted</span><span class='o'>());</span>
+				<span class='o'>}</span> <span class='k'>catch</span> <span class='o'>(</span><span class='n'>Exception</span> <span class='n'>ex</span><span class='o'>)</span> <span class='o'>{</span>
+					<span class='n'>publishProgress</span><span class='o'>(</span><span class='s'>&quot;Location &quot;</span> <span class='o'>+</span> <span class='n'>replayIndex</span> <span class='o'>+</span> <span class='s'>&quot;/&quot;</span> <span class='o'>+</span> <span class='n'>allLocationResources</span><span class='o'>.</span><span class='na'>size</span><span class='o'>()</span> <span class='o'>+</span> <span class='s'>&quot; at &quot;</span> <span class='o'>+</span> <span class='n'>locationResource</span><span class='o'>.</span><span class='na'>getDateFormatted</span><span class='o'>());</span>	
+				<span class='o'>}</span>
+				<span class='n'>SystemClock</span><span class='o'>.</span><span class='na'>sleep</span><span class='o'>(</span><span class='n'>replaySpeed</span><span class='o'>);</span>			
+			<span class='o'>}</span> <span class='k'>else</span> <span class='o'>{</span>
+				<span class='n'>Utils</span><span class='o'>.</span><span class='na'>logDebugMsg</span><span class='o'>(</span><span class='k'>this</span><span class='o'>,</span><span class='s'>&quot;request to stop route playback confirmed&quot;</span><span class='o'>);</span>
+				<span class='n'>playbackInProgress</span><span class='o'>=</span><span class='kc'>false</span><span class='o'>;</span>
+				<span class='k'>return</span> <span class='kc'>null</span><span class='o'>;</span>
+			<span class='o'>}</span>
+		<span class='o'>}</span>
+	<span class='o'>}</span>
+	
+	<span class='nd'>@Override</span>
+	<span class='kd'>protected</span> <span class='kt'>void</span> <span class='nf'>onProgressUpdate</span><span class='o'>(</span><span class='n'>String</span><span class='o'>...</span> <span class='n'>values</span><span class='o'>)</span> <span class='o'>{</span>
+		<span class='c1'>// Update UI</span>
+		<span class='n'>pinInfoText</span><span class='o'>.</span><span class='na'>setText</span><span class='o'>(</span><span class='n'>values</span><span class='o'>[</span><span class='mi'>0</span><span class='o'>]);</span>
+	<span class='o'>}</span>			
+<span class='o'>}</span>
+</code></pre></div>
+<h5 id='android_maps_v2'>Android Maps v2</h5>
+
+<p>Changing the view on the map in order to create beautiful animations can now be done in a much cleaner way. Not only do we have a nice set Camera objects to work with (allowing is to define the tilt / bearing / target / zoom of the camera), but proper animation support is built into the API, allowing us to specify durations and a CancelableCallback, giving us full control over the animation process.</p>
+<div class='highlight'><pre><code class='java'><span class='n'>CancelableCallback</span> <span class='n'>MyCancelableCallback</span> <span class='o'>=</span> <span class='k'>new</span> <span class='n'>CancelableCallback</span><span class='o'>(){</span>
+
+	<span class='nd'>@Override</span>
+	<span class='kd'>public</span> <span class='kt'>void</span> <span class='nf'>onCancel</span><span class='o'>()</span> <span class='o'>{</span>
+	<span class='o'>}</span>
+
+	<span class='nd'>@Override</span>
+	<span class='kd'>public</span> <span class='kt'>void</span> <span class='nf'>onFinish</span><span class='o'>()</span> <span class='o'>{</span>
+
+		<span class='k'>if</span><span class='o'>(++</span><span class='n'>currentPt</span> <span class='o'>&lt;</span> <span class='n'>markers</span><span class='o'>.</span><span class='na'>size</span><span class='o'>()){</span>
+
+			<span class='kt'>float</span> <span class='n'>targetBearing</span> <span class='o'>=</span> <span class='n'>bearingBetweenLatLngs</span><span class='o'>(</span> <span class='n'>googleMap</span><span class='o'>.</span><span class='na'>getCameraPosition</span><span class='o'>().</span><span class='na'>target</span><span class='o'>,</span> <span class='n'>markers</span><span class='o'>.</span><span class='na'>get</span><span class='o'>(</span><span class='n'>currentPt</span><span class='o'>).</span><span class='na'>getPosition</span><span class='o'>());</span>
+			<span class='n'>LatLng</span> <span class='n'>targetLatLng</span> <span class='o'>=</span> <span class='n'>markers</span><span class='o'>.</span><span class='na'>get</span><span class='o'>(</span><span class='n'>currentPt</span><span class='o'>).</span><span class='na'>getPosition</span><span class='o'>();</span>
+
+			<span class='n'>CameraPosition</span> <span class='n'>cameraPosition</span> <span class='o'>=</span>
+					<span class='k'>new</span> <span class='n'>CameraPosition</span><span class='o'>.</span><span class='na'>Builder</span><span class='o'>()</span>
+							<span class='o'>.</span><span class='na'>target</span><span class='o'>(</span><span class='n'>targetLatLng</span><span class='o'>)</span>
+							<span class='o'>.</span><span class='na'>tilt</span><span class='o'>(</span><span class='n'>currentPt</span><span class='o'>&lt;</span><span class='n'>markers</span><span class='o'>.</span><span class='na'>size</span><span class='o'>()-</span><span class='mi'>1</span> <span class='o'>?</span> <span class='mi'>90</span> <span class='o'>:</span> <span class='mi'>0</span><span class='o'>)</span>
+							<span class='o'>.</span><span class='na'>bearing</span><span class='o'>(</span><span class='n'>targetBearing</span><span class='o'>)</span>
+							<span class='o'>.</span><span class='na'>zoom</span><span class='o'>(</span><span class='n'>googleMap</span><span class='o'>.</span><span class='na'>getCameraPosition</span><span class='o'>().</span><span class='na'>zoom</span><span class='o'>)</span>
+							<span class='o'>.</span><span class='na'>build</span><span class='o'>();</span>
+
+			<span class='n'>googleMap</span><span class='o'>.</span><span class='na'>animateCamera</span><span class='o'>(</span>
+					<span class='n'>CameraUpdateFactory</span><span class='o'>.</span><span class='na'>newCameraPosition</span><span class='o'>(</span><span class='n'>cameraPosition</span><span class='o'>),</span> 
+					<span class='mi'>3000</span><span class='o'>,</span>
+					<span class='n'>MyCancelableCallback</span><span class='o'>);</span>
+
+			<span class='n'>markers</span><span class='o'>.</span><span class='na'>get</span><span class='o'>(</span><span class='n'>currentPt</span><span class='o'>).</span><span class='na'>showInfoWindow</span><span class='o'>();</span>
+
+		<span class='o'>}</span>
+
+	<span class='o'>}</span>
+
+<span class='o'>};</span>
+</code></pre></div>
+<h2 id='references'>References</h2>
+
+<ul>
+<li><a href='https://developers.google.com/maps/documentation/android/'>Google Maps Android API v2</a></li>
+
+<li><a href='https://github.com/mg6maciej/android-maps-extensions'>Android Maps Extensions</a></li>
+
+<li><a href='http://code.google.com/p/gmaps-api-issues/issues/list'>Google Maps API bug reports and feature requests</a></li>
+</ul>
+
+<p>TODO : add the drop-effect TODO : add zoom at the end. TODO : use tabs in the app to show the different tutorial sections TODO : incorporate programmatic VS user moves. TODO : write something on the map TODO : add something about mock location testing (https://github.com/paulhoux/Android-MockProviderGPS/blob/master/src/nl/cowlumbus/android/mockgps/MockGpsProviderActivity.java)</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Googlemapsv2withactionbarsherlock maintained by <a href="https://github.com/ddewaele">ddewaele</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
