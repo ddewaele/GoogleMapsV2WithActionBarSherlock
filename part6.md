@@ -3,7 +3,7 @@ layout: index
 title: Common errors and mistakes when using the Maps API
 ---
 
-##Common errors and mistakes when using the Maps API**
+##Common errors and mistakes when using the Maps API
 
 In this section I'm going to go over some of the common mistakes people are making while setting up an Android application using the Google Maps Android API v2.
 
