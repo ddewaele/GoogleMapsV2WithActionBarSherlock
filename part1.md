@@ -21,16 +21,18 @@ I've also created a screencast that covers setting up a skeleton project (not co
 ###Google Maps Android API v2
  
 The new Google Maps Android API v2 (available through Google Play Services) is a vast improvement over the original one and comes with many new features. 
-Not only does it really stand out from a UI perspective but also on an API level is the new Maps v2 library a "delight" for both end-users and developers.
+Not only does it really stand out from a UI perspective but also on an API level can the new Maps v2 library be considered a "delight" for both end-users and developers.
 
 Before the Google Maps Android API v2 was released, developers were forced to embed a `MapView` component in a special type of Activity called a `MapActivity`. 
 
-When developers created map applications using the MapView component, you could immediately see a big difference between those applications and the Google Maps applications.
-Not only were the tiles of much higher quality in the Google Maps application, but subtle differences like auto-orienting street-names and labels that were present in the Google Maps application were not available in the MapView component.
+When developers created map applications using the MapView component, the maps embedded in these third party applications were not of the same standard as the ones that you found on the Google Maps application. 
+Not only were the tiles of much higher quality in the Google Maps application, but subtle differences like auto-orienting street-names and labels that were present in the Google Maps application were not available in the MapView component. So effectivly, developers were left with a lower quality map component.
+
+The `MapView` component also had several limitations. You could use 1 `MapView` component in your application and there was no `Fragment` support.
 
 This has all changes with the new Google Maps Android v2 API.
 
-A quick overview of these features
+A quick overview of the features of the new Maps Android API v2:
 
 - Distribution via Google Play Services (no more waiting for Android platform updates to get new functionality)
 - Full fragment support (no more MapView, no more single map / app limitation)
@@ -42,6 +44,8 @@ In the first part of this series I will show you how to
 - install the library projecs
 - setup your map key
 - add the map to your application.
+- have it run on lower Android SDK levels
+- add ActionBarSherlock
 
 ### Setting up the skeleton project.
 
@@ -67,13 +71,13 @@ Google Play Services can be downloaded using the android SDK Manager. Navigate t
 
 Google Play Services will be extracted in sdk/extras/google/google_play_services)
 
-When importing Library projects into your Eclipse workspace, it's safer to have them somewhere outside of the current workspace before importing them.
+**Note:** When importing Library projects into your Eclipse workspace, it's safer to have them somewhere outside of the current workspace before importing them.
 Otherwise, you might run into the following error :
 
 	Invalid project description.
 	  /Users/ddewaele/Projects/workspace-android/actionbarsherlock overlaps the location of another project: 'actionbarsherlock'
 
-To workaround this problem, simply put the project(s) you want to import in a location outside of your current workspace, and while importing select the *Copy projects into workspce* option.
+To workaround this problem make sure that before importing the project(s) you simply put them in a location outside of your current workspace, and while importing select the *Copy projects into workspce* option if you want to have them in your workspace folder.
 
 ![Import Android projects eclipse](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/import-android-project-eclipse.png)
 
@@ -127,15 +131,22 @@ You need to make sure that the following properties are added. (put them before 
 
 Inside the application tag we need to specify our map key. This needs to be done by adding a meta-data element inside the application element:
 
-	<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="AIzaSyA_u1faIXRhx_Q7NafFbrhQJEerl6UUbPY"/>
+	<meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="INSERT_YOUR_API_KEY_HERE"/>
 
-The whole proceess of [getting a key is described in great length](https://developers.google.com/maps/documentation/android/start#the_google_maps_api_key) on the Google Android Maps v2 page so I'm not going to discuss it here.
+The whole proceess of [getting a key is described in great length](https://developers.google.com/maps/documentation/android/start#the_google_maps_api_key) on the Google Android Maps v2 page so I'm not going to discuss it here. I do highly recommend that you read it to obtain your API key.
+
+I've tried to summarize the process in the picture below, showing you the relationships between
+
+- The SHA1 fingerprint of your keystore
+- Your application pacakge name
+- The API console
 
 ![Overview picture](https://dl.dropboxusercontent.com/u/13246619/Blog%20Articles/GoogleMapsV2/google_maps_key.002.jpg)
 
 ### Adding the map fragment
 
-We'll start with something very simple. We'll put a full-screen map into our application without worrying about ActionBarSherlock.
+Assuming you've added the permissions and the API key to your application manifest, we can now start by putting a full-screen map into our application.
+For the moment we won't be worrying about ActionBarSherlock just yet.
 
 In order to add the map to our application we need to do 2 things.
 
