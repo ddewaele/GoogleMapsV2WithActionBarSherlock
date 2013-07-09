@@ -239,27 +239,27 @@ When using a FragmentActivity but keeping the MapFragment in your layout you'll 
 
 ### Other misc errors
 
-TOOD... investigate those...
+investigate these in more detail...
 
-07-09 12:01:05.500: D/dalvikvm(4169): DexOpt: couldn't find field Landroid/content/res/Configuration;.smallestScreenWidthDp
-07-09 12:01:05.500: W/dalvikvm(4169): VFY: unable to resolve instance field 41
-07-09 12:01:05.500: D/dalvikvm(4169): VFY: replacing opcode 0x52 at 0x0012
-07-09 12:01:05.500: D/dalvikvm(4169): VFY: dead code 0x0014-0018 in Lcom/google/android/gms/common/GooglePlayServicesUtil;.b (Landroid/content/res/Resources;)Z
-07-09 12:01:05.562: W/dalvikvm(4169): Unable to resolve superclass of Lmaps/p/w; (718)
-07-09 12:01:05.562: W/dalvikvm(4169): Link of class 'Lmaps/p/w;' failed
-07-09 12:01:05.562: W/dalvikvm(4169): Unable to resolve superclass of Lmaps/aq/as; (5347)
-07-09 12:01:05.566: W/dalvikvm(4169): Link of class 'Lmaps/aq/as;' failed
-07-09 12:01:05.566: W/dalvikvm(4169): Unable to resolve superclass of Lmaps/ag/l; (4576)
-07-09 12:01:05.566: W/dalvikvm(4169): Link of class 'Lmaps/ag/l;' failed
-07-09 12:01:05.566: E/dalvikvm(4169): Could not find class 'maps.ag.l', referenced from method maps.ah.an.a
-07-09 12:01:05.566: W/dalvikvm(4169): VFY: unable to resolve new-instance 4420 (Lmaps/ag/l;) in Lmaps/ah/an;
-07-09 12:01:05.566: D/dalvikvm(4169): VFY: replacing opcode 0x22 at 0x0085
-07-09 12:01:05.578: D/dalvikvm(4169): VFY: dead code 0x0087-0093 in Lmaps/ah/an;.a (Landroid/view/LayoutInflater;Lcom/google/android/gms/maps/GoogleMapOptions;Z)Lmaps/ah/an;
-07-09 12:01:06.441: D/dalvikvm(4169): GC_CONCURRENT freed 842K, 51% free 3333K/6727K, external 2059K/2108K, paused 3ms+4ms
-07-09 12:01:06.613: D/dalvikvm(4169): GC_CONCURRENT freed 834K, 50% free 3460K/6855K, external 1801K/2108K, paused 3ms+2ms
-07-09 12:01:07.734: D/libEGL(4169): loaded /system/lib/egl/libEGL_POWERVR_SGX540_120.so
-07-09 12:01:07.738: D/libEGL(4169): loaded /system/lib/egl/libGLESv1_CM_POWERVR_SGX540_120.so
-07-09 12:01:07.757: D/libEGL(4169): loaded /system/lib/egl/libGLESv2_POWERVR_SGX540_120.so
-07-09 12:01:07.816: I/Google Maps Android API(4169): Failed to contact Google servers. Another attempt will be made when connectivity is established.
-07-09 12:01:16.167: D/dalvikvm(4169): GC_CONCURRENT freed 790K, 50% free 3505K/6919K, external 2007K/2108K, paused 17ms+3ms
-07-09 12:01:22.835: E/Google Maps Android API(4169): Failed to load map. Error contacting Google servers. This is probably an authentication issue (but could be due to network errors).
+	D/dalvikvm(4169): DexOpt: couldn't find field Landroid/content/res/Configuration;.smallestScreenWidthDp
+	W/dalvikvm(4169): VFY: unable to resolve instance field 41
+	D/dalvikvm(4169): VFY: replacing opcode 0x52 at 0x0012
+	D/dalvikvm(4169): VFY: dead code 0x0014-0018 in Lcom/google/android/gms/common/GooglePlayServicesUtil;.b (Landroid/content/res/Resources;)Z
+	W/dalvikvm(4169): Unable to resolve superclass of Lmaps/p/w; (718)
+	W/dalvikvm(4169): Link of class 'Lmaps/p/w;' failed
+	W/dalvikvm(4169): Unable to resolve superclass of Lmaps/aq/as; (5347)
+	W/dalvikvm(4169): Link of class 'Lmaps/aq/as;' failed
+	W/dalvikvm(4169): Unable to resolve superclass of Lmaps/ag/l; (4576)
+	W/dalvikvm(4169): Link of class 'Lmaps/ag/l;' failed
+	E/dalvikvm(4169): Could not find class 'maps.ag.l', referenced from method maps.ah.an.a
+	W/dalvikvm(4169): VFY: unable to resolve new-instance 4420 (Lmaps/ag/l;) in Lmaps/ah/an;
+	D/dalvikvm(4169): VFY: replacing opcode 0x22 at 0x0085
+	D/dalvikvm(4169): VFY: dead code 0x0087-0093 in Lmaps/ah/an;.a (Landroid/view/LayoutInflater;Lcom/google/android/gms/maps/GoogleMapOptions;Z)Lmaps/ah/an;
+	D/dalvikvm(4169): GC_CONCURRENT freed 842K, 51% free 3333K/6727K, external 2059K/2108K, paused 3ms+4ms
+	D/dalvikvm(4169): GC_CONCURRENT freed 834K, 50% free 3460K/6855K, external 1801K/2108K, paused 3ms+2ms
+	D/libEGL(4169): loaded /system/lib/egl/libEGL_POWERVR_SGX540_120.so
+	D/libEGL(4169): loaded /system/lib/egl/libGLESv1_CM_POWERVR_SGX540_120.so
+	D/libEGL(4169): loaded /system/lib/egl/libGLESv2_POWERVR_SGX540_120.so
+	I/Google Maps Android API(4169): Failed to contact Google servers. Another attempt will be made when connectivity is established.
+	D/dalvikvm(4169): GC_CONCURRENT freed 790K, 50% free 3505K/6919K, external 2007K/2108K, paused 17ms+3ms
+	E/Google Maps Android API(4169): Failed to load map. Error contacting Google servers. This is probably an authentication issue (but could be due to network errors).
