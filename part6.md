@@ -7,29 +7,6 @@ title: Common errors and mistakes when using the Maps API
 
 In this section I'm going to go over some of the common mistakes people are making while setting up an Android application using the Google Maps Android API v2.
 
-###Failing to provide the correct location permissions
-
-When 
-
-07-09 11:46:42.734: E/AndroidRuntime(3444): java.lang.SecurityException: Client must have ACCESS_FINE_LOCATION permission to request PRIORITY_HIGH_ACCURACY locations.
-07-09 11:46:42.734: E/AndroidRuntime(3444): 	at android.os.Parcel.readException(Parcel.java:1322)
-07-09 11:46:42.734: E/AndroidRuntime(3444): 	at android.os.Parcel.readException(Parcel.java:1276)
-07-09 11:46:42.734: E/AndroidRuntime(3444): 	at beo.a(SourceFile:424)
-07-09 11:46:42.734: E/AndroidRuntime(3444): 	at bes.a(SourceFile:232)
-07-09 11:46:42.734: E/AndroidRuntime(3444): 	at maps.aj.b.j(Unknown Source)
-07-09 11:46:42.734: E/AndroidRuntime(3444): 	at ws.h(SourceFile:692)
-07-09 11:46:42.734: E/AndroidRuntime(3444): 	at wy.a(SourceFile:449)
-07-09 11:46:42.734: E/AndroidRuntime(3444): 	at wu.a(SourceFile:166)
-07-09 11:46:42.734: E/AndroidRuntime(3444): 	at wt.handleMessage(SourceFile:113)
-07-09 11:46:42.734: E/AndroidRuntime(3444): 	at android.os.Handler.dispatchMessage(Handler.java:99)
-07-09 11:46:42.734: E/AndroidRuntime(3444): 	at android.os.Looper.loop(Looper.java:123)
-07-09 11:46:42.734: E/AndroidRuntime(3444): 	at android.app.ActivityThread.main(ActivityThread.java:3687)
-07-09 11:46:42.734: E/AndroidRuntime(3444): 	at java.lang.reflect.Method.invokeNative(Native Method)
-07-09 11:46:42.734: E/AndroidRuntime(3444): 	at java.lang.reflect.Method.invoke(Method.java:507)
-07-09 11:46:42.734: E/AndroidRuntime(3444): 	at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:842)
-07-09 11:46:42.734: E/AndroidRuntime(3444): 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:600)
-07-09 11:46:42.734: E/AndroidRuntime(3444): 	at dalvik.system.NativeStart.main(Native Method)
-
 ###Failing to provide the correct map permissions
 
 Forgetting to add a permission like this
@@ -236,6 +213,40 @@ When using a FragmentActivity but keeping the MapFragment in your layout you'll 
 	07-09 10:58:51.507: E/(136): Dumpstate > /data/log/dumpstate_app_error
 
 **Solution:** Ensure that when using a FragmentActivity you have a corresponding SupportMapFragment in your layout.
+
+###Failing to provide the correct location permissions
+
+When you are requesting the users location on your map using the following code:
+
+	googleMap.setMyLocationEnabled(true);
+
+You need to ensure that you have the proper permissions in place. When these permissions are not present in your manifest you'll receive the following error:
+
+	java.lang.SecurityException: Client must have ACCESS_FINE_LOCATION permission to request PRIORITY_HIGH_ACCURACY locations.
+		at android.os.Parcel.readException(Parcel.java:1322)
+		at android.os.Parcel.readException(Parcel.java:1276)
+		at beo.a(SourceFile:424)
+		at bes.a(SourceFile:232)
+		at maps.aj.b.j(Unknown Source)
+		at ws.h(SourceFile:692)
+		at wy.a(SourceFile:449)
+		at wu.a(SourceFile:166)
+		at wt.handleMessage(SourceFile:113)
+		at android.os.Handler.dispatchMessage(Handler.java:99)
+		at android.os.Looper.loop(Looper.java:123)
+		at android.app.ActivityThread.main(ActivityThread.java:3687)
+		at java.lang.reflect.Method.invokeNative(Native Method)
+		at java.lang.reflect.Method.invoke(Method.java:507)
+		at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:842)
+		at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:600)
+		at dalvik.system.NativeStart.main(Native Method)
+
+**Solution:** Ensure that you have the permissions below in your manifest.
+
+    <!-- My Location -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
 
 ### Other misc errors
 
