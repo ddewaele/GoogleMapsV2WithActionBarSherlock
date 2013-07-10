@@ -25,8 +25,6 @@ We'll start our animation by simply animating to the different markers on the ma
 
 We've already placed a couple of markers on the map to get us started.
 
-
-
 In order to animate the camera, we first need to define where it should be pointed at. We do this by building a new CameraPosition object.
 
 {% highlight java %}
@@ -73,8 +71,10 @@ The callback provides us hooks when the animation finishes.
 - onFinish is called after the animation has completely finished
 - onCancel is called when the animation has been stopped for some reason (call to stopAnimation or another animation started).
 
-Note that you cannot have 2 animations running at the same time. 
-As soon as the second animation is scheduled (through an animateCamera call), the first animation will be stopped abrublty, and you'll get a notification through the onCancel callback.
+So if we want to have an animation that loops untill the last marker, we simply keep on starting a new animation in the `onFinish` callback.
+
+
+**Note:** You cannot have 2 animations running at the same time. As soon as the second animation is scheduled (through an animateCamera call), the first animation will be stopped abrublty, and you'll get a notification through the onCancel callback.
 
 ### Setting the correct bearing
 
