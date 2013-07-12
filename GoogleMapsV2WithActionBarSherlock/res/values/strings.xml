@@ -14,6 +14,10 @@
 	<string name="to">To</string>
     <string name="load_directions">Load directions</string>
     <string name="tooltip">This is the tooltip</string>
+    <string name="start_animation">Start Animation</string>
+    <string name="stop_animation">Stop Animation</string>
+    <string name="clear_markers">Clear markers</string>
+    <string name="add_default_locations">Add Default Locations</string>
     
 
 </resources>

@@ -34,7 +34,7 @@ public class SimpleMapFragmentActivity extends FragmentActivity{
 		
 		mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         googleMap = mapFragment.getMap();
-        googleMap.setMyLocationEnabled(true);
+       //googleMap.setMyLocationEnabled(true);
 	}
 	
 	  @Override

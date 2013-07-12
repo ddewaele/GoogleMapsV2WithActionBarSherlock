@@ -7,12 +7,9 @@ import java.util.Random;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v4.view.ViewPager.LayoutParams;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 
 import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuInflater;
@@ -66,7 +63,6 @@ public class SimpleAnimatingMarkersFragment  extends SherlockMapFragment {
 		View root = super.onCreateView(inflater, container, savedInstanceState);
 		googleMap = getMap();
 		googleMap.setMyLocationEnabled(true);
-		//googleMap.getUiSettings().setMyLocationButtonEnabled(true);
 		
 		googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
 			
@@ -118,7 +114,7 @@ public class SimpleAnimatingMarkersFragment  extends SherlockMapFragment {
 		googleMap.animateCamera(
 		        CameraUpdateFactory.newLatLngZoom(markers.get(0).getPosition(), 16), 
 		        5000,
-		        MyCancelableCallback);      
+		        simpleAnimationCancelableCallback);      
 		      
 		      currentPt = 0-1;	
 	}
@@ -142,7 +138,13 @@ public class SimpleAnimatingMarkersFragment  extends SherlockMapFragment {
 
 	int currentPt;
 	
-	CancelableCallback MyCancelableCallback =
+	/**
+	 * 
+	 * Callback that highlights the current marker and keeps animating to the next marker, providing a "next marker" is still available.
+	 * If we've reached the end-marker the animation stops.
+	 * 
+	 */
+	CancelableCallback simpleAnimationCancelableCallback =
 		new CancelableCallback(){
 
 			@Override
@@ -154,15 +156,18 @@ public class SimpleAnimatingMarkersFragment  extends SherlockMapFragment {
 
 				if(++currentPt < markers.size()){
 					
-					float targetBearing = bearingBetweenLatLngs( googleMap.getCameraPosition().target, markers.get(currentPt).getPosition());
-					
+//					double heading = SphericalUtil.computeHeading(googleMap.getCameraPosition().target, markers.get(currentPt).getPosition());
+//					System.out.println("Heading  = " + (float)heading);
+//					float targetBearing = bearingBetweenLatLngs(googleMap.getCameraPosition().target, markers.get(currentPt).getPosition());
+//					System.out.println("Bearing  = " + targetBearing);
+//					
 					LatLng targetLatLng = markers.get(currentPt).getPosition();
 
 					CameraPosition cameraPosition =
 							new CameraPosition.Builder()
 									.target(targetLatLng)
 									.tilt(currentPt<markers.size()-1 ? 90 : 0)
-				                    .bearing(targetBearing)
+				                    //.bearing((float)heading)
 				                    .zoom(googleMap.getCameraPosition().zoom)
 				                    .build();
 
@@ -170,16 +175,13 @@ public class SimpleAnimatingMarkersFragment  extends SherlockMapFragment {
 					googleMap.animateCamera(
 							CameraUpdateFactory.newCameraPosition(cameraPosition), 
 							3000,
-							MyCancelableCallback);
+							simpleAnimationCancelableCallback);
 					
 					highLightMarker(currentPt);
-					//markers.get(currentPt).showInfoWindow();
-					
+
 				}
 			}
 	};
-	
-	
 	    
 	private Location convertLatLngToLocation(LatLng latLng) {
 		Location loc = new Location("someLoc");
@@ -241,25 +243,15 @@ public class SimpleAnimatingMarkersFragment  extends SherlockMapFragment {
 	 * Highlight the marker by marker.
 	 */
 	private void highLightMarker(Marker marker) {
-		
-		/*
-		for (Marker foundMarker : this.markers) {
-			if (!foundMarker.equals(marker)) {
-				foundMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-			} else {
-				foundMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-				foundMarker.showInfoWindow();
-			}
-		}
-		*/
 		marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
 		marker.showInfoWindow();
-
 		//Utils.bounceMarker(googleMap, marker);
-		
 		this.selectedMarker=marker;
 	}	
 
+	/**
+	 * Ensure that all markers are using the default red colored icon. (removes any highlighted icons).
+	 */
 	private void resetMarkers() {
 		for (Marker marker : this.markers) {
 			marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));

@@ -23,7 +23,6 @@ import com.ecs.google.maps.v2.actionbarsherlock.R;
 import com.ecs.google.maps.v2.component.SherlockMapFragment;
 import com.ecs.google.maps.v2.util.GoogleMapUtis;
 import com.ecs.google.maps.v2.util.ViewUtils;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.GoogleMap.CancelableCallback;
@@ -87,23 +86,6 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 
 		return view;
 	}
-	
-//	private void addMarkerToMap(LatLng latLng) {
-//		Marker marker = googleMap.addMarker(new MarkerOptions().position(latLng)
-//				 .title("title")
-//				 .snippet("snippet"));
-//		markers.add(marker);
-//		
-//	}
-//	
-//	/**
-//	 * Adds a list of markers to the map.
-//	 */
-//	public void addMarkersToMap(List<LatLng> latLngs) {
-//		for (LatLng latLng : latLngs) {
-//			addMarkerToMap(latLng);
-//		}
-//	}
 	
 	/**
 	 * Adds a list of markers to the map.
@@ -266,7 +248,6 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 			private static final int BEARING_OFFSET = 20;
 
 			private final Interpolator interpolator = new LinearInterpolator();
-			//private final Interpolator interpolator = new AccelerateDecelerateInterpolator();
 			
 			private boolean animating = false;
 			
@@ -485,26 +466,12 @@ public class DirectionsMapFragment extends SherlockMapFragment {
 		 * Highlight the marker by marker.
 		 */
 		private void highLightMarker(Marker marker) {
-			
-			/*
-			for (Marker foundMarker : this.markers) {
-				if (!foundMarker.equals(marker)) {
-					foundMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED));
-				} else {
-					foundMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
-					foundMarker.showInfoWindow();
-				}
-			}
-			*/
+
 			if (marker!=null) {
 				marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE));
 				marker.showInfoWindow();
 			}
 
-			//Utils.bounceMarker(googleMap, marker);
-			
-			//TODO: DDW FIX THIS
-			//this.selectedMarker=marker;
 		}	
 
 		private void resetMarkers() {

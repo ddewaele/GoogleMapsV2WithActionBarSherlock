@@ -30,7 +30,7 @@ public class SimpleMapActivity extends Activity{
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.map_fragment);
+		setContentView(R.layout.support_map_fragment);
 
 		// API level 11 is needed for this call to work.
 		//mapFragment = (com.google.android.gms.maps.MapFragment) getFragmentManager().findFragmentById(R.id.map);

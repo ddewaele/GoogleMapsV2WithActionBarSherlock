@@ -3,26 +3,22 @@
     
 		<item android:id="@+id/action_bar_start_animation"
         android:showAsAction="ifRoom"
-        android:title="Start Animation"/>			
+        android:title="@string/start_animation"/>			
 							
 		<item android:id="@+id/action_bar_stop_animation"
         android:showAsAction="ifRoom"
-        android:title="Stop Animation"/>			
+        android:title="@string/stop_animation"/>			
 		
         <item android:id="@+id/action_bar_clear_locations"
         android:showAsAction="ifRoom"
-        android:title="Clear"/>	
+        android:title="@string/clear_markers"/>	
     
         <item android:id="@+id/action_bar_add_default_locations"
         android:showAsAction="ifRoom"
-        android:title="Add Default Locations"/>	
+        android:title="@string/add_default_locations"/>	
         
-        <item android:id="@+id/action_bar_zoom"
-        android:showAsAction="ifRoom"
-        android:title="Zoom"/>	
-
 		<item android:id="@+id/action_bar_toggle_style"
         android:showAsAction="ifRoom"
-        android:title="Toggle Style"/>
+        android:title="@string/toggle_style"/>
 		
 </menu>
