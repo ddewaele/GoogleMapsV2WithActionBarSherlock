@@ -5,6 +5,8 @@ title: Animating the map
 
 ##Part 3 : Animating the map
 
+**Attention: This is still very much work in progress. Stay tuned for updates or feel free to log issues / provide remarks/suggestions**
+
 In the previous sections we've seen how to setup your map applications, how to move around the map with the camera, and how to add markers and lines to the map.
 In this last part we're going to create an animation that resembles a fly-over.
 
@@ -73,6 +75,47 @@ The callback provides us hooks when the animation finishes.
 
 So if we want to have an animation that loops untill the last marker, we simply keep on starting a new animation in the `onFinish` callback.
 
+The following code illustrates that:
+
+{% highlight java %}
+	/**
+	 * 
+	 * Callback that highlights the current marker and keeps animating to the next marker, providing a "next marker" is still available.
+	 * If we've reached the end-marker the animation stops.
+	 * 
+	 */
+	CancelableCallback simpleAnimationCancelableCallback =
+		new CancelableCallback(){
+
+			@Override
+			public void onCancel() {
+			}
+
+			@Override
+			public void onFinish() {
+
+				if(++currentPt < markers.size()){
+
+					CameraPosition cameraPosition =
+							new CameraPosition.Builder()
+									.target(targetLatLng)
+									.tilt(currentPt<markers.size()-1 ? 90 : 0)
+				                    //.bearing((float)heading)
+				                    .zoom(googleMap.getCameraPosition().zoom)
+				                    .build();
+
+					
+					googleMap.animateCamera(
+							CameraUpdateFactory.newCameraPosition(cameraPosition), 
+							3000,
+							simpleAnimationCancelableCallback);
+					
+					highLightMarker(currentPt);
+
+				}
+			}
+	};
+{% endhighlight %}
 
 **Note:** You cannot have 2 animations running at the same time. As soon as the second animation is scheduled (through an animateCamera call), the first animation will be stopped abrublty, and you'll get a notification through the onCancel callback.
 
