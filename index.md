@@ -54,6 +54,15 @@ The tutorial guides can be found in the docs folder of this project. The sample 
 - [More](./part5)
 
 
+**Part 6 : Common errors / mistakes when using the Maps API**
+
+- Failing to provide the correct permissions
+- Failing to provide an API key entry
+- Providing an invalid API key
+- Using an Activity to launch a map on lower SDK levels
+- Using a SupportMapFragment in an Activity
+- Using a MapFragment in a FragmentActivity
+- [More](./part6)
 
 
 

@@ -6,17 +6,22 @@ title: Markers
 ## Markers
 ### Introduction
 
-In this article, I'll show you some simple ways of dealing with Markers on your map. 
+In the [previous part][5] I showed you how to create a skeleton project using the new Google Naps V2 API for Android. 
 
-[Markers][0] have finally become first class citizens in the Google Maps for Android v2 API. Gone are the days where you need to work with low-level overlays and overlay items to get a simple marker on the Map. 
+In this part, I'll show you some simple ways of dealing with Markers on your map. 
+
+[Markers][0] have finally become first class citizens in the Google Maps for Android v2 API. 
+
+Gone are the days where you need to work with low-level overlays and overlay items to get a simple marker on the Map. 
+
 As of v2, we finally have `Marker` objects and an `addMarkerToMap` method on the map, so let's see what we can do with it...
 
 But first we're going to take a little side-track. 
 
 ### Adding some tabs to our application.
 
-The next 4 parts in this series will be included in a single Android demo application.
-I'm going to use a wonderful library from [Andreas Stütz][1] called [PagerSlidingTabStrip][2] that adds a nice set of tabs to the application.
+The next 4 parts in this series are included in a single Android demo application that can be downloaded from this [GitHub repository][6].
+Each part of the series will be shown in an individual tab. For that I'm going to use a wonderful library from [Andreas Stütz][1] called [PagerSlidingTabStrip][2] that adds a nice set of tabs to the application.
 Setting up the project is really easy. Go checkout the Github page and download the library and the sample project if you're interested in finding out more.
 
 The main layout of the application looks like this:
@@ -306,6 +311,10 @@ And finally we need to set the `InfoWindowAdapter` on the map
 googleMap.setInfoWindowAdapter(new IconizedWindowAdapter(getActivity().getLayoutInflater()));	
 {% endhighlight %}	
 
+The result looks like this:
+
+![Custom infowindow](./images/custom-infowindow.png)
+
 ### Custom markers
 
 Besides having custom info windows, it's also possible to put custom markers on the map.
@@ -436,3 +445,5 @@ Placing them on a custom `MapFragment` subclass is an ideal way to promote re-us
 [2]: https://github.com/astuetz/PagerSlidingTabStrip
 [3]: http://www.youtube.com/watch?feature=player_embedded&v=nb2X9IjjZpM#!
 [4]: https://github.com/googlemaps/android-maps-utils
+[5]: ./part1
+[6]: https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock
