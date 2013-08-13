@@ -15,7 +15,7 @@ Unfortunately this is not always the case.
 
 If you take a look at the video below, you'll see how I'm able to deploy my app with an invalid API key and still get to see a working map. Vice versa, I also managed to deploy an app with a valid API key while the app wasn't showing anything at all.
 
-<iframe width="560" height="315" src="//www.youtube.com/embed/rtWWt2blDTg?rel=0&&vq=hd720" frameborder="0"> </iframe>
+<iframe width="560" height="315" src="//www.youtube.com/embed/rtWWt2blDTg?rel=0&vq=hd720" frameborder="0"> </iframe>
 
 **Solution:** Always double check that your changes ended up on the device by uninstalling your app and re-installing it again.
 
