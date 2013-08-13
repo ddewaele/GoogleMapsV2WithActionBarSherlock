@@ -19,7 +19,7 @@ Given a series of LatLng points on the map, we would like to see the following h
 
 The final animation looks like this:
 
-<iframe width="560" height="315" src="//www.youtube.com/embed/HPWYorS68WE?rel=0" frameborder="0"> </iframe>
+<iframe width="560" height="315" src="//www.youtube.com/embed/HPWYorS68WE?vq=hd720" frameborder="0"> </iframe>
 
 Animating the camera on the map is one of the many cool new features of the Google Maps Android API v2.
 
