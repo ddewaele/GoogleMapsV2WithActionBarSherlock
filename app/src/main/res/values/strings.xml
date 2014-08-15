@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">Maps V2 API</string>
+  
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="remove">Remove</string>
+    <string name="clear">Clear</string>
+    <string name="pancamera">PanCamera</string>
+    <string name="toggle_style">Toggle Style</string>
+    <string name="directions_input">Directions Input</string>
+	<string name="from">From</string>
+	<string name="to">To</string>
+    <string name="load_directions">Load directions</string>
+    <string name="tooltip">This is the tooltip</string>
+    <string name="start_animation">Start Animation</string>
+    <string name="stop_animation">Stop Animation</string>
+    <string name="clear_markers">Clear markers</string>
+    <string name="add_default_locations">Add Default Locations</string>
+    
+
+</resources>
