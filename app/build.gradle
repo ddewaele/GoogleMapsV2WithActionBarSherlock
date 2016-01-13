@@ -2,18 +2,20 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 17
-    buildToolsVersion "19.1.0"
+    buildToolsVersion "23.0.2"
 
     defaultConfig {
         applicationId "com.ecs.google.maps.v2.actionbarsherlock"
         minSdkVersion 9
         targetSdkVersion 17
+        // Enabling multidex support.
+        multiDexEnabled true
     }
 
     buildTypes {
         release {
-            runProguard false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
 
@@ -41,8 +43,11 @@ dependencies {
         exclude module: 'support-v4'
     }
     compile 'com.google.code.gson:gson:2.1'
+    compile ('com.google.android.gms:play-services-maps:8.4.0') {
+        exclude module: 'support-v4'
+    }
 
-    compile files('libs/commons-logging-1.1.1.jar')
+    //compile files('libs/commons-logging-1.1.1.jar')
     compile files('libs/google-http-client-1.15.0-rc.jar')
     compile files('libs/google-http-client-android-1.15.0-rc.jar')
     compile files('libs/google-http-client-jackson2-1.15.0-rc.jar')
