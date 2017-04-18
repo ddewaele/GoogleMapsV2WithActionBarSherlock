@@ -3,7 +3,7 @@ layout: index
 title: Animating the map
 ---
 
-##Part 3 : Animating the map
+## Part 3 : Animating the map
 
 In the previous sections we've seen how to setup your map applications, how to move around the map with the camera, and how to add markers and lines to the map.
 In this last part we're going to create an animation that resembles a fly-over.
@@ -233,7 +233,7 @@ And finally start the animation again.
 	
 
 
-###References
+### References
 
 [1]: http://www.geomidpoint.com/destination/
 [2]: http://grepcode.com/file/repository.grepcode.com/java/ext/com.google.android/android/2.2_r1.1/android/location/Location.java#Location.computeDistanceAndBearing%28double%2Cdouble%2Cdouble%2Cdouble%2Cfloat%5B%5D%29

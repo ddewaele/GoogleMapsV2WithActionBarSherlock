@@ -1,4 +1,4 @@
-##Introduction
+## Introduction
 
 This repository contains a number of projects that will help you get up to speed with Google Maps v2 on Android with ActionBarSherlock 4.3.1
 
@@ -12,35 +12,35 @@ It contains the following folders
 
 Note : This project was created for Eclipse ADT so on the master branch you can checkout the projects, import them in Eclipse and you should be good to go. For people working with Android Studio, I've created a [new branch](https://github.com/ddewaele/GoogleMapsV2WithActionBarSherlock/tree/androidstudio_migration) called ```androidstudio_migration1``` where you can checkout a Gradle enable version that you can import in Android Studio and get started immediately.
 
-##Tutorial
+## Tutorial
 
 The tutorial guides can be found in the docs folder of this project. The sample application is part of a 6-part tutorial covering
 
-###Part 1 : Setting up the Maps component with ActionBarSherlock
+### Part 1 : Setting up the Maps component with ActionBarSherlock
 
 - Setup a skeleton project
 - Add the ActionBarSherlock and GooglePlayServices libs
 - [More](./GoogleMapsV2WithActionBarSherlock/docs/part1.md)
 	
-###Part 2 : Drawing on the Map - Markers and polylines
+### Part 2 : Drawing on the Map - Markers and polylines
 
 - Adding markers
 - Highlighting markers
 - Removing markers
 - [More](./GoogleMapsV2WithActionBarSherlock/docs/part2.md)
 
-###Part 3 : Animating the Map
+### Part 3 : Animating the Map
 
 - Animate through a set of markers on the map
 - [More](./GoogleMapsV2WithActionBarSherlock/docs/part3.md)
 	
-###Part 4 : Migrating from v1 maps to v2 maps
+### Part 4 : Migrating from v1 maps to v2 maps
 
 - Some tips and tricks for migrating your old v1 apps to v2.
 - A rundown of all the changes.
 - [More](./GoogleMapsV2WithActionBarSherlock/docs/part4.md)
 
-###Part 5 : Using Google APIs : Directions and Places API
+### Part 5 : Using Google APIs : Directions and Places API
 
 - Use Google Places Autocomplete API
 - Use Google Directions API
@@ -51,7 +51,7 @@ The tutorial guides can be found in the docs folder of this project. The sample 
 **Important note:**
 
 
-###API keys
+### API keys
 In order to run this application on your phone you'll first need to get an API key.
 
 Instructions on how to setup your API key can be found in the [Setting up an Android Maps V2 Project][0] article.
@@ -62,7 +62,7 @@ You'll need to paste the API key into your application manifest on the following
 <meta-data android:name="com.google.android.maps.v2.API_KEY" android:value="INSERT_YOUR_API_KEY_HERE"/>
 ```
 
-###Library issues
+### Library issues
 If you attempt to run an Android sample app with your own copy of ActionBarSherlock, you might run into the following issue:
 
 	Found 2 versions of android-support-v4.jar in the dependency list,

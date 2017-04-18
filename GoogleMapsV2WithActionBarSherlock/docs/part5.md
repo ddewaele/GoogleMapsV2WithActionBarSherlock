@@ -20,7 +20,7 @@ See later on why.
 
 Next step is to import the code in our ADT.
 
-###Import the code in ADT.
+### Import the code in ADT.
 
 When importing code in ADT it's always best to import code from a location that's outside your standard eclipse workspace.
 Otherwise you might run into the following error 
@@ -44,7 +44,7 @@ Next up is to reference the android-maps-utils Library project on our project.
 [INSERT screenshot] 
 
 
-##References
+## References
 
 [0]: http://www.youtube.com/watch?feature=player_embedded&v=nb2X9IjjZpM#!
 [1]: https://github.com/googlemaps/android-maps-utils
