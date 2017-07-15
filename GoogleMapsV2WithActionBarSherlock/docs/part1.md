@@ -3,9 +3,9 @@ layout: index
 title: Setting up the project
 ---
 
-##Part 1 : Setting up the project.
+## Part 1 : Setting up the project.
 
-###Introduction
+### Introduction
 
 In the first part of this tutorial I will show you can start using Google Maps Android API v2 in your Android application. 
 The goal is to create a skeleton project that 
@@ -14,7 +14,7 @@ The goal is to create a skeleton project that
 - uses ActionBarsherlock.
 - can run on older versions of Android (2.x and up).
  
-###Google Maps Android API v2
+### Google Maps Android API v2
  
 The new Google Maps Android API v2 ((available through Google Play Services)) is a vast improvement over the original one and comes with many new features. 
 Not only does it really stand out from a UI perspective but also on an API level is the new Maps v2 library a "delight" for both end-users and developers.

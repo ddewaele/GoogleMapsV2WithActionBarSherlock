@@ -185,7 +185,7 @@ but proper animation support is built into the API, allowing us to specify durat
 
 		
 		
-##References
+## References
 
 - [Google Maps Android API v2] (https://developers.google.com/maps/documentation/android/)
 - [Android Maps Extensions](https://github.com/mg6maciej/android-maps-extensions)

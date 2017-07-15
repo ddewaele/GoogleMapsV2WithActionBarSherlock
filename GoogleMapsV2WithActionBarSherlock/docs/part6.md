@@ -3,7 +3,7 @@ layout: index
 title: Document Center3
 ---
 
-##Using Google APIs on your map : Directions and Places
+## Using Google APIs on your map : Directions and Places
 
 In the following part I'll show you howto integrate with 2 popular Google APIs that you can use to enrich your Maps experience, the `Directions API` and the `Places API`.
 
@@ -14,17 +14,17 @@ After the user has entered an origin and a destination, we'll show the direction
 We're going to be using AsyncTask to perform the HTTP processing in the background off the main thread. 
 For the actual HTTP communication we're going to be using the [Google HTTP Client Library for Java][0].
 
-###The Google Directions API
+### The Google Directions API
 The Google Directions API is a service that calculates directions between locations using an HTTP request. We'll use it to draw a path (a polyline) between 2 points (origin and destination).
 
-###The Google Places API
+### The Google Places API
 The Google Places API is a service that returns information about Places — defined within this API as establishments, geographic locations, or prominent points of interest — using HTTP requests. Place requests specify locations as latitude/longitude coordinates.
 We're going to be using a small part of the Google Places API, namely the Places Autocomplete API.
 
-###Places Autocomplete
+### Places Autocomplete
 The Google Places Autocomplete API is a web service that returns Place information based on text search terms, and, optionally, geographic bounds. The API can be used to provide autocomplete functionality for text-based geographic searches, by returning Places such as businesses, addresses, and points of interest as a user types.
 
-###Directions input
+### Directions input
 
 We're going to use a GridLayout to build our directions input layout.
 We add a couple of labels and 2 AutoCompleteTextView components to the layout.
@@ -147,7 +147,7 @@ As the user is typing, he'll get the hints from the Google Places Autocompletion
 		
 The grunt of the work happens in the `autocomplete` method. I've used a different approach for that one as I wanted to use the [Google HTTP Client Library for Java][0] to connect to the Google API and parse the results, as opposed to using a lower-level `HttpURLConnection` to make the HTTP connection, and parsing the JSON response using a `JSONObject`.
 
-###Communicating the the Google Services
+### Communicating the the Google Services
   
 The [Google HTTP Client Library for Java][0] provides an easy and convenient way to interact with JSON based webservices like the ones we'll be discussing today
 
@@ -164,7 +164,7 @@ The JSON Factory is the low-level JSON library implementation based on Jackson 2
 
 We'll use the [Google HTTP Client Library for Java][0] for both the Places Autocompletion API call as well as for the Directions API call.
 
-###Places Autocompletion API
+### Places Autocompletion API
 
 Using our HttpTransport, we create an `HttpRequestFactory` (responsible for setting the parser) that we'll use to build our actual HTTP requests.
 
@@ -305,7 +305,7 @@ The complete code is pretty condensed and simple:
 		}	
 		
 
-###Directions API call
+### Directions API call
 
 The Directions API call use an AsyncTask to fetch the data in the background.	
 	
@@ -435,7 +435,7 @@ The full code can be found here.
 	}	
 
 
-###References
+### References
 
 - [Google HTTP Client Library for Java][0]
 - [The Google Directions API][1]
